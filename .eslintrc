@@ -1,0 +1,22 @@
+{
+  "extends": ["eslint:recommended", "plugin:react/recommended", "prettier", "plugin:import/errors", "plugin:flowtype/recommended"],
+  "plugins": ["prettier", "flowtype"],
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "amd": true
+  },
+  "rules": {
+    "prettier/prettier": "error",
+    "no-console": 0,
+    "no-debugger": 0
+  },
+  "settings": {
+    "flowtype": {
+      "onlyFilesWithFlowAnnotation": false
+    },
+    "import/resolver": {
+      "babel-module": {}
+    }
+  }
+}

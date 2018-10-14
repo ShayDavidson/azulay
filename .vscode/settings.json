@@ -1,0 +1,7 @@
+{
+  "javascript.validate.enable": false,
+  "flow.useNPMPackagedFlow": true,
+  "javascript.format.enable": false,
+  "editor.formatOnSave": true,
+  "prettier.eslintIntegration": true
+}
