@@ -1,7 +1,5 @@
 // @flow
 
-// import * as Phases from "./phases";
-
 // CONSTS ////////////////////////////
 
 export const COLORS = 5;
@@ -96,7 +94,7 @@ export function createBoard(): Board {
   return {
     wall: createWall(),
     staging: new Array(COLORS),
-    floor: new Array(FLOOR_SLOTS)
+    floor: new Array(FLOOR_SLOTS.length)
   };
 }
 

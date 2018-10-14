@@ -6,7 +6,7 @@ import { applyGlobalStyles } from "./styles.js";
 
 /***********************************************************/
 
-import Tile from "./components/tile";
+import Wall from "./components/wall";
 
 /***********************************************************/
 
@@ -22,11 +22,7 @@ class Azul extends Component<Props, State> {
   render() {
     return (
       <Fragment>
-        <Tile color={0} />
-        <Tile color={1} />
-        <Tile color={2} />
-        <Tile color={3} />
-        <Tile color={4} />
+        <Wall />
       </Fragment>
     );
   }

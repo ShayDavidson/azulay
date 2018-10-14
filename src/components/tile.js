@@ -1,14 +1,14 @@
 // @flow
 
 import React, { Component } from "react";
-import { TILE_COLORS } from "../styles";
+import { TILE_COLORS, BOARD_TILE_SIZE } from "../styles";
 
 /***********************************************************/
 
-const BASE_SIZE = 50;
-const BORDER_RADIUS = "0.14em";
+const BASE_SIZE = BOARD_TILE_SIZE;
+const BORDER_RADIUS = "0.12em";
 const SHADOW_DISTANCE = "0.04em";
-const HIGHLIGHT_WIDTH = "0.04em";
+const HIGHLIGHT_WIDTH = "0.06em";
 const SHADOW_ALPHA = 0.7;
 const LIGHT_BORDER_ALPHA = 0.55;
 const DARK_BORDER_ALPHA = 0.15;
@@ -30,7 +30,6 @@ export default class Tile extends Component<Props, State> {
       backgroundColor: TILE_COLORS[this.props.color],
       boxShadow: `${SHADOW_DISTANCE} ${SHADOW_DISTANCE} rgba(0, 0, 0, ${SHADOW_ALPHA})`,
       borderRadius: BORDER_RADIUS,
-      margin: 5,
       position: "relative"
     };
 
@@ -40,8 +39,8 @@ export default class Tile extends Component<Props, State> {
       borderRadius: BORDER_RADIUS,
       borderTop: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
       borderLeft: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
-      borderBottom: `${HIGHLIGHT_WIDTH} solid rgba(0, 0, 0, ${DARK_BORDER_ALPHA})`,
-      borderRight: `${HIGHLIGHT_WIDTH} solid rgba(0, 0, 0, ${DARK_BORDER_ALPHA})`,
+      borderBottom: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${DARK_BORDER_ALPHA})`,
+      borderRight: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${DARK_BORDER_ALPHA})`,
       position: "absolute"
     };
 
