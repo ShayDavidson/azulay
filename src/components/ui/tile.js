@@ -1,11 +1,11 @@
 // @flow
 
-import React, { Component } from "react";
+import React from "react";
 import { css } from "glamor";
 
 /***********************************************************/
 
-import { TILE_COLORS } from "../styles";
+import { TILE_COLORS } from "../../styles";
 
 /***********************************************************/
 
@@ -49,7 +49,7 @@ const $internalStyle = css({
 
 /***********************************************************/
 
-export default class Tile extends Component<Props, State> {
+export default class Tile extends React.Component<Props, State> {
   render() {
     const $dynamicStyle = { backgroundColor: TILE_COLORS[this.props.color] };
 

@@ -1,13 +1,13 @@
 // @flow
 
-import React, { Component } from "react";
+import React from "react";
 import { css } from "glamor";
 import Color from "color";
 
 /***********************************************************/
 
-import type { ColorType } from "../models";
-import { TILE_COLORS } from "../styles";
+import type { ColorType } from "../../models";
+import { TILE_COLORS } from "../../styles";
 import Tile from "./tile";
 
 /***********************************************************/
@@ -45,7 +45,7 @@ const $internalStyle = css({
   position: "absolute"
 });
 
-export default class Placement extends Component<Props, State> {
+export default class Placement extends React.Component<Props, State> {
   render() {
     let $dynamicStyle =
       this.props.color != undefined

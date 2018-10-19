@@ -1,13 +1,13 @@
 // @flow
 
-import React, { Fragment, Component } from "react";
+import React, { Fragment } from "react";
 import ReactDOM from "react-dom";
 import { applyGlobalStyles } from "./styles.js";
 
 /***********************************************************/
 
-import Wall from "./components/wall";
-import Factory from "./components/factory";
+import GameProvider from "./components/game_provider";
+import Wall from "./components/ui/wall";
 
 /***********************************************************/
 
@@ -19,16 +19,16 @@ type State = {
   /* ... */
 };
 
-class Azul extends Component<Props, State> {
+/***********************************************************/
+
+class Azul extends React.Component<Props, State> {
   render() {
     return (
-      <Fragment>
-        <Wall />
-        <Factory />
-        <Factory />
-        <Factory />
-        <Factory />
-      </Fragment>
+      <GameProvider>
+        <Fragment>
+          <Wall />
+        </Fragment>
+      </GameProvider>
     );
   }
 }

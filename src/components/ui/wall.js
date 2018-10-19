@@ -1,14 +1,14 @@
 // @flow
 
-import React, { Component } from "react";
+import React from "react";
 import { css } from "glamor";
 
 /***********************************************************/
 
 import Placement from "./placement";
-import { BOARD_TILE_SIZE } from "../styles";
-import { COLORS, getWallPlacementColor } from "../models";
-import type { Wall as WallModel } from "../models";
+import { BOARD_TILE_SIZE } from "../../styles";
+import { COLORS, getWallPlacementColor } from "../../models";
+import type { Wall as WallModel } from "../../models";
 
 /***********************************************************/
 
@@ -37,7 +37,7 @@ const $baseStyle = css({
 
 /***********************************************************/
 
-export default class Wall extends Component<Props, State> {
+export default class Wall extends React.Component<Props, State> {
   render() {
     return (
       <div className={$baseStyle}>

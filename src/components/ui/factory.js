@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from "react";
+import React from "react";
 import { css } from "glamor";
 
 /***********************************************************/
@@ -29,7 +29,7 @@ const $baseStyle = css({
 
 /***********************************************************/
 
-export default class Factory extends Component<Props, State> {
+export default class Factory extends React.Component<Props, State> {
   render() {
     return <div className={$baseStyle} />;
   }
