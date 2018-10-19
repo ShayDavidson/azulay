@@ -68,10 +68,10 @@ export type Game = {|
 
 export function createGame(players: number, seed: number): Game {
   return {
-    players: new Array(players).map(createPlayer),
+    players: [...Array(players)].map(createPlayer),
     bag: createColorCountArray(TILES_PER_COLOR),
     box: createColorCountArray(0),
-    factories: new Array(FACTORIES_BY_PLAYERS[players]).map(() => createColorCountArray(0)),
+    factories: [...Array(FACTORIES_BY_PLAYERS[players])].map(() => createColorCountArray(0)),
     turn: 0,
     currentPlayer: 0,
     phase: PHASES.refill,

@@ -47,7 +47,7 @@ const $internalStyle = css({
 
 export default class Placement extends React.Component<Props, State> {
   render() {
-    let $dynamicStyle =
+    const $dynamicStyle =
       this.props.color != undefined
         ? {
             backgroundColor: Color(TILE_COLORS[this.props.color])

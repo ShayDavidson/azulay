@@ -1,13 +1,13 @@
 // @flow
 
-import React, { Fragment } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 import { applyGlobalStyles } from "./styles.js";
 
 /***********************************************************/
 
-import GameProvider from "./components/game_provider";
-import Wall from "./components/ui/wall";
+import GameProvider, { GameContext } from "./components/game_provider";
+import PlayerZone from "./components/ui/player_zone";
 
 /***********************************************************/
 
@@ -24,10 +24,12 @@ type State = {
 class Azul extends React.Component<Props, State> {
   render() {
     return (
-      <GameProvider>
-        <Fragment>
-          <Wall />
-        </Fragment>
+      <GameProvider players={1} seed={6070}>
+        <GameContext.Consumer>
+          {gameState => {
+            return gameState.players.map((player, index) => <PlayerZone player={player} key={index} />);
+          }}
+        </GameContext.Consumer>
       </GameProvider>
     );
   }

@@ -8,7 +8,7 @@ import { css } from "glamor";
 import Placement from "./placement";
 import { BOARD_TILE_SIZE } from "../../styles";
 import { COLORS, getWallPlacementColor } from "../../models";
-import type { Wall as WallModel } from "../../models";
+import type { Wall as WallType } from "../../models";
 
 /***********************************************************/
 
@@ -17,7 +17,7 @@ const PLACEMENT_GAP = "0.04em";
 /***********************************************************/
 
 type Props = {
-  wall: WallModel
+  wall: WallType
 };
 
 type State = {
@@ -43,8 +43,8 @@ export default class Wall extends React.Component<Props, State> {
       <div className={$baseStyle}>
         {[...Array(COLORS)].map((_, row) => {
           return [...Array(COLORS)].map((_, col) => {
-            let key = `${row}:${col}`;
-            let color = getWallPlacementColor(row, col);
+            const key = `${row}:${col}`;
+            const color = getWallPlacementColor(row, col);
             return <Placement color={color} hasTileOfColor={color} key={key} />;
           });
         })}
