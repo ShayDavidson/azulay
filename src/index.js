@@ -7,6 +7,7 @@ import { applyGlobalStyles } from "./styles.js";
 /***********************************************************/
 
 import Wall from "./components/wall";
+import Factory from "./components/factory";
 
 /***********************************************************/
 
@@ -23,6 +24,10 @@ class Azul extends Component<Props, State> {
     return (
       <Fragment>
         <Wall />
+        <Factory />
+        <Factory />
+        <Factory />
+        <Factory />
       </Fragment>
     );
   }

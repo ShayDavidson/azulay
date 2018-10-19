@@ -22,7 +22,7 @@ export type RandomProps = {|
   counter: number
 |};
 
-export type Color = number;
+export type ColorType = number;
 
 export type WallPlacement = boolean;
 
@@ -31,11 +31,11 @@ export type Wall = Array<Array<WallPlacement>>;
 export type Board = {|
   wall: Wall,
   staging: Array<StagingRow>,
-  floor: Array<?Color>
+  floor: Array<?ColorType>
 |};
 
 export type StagingRow = {|
-  color: Color,
+  color: ColorType,
   count: number
 |};
 
@@ -45,7 +45,7 @@ export type Player = {|
 |};
 
 export type ColorBundle = {|
-  color: Color,
+  color: ColorType,
   count: number
 |};
 
@@ -113,7 +113,7 @@ export function createWall(): Wall {
 
 // INTERNAL ACTIONS ////////////////////////////
 
-function placeTileInWall(wall: Wall, fromStagingRowIndex: number, tileColor: Color): Wall {
+function placeTileInWall(wall: Wall, fromStagingRowIndex: number, tileColor: ColorType): Wall {
   let tileWallRow = fromStagingRowIndex;
   let tileWallCol = getWallPlacementCol(tileWallRow, tileColor);
   return wall.map((wallRow, wallRowIndex) => {
@@ -187,10 +187,10 @@ export function isStagingRowFull(stagingRow: ?StagingRow, index: number): boolea
   }
 }
 
-export function getWallPlacementCol(row: number, color: Color): number {
+export function getWallPlacementCol(row: number, color: ColorType): number {
   return (row + color) % COLORS;
 }
 
-export function getWallPlacementColor(row: number, col: number): Color {
+export function getWallPlacementColor(row: number, col: number): ColorType {
   return (col + row) % COLORS;
 }
