@@ -24,7 +24,11 @@ type State = {
 
 const $baseStyle = css({
   fontSize: BOARD_TILE_SIZE,
-  width: "max-content"
+  width: "max-content",
+  display: "grid",
+  gridTemplateColumns: `repeat(2, 2fr)`,
+  gridTemplateRows: `repeat(1, 1fr)`,
+  gridGap: "0.1em"
 });
 
 /***********************************************************/

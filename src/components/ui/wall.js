@@ -30,8 +30,7 @@ const $baseStyle = css({
   display: "grid",
   gridTemplateColumns: `repeat(${COLORS}, 1em)`,
   gridTemplateRows: `repeat(${COLORS}, 1em)`,
-  gridRowGap: `${PLACEMENT_GAP}em`,
-  gridColumnGap: `${PLACEMENT_GAP}em`
+  gridGap: `${PLACEMENT_GAP}em`
 });
 
 /***********************************************************/
@@ -45,7 +44,7 @@ export default class Wall extends React.Component<Props, State> {
             return [...Array(COLORS)].map((_, col) => {
               const key = `${row}:${col}`;
               const color = getWallPlacementColor(row, col);
-              return <Placement color={color} hasTileOfColor={color} key={key} />;
+              return <Placement color={color} key={key} />;
             });
           })}
         </div>

@@ -30,9 +30,10 @@ const $stagingRowStyle = css({
   display: "grid",
   gridTemplateColumns: `repeat(${COLORS}, 1em)`,
   gridTemplateRows: `repeat(1, 1em)`,
-  gridRowGap: `${PLACEMENT_GAP}em`,
-  gridColumnGap: `${PLACEMENT_GAP}em`,
-  justifyContent: "end"
+  gridGap: `${PLACEMENT_GAP}em`,
+  justifyContent: "end",
+  direction: "rtl",
+  ":not(:last-child)": { marginBottom: `${PLACEMENT_GAP}em` }
 });
 
 /***********************************************************/
