@@ -8,6 +8,7 @@ export function applyGlobalStyles() {
 
 export const TILE_COLORS = ["#2d7dbc", "#f8c548", "#ee3231", "#201718", "#71cbd4"];
 export const BOARD_TILE_SIZE = 50;
+export const PLACEMENT_GAP = 0.04;
 
 function addResetStyles() {
   css.global("html, body", {

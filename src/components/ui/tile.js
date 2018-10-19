@@ -2,9 +2,9 @@
 
 import React from "react";
 import { css } from "glamor";
-
-/***********************************************************/
-
+// types
+import type { ColorType } from "../../models";
+// helpers
 import { TILE_COLORS } from "../../styles";
 
 /***********************************************************/
@@ -19,7 +19,7 @@ const DARK_BORDER_ALPHA = 0.15;
 /***********************************************************/
 
 type Props = {
-  color: number
+  color: ColorType
 };
 
 type State = {

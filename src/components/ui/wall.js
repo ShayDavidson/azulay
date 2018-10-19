@@ -2,17 +2,13 @@
 
 import React from "react";
 import { css } from "glamor";
-
-/***********************************************************/
-
-import Placement from "./placement";
-import { BOARD_TILE_SIZE } from "../../styles";
-import { COLORS, getWallPlacementColor } from "../../models";
+// types
 import type { Wall as WallType } from "../../models";
-
-/***********************************************************/
-
-const PLACEMENT_GAP = "0.04em";
+// components
+import Placement from "./placement";
+// helpers
+import { COLORS, getWallPlacementColor } from "../../models";
+import { PLACEMENT_GAP } from "../../styles";
 
 /***********************************************************/
 
@@ -26,13 +22,16 @@ type State = {
 
 /***********************************************************/
 
+const $containerStyle = css({
+  width: "max-content"
+});
+
 const $baseStyle = css({
   display: "grid",
-  fontSize: BOARD_TILE_SIZE,
-  gridTemplateColumns: `repeat(${COLORS}, ${BOARD_TILE_SIZE}px)`,
-  gridTemplateRows: `repeat(${COLORS}, ${BOARD_TILE_SIZE}px)`,
-  gridRowGap: PLACEMENT_GAP,
-  gridColumnGap: PLACEMENT_GAP
+  gridTemplateColumns: `repeat(${COLORS}, 1em)`,
+  gridTemplateRows: `repeat(${COLORS}, 1em)`,
+  gridRowGap: `${PLACEMENT_GAP}em`,
+  gridColumnGap: `${PLACEMENT_GAP}em`
 });
 
 /***********************************************************/
@@ -40,14 +39,16 @@ const $baseStyle = css({
 export default class Wall extends React.Component<Props, State> {
   render() {
     return (
-      <div className={$baseStyle}>
-        {[...Array(COLORS)].map((_, row) => {
-          return [...Array(COLORS)].map((_, col) => {
-            const key = `${row}:${col}`;
-            const color = getWallPlacementColor(row, col);
-            return <Placement color={color} hasTileOfColor={color} key={key} />;
-          });
-        })}
+      <div className={$containerStyle}>
+        <div className={$baseStyle}>
+          {[...Array(COLORS)].map((_, row) => {
+            return [...Array(COLORS)].map((_, col) => {
+              const key = `${row}:${col}`;
+              const color = getWallPlacementColor(row, col);
+              return <Placement color={color} hasTileOfColor={color} key={key} />;
+            });
+          })}
+        </div>
       </div>
     );
   }

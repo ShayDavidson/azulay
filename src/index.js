@@ -2,12 +2,11 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
-import { applyGlobalStyles } from "./styles.js";
-
-/***********************************************************/
-
+// components
 import GameProvider, { GameContext } from "./components/game_provider";
 import PlayerZone from "./components/ui/player_zone";
+// helpers
+import { applyGlobalStyles } from "./styles.js";
 
 /***********************************************************/
 

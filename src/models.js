@@ -28,14 +28,18 @@ export type WallPlacement = boolean;
 
 export type Wall = Array<Array<WallPlacement>>;
 
+export type Staging = Array<StagingRow>;
+
+export type Floor = Array<?ColorType>;
+
 export type Board = {|
   wall: Wall,
-  staging: Array<StagingRow>,
-  floor: Array<?ColorType>
+  staging: Staging,
+  floor: Floor
 |};
 
 export type StagingRow = {|
-  color: ColorType,
+  color: ?ColorType,
   count: number
 |};
 
@@ -93,8 +97,8 @@ export function createPlayer(): Player {
 export function createBoard(): Board {
   return {
     wall: createWall(),
-    staging: new Array(COLORS),
-    floor: new Array(FLOOR_SLOTS.length)
+    staging: [...new Array(COLORS)],
+    floor: [...new Array(FLOOR_SLOTS.length)]
   };
 }
 
@@ -131,10 +135,14 @@ export function calculateBoardAddedScore(board: Board): number {
   return board.staging.reduce((score, stagingRow, stagingRowIndex) => {
     if (isStagingRowFull(stagingRow, stagingRowIndex)) {
       let placementColor = stagingRow.color;
-      let newWall = placeTileInWall(board.wall, stagingRowIndex, placementColor);
-      let placementRow = stagingRowIndex;
-      let placementCol = getWallPlacementCol(placementRow, placementColor);
-      return score + calculateTilePlacementScore(newWall, placementRow, placementCol);
+      if (placementColor != undefined) {
+        let newWall = placeTileInWall(board.wall, stagingRowIndex, placementColor);
+        let placementRow = stagingRowIndex;
+        let placementCol = getWallPlacementCol(placementRow, placementColor);
+        return score + calculateTilePlacementScore(newWall, placementRow, placementCol);
+      } else {
+        return score;
+      }
     } else {
       return score;
     }
@@ -185,6 +193,10 @@ export function isStagingRowFull(stagingRow: ?StagingRow, index: number): boolea
   } else {
     return stagingRow.count == index + 1;
   }
+}
+
+export function placementsForStagingRow(index: number): number {
+  return index + 1;
 }
 
 export function getWallPlacementCol(row: number, color: ColorType): number {

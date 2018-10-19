@@ -3,12 +3,12 @@
 import React from "react";
 import { css } from "glamor";
 import Color from "color";
-
-/***********************************************************/
-
+// types
 import type { ColorType } from "../../models";
-import { TILE_COLORS } from "../../styles";
+// components
 import Tile from "./tile";
+// helpers
+import { TILE_COLORS } from "../../styles";
 
 /***********************************************************/
 
@@ -54,7 +54,9 @@ export default class Placement extends React.Component<Props, State> {
               .desaturate(0.5)
               .toString()
           }
-        : {};
+        : {
+            backgroundColor: "rgba(0, 0, 0, 0.25)"
+          };
 
     return (
       <div className={$baseStyle} style={$dynamicStyle}>
