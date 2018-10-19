@@ -7,6 +7,7 @@ import type { Player } from "../../models";
 // components
 import Wall from "./wall";
 import Staging from "./staging";
+import Floor from "./floor";
 // helpers
 import { BOARD_TILE_SIZE } from "../../styles";
 
@@ -35,11 +36,12 @@ const $baseStyle = css({
 
 export default class PlayerZone extends React.Component<Props, State> {
   render() {
-    const { board: { wall, staging } } = this.props.player;
+    const { board: { wall, staging, floor } } = this.props.player;
     return (
       <div className={$baseStyle}>
         <Staging staging={staging} />
         <Wall wall={wall} />
+        <Floor floor={floor} />
       </div>
     );
   }

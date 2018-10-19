@@ -19,7 +19,8 @@ const HIGHLIGHT_WIDTH = "0.06em";
 
 type Props = {
   color?: ColorType,
-  hasTileOfColor?: ColorType
+  hasTileOfColor?: ColorType,
+  label?: string
 };
 
 type State = {
@@ -45,6 +46,11 @@ const $internalStyle = css({
   position: "absolute"
 });
 
+const $labelStyle = css({
+  fontSize: "0.3em",
+  position: "absolute"
+});
+
 export default class Placement extends React.Component<Props, State> {
   render() {
     const $dynamicStyle =
@@ -62,6 +68,7 @@ export default class Placement extends React.Component<Props, State> {
       <div className={$baseStyle} style={$dynamicStyle}>
         <div className={$internalStyle} />
         {this.props.hasTileOfColor != undefined ? <Tile color={this.props.hasTileOfColor} /> : null}
+        {this.props.label != undefined ? <div className={$labelStyle}>{this.props.label}</div> : null}
       </div>
     );
   }

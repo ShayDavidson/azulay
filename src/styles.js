@@ -12,7 +12,6 @@ export const PLACEMENT_GAP = 0.04;
 
 function addResetStyles() {
   css.global("html, body", {
-    padding: 10,
     margin: 0,
     width: "100%",
     height: "100%"
@@ -21,7 +20,9 @@ function addResetStyles() {
   css.global("body", {
     overflow: "hidden",
     userSelect: "none",
-    backgroundColor: "#d3b698"
+    backgroundColor: "#d3b698",
+    padding: 10,
+    fontFamily: "Helvetica"
   });
 
   css.global("*", {
