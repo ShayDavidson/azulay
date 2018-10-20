@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Fragment } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 import { css } from "glamor";
 // components
@@ -34,11 +34,15 @@ const $aboutStyle = css({
 
 const $boardsStyle = css({
   display: "grid",
-  gridTemplateColumns: `repeat(2, 1fr)`,
   gridTemplateRows: `repeat(2, 1fr)`,
   gridAutoFlow: "column",
   gridGap: GLOBAL_PADDING,
-  width: "max-content"
+  width: "max-content",
+  marginRight: GLOBAL_PADDING
+});
+
+const $gameStyle = css({
+  display: "flex"
 });
 
 /***********************************************************/
@@ -48,24 +52,29 @@ class Azul extends React.Component<Props, State> {
     return (
       <div>
         <div className={$titleStyle}>Azulay - The Online Azul AI</div>
-        <GameProvider players={4} seed={6070}>
+        <GameProvider players={3} seed={6070}>
           <GameContext.Consumer>
             {gameState => {
+              const numberOfPlayers = gameState.players.length;
+              const $boardsGridStyle = { gridTemplateColumns: `repeat(${numberOfPlayers > 2 ? 2 : 1}, 1fr)` };
               return (
-                <Fragment>
-                  <div className={$boardsStyle}>
+                <div className={$gameStyle}>
+                  <div className={$boardsStyle} style={$boardsGridStyle}>
                     {gameState.players.map((player, index) => {
                       return <PlayerBoard player={player} current={gameState.currentPlayer == index} key={index} />;
                     })}
                   </div>
-                  {/* <FactoryZone players={gameState.players.length} factories={gameState.factories} />; */}
-                </Fragment>
+                  <FactoryZone players={numberOfPlayers} factories={gameState.factories} />
+                </div>
               );
             }}
           </GameContext.Consumer>
         </GameProvider>
         <div className={$aboutStyle}>
-          Created by Shay Davidson (shay.h.davidson@gmail.com, @ShayHDavidson).
+          Created by Shay Davidson (<a href="mailto:shay.h.davidson@gmail.com">shay.h.davidson@gmail.com</a>,
+          <a rel="noopener noreferrer" target="_blank" href="https://twitter.com/ShayHDavidson">
+            @ShayHDavidson
+          </a>).
           <br />
           Azul was creaetd by Michael Kiesling and published by Plan B Games.
         </div>

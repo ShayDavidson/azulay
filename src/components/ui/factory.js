@@ -27,7 +27,8 @@ const $baseStyle = css({
   width: "100px",
   height: "100px",
   boxShadow: "2px 2px 0 0 rgba(0, 0, 0, 0.1)",
-  borderRadius: "50%"
+  borderRadius: "50%",
+  display: "inline-block"
 });
 
 /***********************************************************/
