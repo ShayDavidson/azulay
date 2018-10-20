@@ -17,6 +17,8 @@ const LIGHT_BORDER_ALPHA = 0.55;
 const DARK_BORDER_ALPHA = 0.15;
 const HIGHLIGHT_WIDTH = "0.06em";
 
+/***********************************************************/
+
 type Props = {
   color?: ColorType,
   hasTileOfColor?: ColorType,
@@ -26,6 +28,8 @@ type Props = {
 type State = {
   /* ... */
 };
+
+/***********************************************************/
 
 const $baseStyle = css({
   borderRadius: BORDER_RADIUS,
@@ -50,6 +54,8 @@ const $labelStyle = css({
   fontSize: "0.3em",
   position: "absolute"
 });
+
+/***********************************************************/
 
 export default class Placement extends React.Component<Props, State> {
   render() {
