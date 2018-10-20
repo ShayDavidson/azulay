@@ -7,11 +7,12 @@ export function applyGlobalStyles() {
 }
 
 export const TILE_COLORS = ["#2d7dbc", "#f8c548", "#ee3231", "#201718", "#71cbd4"];
-export const BOARD_TILE_SIZE = 50;
+export const BOARD_TILE_SIZE = 40;
 export const PLACEMENT_GAP = 0.08;
-export const BOARD_BORDER_WIDTH = "2px";
-export const BOARD_BORDER_COLOR = "rgba(125, 125, 125, 0.5)";
+export const BOARD_BORDER_WIDTH = "3px";
+export const BOARD_BORDER_COLOR = "rgba(100, 100, 100, 0.8)";
 export const BOARD_PADDING = 0.1;
+export const GLOBAL_PADDING = 10;
 
 function addResetStyles() {
   css.global("html, body", {
@@ -21,11 +22,12 @@ function addResetStyles() {
   });
 
   css.global("body", {
-    overflow: "hidden",
     userSelect: "none",
+    overflow: "hidden",
     backgroundColor: "hsl(31, 10%, 71%)",
-    padding: 10,
-    fontFamily: "Helvetica"
+    padding: GLOBAL_PADDING,
+    fontFamily: "Helvetica",
+    color: "rgba(20, 20, 20, 1)"
   });
 
   css.global("*", {

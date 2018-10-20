@@ -55,6 +55,8 @@ export type ColorBundle = {|
 
 export type TilesColorCounter = Array<number>;
 
+export type Factory = TilesColorCounter;
+
 export type Phase = $Keys<typeof PHASES>;
 
 export type Game = {|

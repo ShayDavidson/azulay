@@ -15,7 +15,8 @@ import { BOARD_TILE_SIZE, BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, BOARD_PADDING 
 /***********************************************************/
 
 type Props = {
-  player: Player
+  player: Player,
+  current: boolean
 };
 
 type State = {
@@ -49,12 +50,13 @@ const $scoreZoneStyle = css({
 });
 
 const $spanStyle = css({
-  fontSize: "0.3em"
+  fontSize: "0.3em",
+  color: "white"
 });
 
 /***********************************************************/
 
-export default class PlayerZone extends React.Component<Props, State> {
+export default class PlayerBoard extends React.Component<Props, State> {
   render() {
     const { board: { wall, staging, floor }, score } = this.props.player;
     return (

@@ -36,7 +36,7 @@ module.exports = function(env) {
     },
     plugins: [
       new HtmlWebpackPlugin({
-        title: "AzulAI",
+        title: "Azulay",
         favicon: path.resolve(__dirname, "public") + "/favicon.png"
       }),
       new StatefulReactContainerPlugin({ noState: true })
