@@ -23,7 +23,6 @@ function addResetStyles() {
 
   css.global("body", {
     userSelect: "none",
-    overflow: "hidden",
     backgroundColor: "hsl(31, 10%, 71%)",
     padding: GLOBAL_PADDING,
     fontFamily: "Helvetica",

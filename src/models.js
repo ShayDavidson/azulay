@@ -14,6 +14,10 @@ export const PHASES = {
   placement: "placement",
   scoring: "scoring"
 };
+export const PLAYER_TYPE = {
+  human: "human",
+  cpu: "cpu"
+};
 
 // TYPES ////////////////////////////
 
@@ -32,6 +36,8 @@ export type Staging = Array<StagingRow>;
 
 export type Floor = Array<?ColorType>;
 
+export type PlayerType = $Keys<typeof PLAYER_TYPE>;
+
 export type Board = {|
   wall: Wall,
   staging: Staging,
@@ -45,7 +51,9 @@ export type StagingRow = {|
 
 export type Player = {|
   score: number,
-  board: Board
+  board: Board,
+  type: PlayerType,
+  name: string
 |};
 
 export type ColorBundle = {|
@@ -74,7 +82,7 @@ export type Game = {|
 
 export function createGame(players: number, seed: number): Game {
   return {
-    players: [...Array(players)].map(createPlayer),
+    players: [...Array(players)].map((_, index) => createPlayer(`Player ${index}`, "human")),
     bag: createColorCountArray(TILES_PER_COLOR),
     box: createColorCountArray(0),
     factories: [...Array(FACTORIES_BY_PLAYERS[players])].map(() => createColorCountArray(0)),
@@ -89,10 +97,12 @@ export function createColorCountArray(count: number): TilesColorCounter {
   return new Array(COLORS).fill(count);
 }
 
-export function createPlayer(): Player {
+export function createPlayer(name: string, type: PlayerType): Player {
   return {
     score: 0,
-    board: createBoard()
+    board: createBoard(),
+    type,
+    name
   };
 }
 

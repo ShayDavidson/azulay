@@ -11,6 +11,7 @@ import Floor from "./floor";
 import Separator from "./separator";
 // helpers
 import { BOARD_TILE_SIZE, BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, BOARD_PADDING } from "../../styles";
+import { PLAYER_TYPE } from "../../models";
 
 /***********************************************************/
 
@@ -50,6 +51,7 @@ const $scoreZoneStyle = css({
 });
 
 const $spanStyle = css({
+  textAlign: "center",
   fontSize: "0.3em",
   color: "white"
 });
@@ -58,9 +60,12 @@ const $spanStyle = css({
 
 export default class PlayerBoard extends React.Component<Props, State> {
   render() {
-    const { board: { wall, staging, floor }, score } = this.props.player;
+    const { board: { wall, staging, floor }, score, name, type } = this.props.player;
     return (
-      <div className={$baseStyle}>
+      <div
+        className={$baseStyle}
+        style={this.props.current ? { border: `calc(${BOARD_BORDER_WIDTH} * 2) solid white` } : {}}
+      >
         <div className={$rowContainerStyle} style={{ width: "max-content" }}>
           <Staging staging={staging} />
           <Separator type="vertical" />
@@ -70,7 +75,11 @@ export default class PlayerBoard extends React.Component<Props, State> {
         <div className={$rowContainerStyle} style={{ width: "100%" }}>
           <Floor floor={floor} />
           <div className={$scoreZoneStyle}>
-            <span className={$spanStyle}>{`Score: ${score}`}</span>
+            <span className={$spanStyle}>
+              {`${name} - ${type == PLAYER_TYPE.human ? "Human" : "CPU"}`}
+              <br />
+              <strong>{`Score: ${score}`}</strong>
+            </span>
           </div>
         </div>
       </div>

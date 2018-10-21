@@ -7,6 +7,7 @@ import type { Factory as FactoryType } from "../../models";
 // components
 import Factory from "./factory";
 // helpers
+import { GLOBAL_PADDING } from "../../styles";
 import { FACTORIES_BY_PLAYERS } from "../../models";
 
 /***********************************************************/
@@ -22,7 +23,14 @@ type State = {
 
 // /***********************************************************/
 
-const $baseStyle = css({});
+const $baseStyle = css({
+  position: "relative",
+  display: "grid",
+  gridTemplateColumns: `repeat(3, 1fr)`,
+  gridAutoFlow: "row",
+  gridGap: GLOBAL_PADDING,
+  gridAutoRows: "min-content"
+});
 
 /***********************************************************/
 
