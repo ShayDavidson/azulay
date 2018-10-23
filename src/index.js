@@ -7,8 +7,10 @@ import { css } from "glamor";
 import GameProvider, { GameContext } from "./components/game_provider";
 import PlayerBoard from "./components/ui/player_board";
 import FactoryZone from "./components/ui/factory_zone";
+import Separator from "./components/ui/separator";
 // helpers
 import { applyGlobalStyles, GLOBAL_PADDING } from "./styles.js";
+import { getTilesInColorCounter } from "./models.js";
 
 /***********************************************************/
 
@@ -44,6 +46,11 @@ const $gameStyle = css({
   display: "flex"
 });
 
+const $infoStyle = css({
+  marginTop: GLOBAL_PADDING,
+  marginBottom: GLOBAL_PADDING
+});
+
 /***********************************************************/
 
 class Azul extends React.Component<Props, State> {
@@ -51,24 +58,31 @@ class Azul extends React.Component<Props, State> {
     return (
       <div>
         <div className={$titleStyle}>Azulay - The Online Azul AI</div>
-        <GameProvider players={3} seed={6070}>
+        <GameProvider players={4} seed={6070}>
           <GameContext.Consumer>
             {gameState => {
               const numberOfPlayers = gameState.players.length;
               const $boardsGridStyle = { gridTemplateColumns: `repeat(${numberOfPlayers > 2 ? 2 : 1}, 1fr)` };
               return (
-                <div className={$gameStyle}>
-                  <div className={$boardsStyle} style={$boardsGridStyle}>
-                    {gameState.players.map((player, index) => {
-                      return <PlayerBoard player={player} current={gameState.currentPlayer == index} key={index} />;
-                    })}
+                <div>
+                  <div className={$gameStyle}>
+                    <div className={$boardsStyle} style={$boardsGridStyle}>
+                      {gameState.players.map((player, index) => {
+                        return <PlayerBoard player={player} current={gameState.currentPlayer == index} key={index} />;
+                      })}
+                    </div>
+                    <FactoryZone players={numberOfPlayers} factories={gameState.factories} />
                   </div>
-                  <FactoryZone players={numberOfPlayers} factories={gameState.factories} />
+                  <div className={$infoStyle}>
+                    <div>Tiles in bag: {getTilesInColorCounter(gameState.bag)}</div>
+                    <div>Discarded tiles: {getTilesInColorCounter(gameState.box)}</div>
+                  </div>
                 </div>
               );
             }}
           </GameContext.Consumer>
         </GameProvider>
+        <Separator type="horizontal" />
         <div className={$aboutStyle}>
           Created by Shay Davidson (<a href="mailto:shay.h.davidson@gmail.com">shay.h.davidson@gmail.com</a>,
           <a rel="noopener noreferrer" target="_blank" href="https://twitter.com/ShayHDavidson">

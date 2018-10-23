@@ -72,6 +72,7 @@ export type Game = {|
   bag: TilesColorCounter,
   box: TilesColorCounter,
   factories: Array<TilesColorCounter>,
+  leftovers: TilesColorCounter,
   turn: number,
   currentPlayer: number,
   phase: Phase,
@@ -86,6 +87,7 @@ export function createGame(players: number, seed: number): Game {
     bag: createColorCountArray(TILES_PER_COLOR),
     box: createColorCountArray(0),
     factories: [...Array(FACTORIES_BY_PLAYERS[players])].map(() => createColorCountArray(0)),
+    leftovers: createColorCountArray(0),
     turn: 0,
     currentPlayer: 0,
     phase: PHASES.refill,
@@ -217,4 +219,8 @@ export function getWallPlacementCol(row: number, color: ColorType): number {
 
 export function getWallPlacementColor(row: number, col: number): ColorType {
   return (col + row) % COLORS;
+}
+
+export function getTilesInColorCounter(counter: TilesColorCounter): number {
+  return counter.reduce((a, b) => a + b, 0);
 }
