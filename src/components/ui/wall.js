@@ -44,7 +44,7 @@ export default class Wall extends React.Component<Props, State> {
             return [...Array(COLORS)].map((_, col) => {
               const key = `${row}:${col}`;
               const color = getWallPlacementColor(row, col);
-              return <Placement hasTileOfColor={color} color={color} key={key} />;
+              return <Placement color={color} key={key} />;
             });
           })}
         </div>

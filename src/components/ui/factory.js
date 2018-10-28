@@ -3,7 +3,7 @@
 import React from "react";
 import { css } from "glamor";
 // helpers
-import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR } from "../../styles";
+import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, WHITE_COLOR } from "../../styles";
 
 /***********************************************************/
 
@@ -24,8 +24,7 @@ const $baseStyle = css({
 });
 
 const $standardStyle = css($baseStyle, {
-  background:
-    "linear-gradient(135deg, hsl(30, 20%, 90%) 0%, hsl(30, 20%, 90%) 50%, hsl(10, 10%, 88%) 50%, hsl(10, 10%, 88%) 100%)",
+  background: `linear-gradient(135deg, ${WHITE_COLOR} 0%, ${WHITE_COLOR} 50%, hsl(10, 10%, 88%) 50%, hsl(10, 10%, 88%) 100%)`,
   borderTop: `${BOARD_BORDER_WIDTH} solid #d66313`,
   borderLeft: `${BOARD_BORDER_WIDTH} solid #d66313`,
   borderRight: `${BOARD_BORDER_WIDTH} solid #a04b10`,

@@ -5,7 +5,7 @@ import { css } from "glamor";
 // types
 import type { ColorType } from "../../models";
 // helpers
-import { TILE_COLORS } from "../../styles";
+import { TILE_COLORS, WHITE_COLOR } from "../../styles";
 
 /***********************************************************/
 
@@ -49,7 +49,7 @@ const $baseStyle = css({
 export default class Tile extends React.Component<Props, State> {
   render() {
     const $dynamicStyle = {
-      backgroundColor: this.props.firstPlayer ? "hsl(160, 50%, 40%)" : TILE_COLORS[this.props.color]
+      backgroundColor: this.props.firstPlayer ? WHITE_COLOR : TILE_COLORS[this.props.color]
     };
 
     return <div className={$baseStyle} style={$dynamicStyle} />;

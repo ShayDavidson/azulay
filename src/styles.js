@@ -6,7 +6,10 @@ export function applyGlobalStyles() {
   addResetStyles();
 }
 
-export const TILE_COLORS = ["#2d7dbc", "#f8c548", "#ee3231", "#201718", "#71cbd4"];
+export const WHITE_COLOR = "hsl(30, 20%, 90%)";
+export const BLACK_COLOR = "#201718";
+export const TILE_COLORS = ["#2d7dbc", "#f8c548", "#ee3231", BLACK_COLOR, "#71cbd4"];
+export const LABEL_COLORS = [BLACK_COLOR, BLACK_COLOR, BLACK_COLOR, WHITE_COLOR, BLACK_COLOR];
 export const BOARD_TILE_SIZE = 50;
 export const PLACEMENT_GAP = 0.08;
 export const BOARD_BORDER_WIDTH = "3px";
@@ -26,7 +29,7 @@ function addResetStyles() {
     backgroundColor: "hsl(31, 10%, 71%)",
     padding: GLOBAL_PADDING,
     fontFamily: "Helvetica",
-    color: "rgba(20, 20, 20, 1)"
+    color: BLACK_COLOR
   });
 
   css.global("*", {
