@@ -10,7 +10,7 @@ import Staging from "./staging";
 import Floor from "./floor";
 import Separator from "./separator";
 // helpers
-import { BOARD_TILE_SIZE, BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, BOARD_PADDING } from "../../styles";
+import { BOARD_TILE_SIZE, BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, BOARD_PADDING, $bevelStyle } from "../../styles";
 import { PLAYER_TYPE } from "../../models";
 
 /***********************************************************/
@@ -40,7 +40,7 @@ const $rowContainerStyle = css({
   display: "flex"
 });
 
-const $scoreZoneStyle = css({
+const $scoreZoneStyle = css($bevelStyle, {
   backgroundColor: BOARD_BORDER_COLOR,
   borderRadius: "0.1em",
   width: "inherit",

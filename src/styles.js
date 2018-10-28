@@ -2,9 +2,7 @@
 
 import { css } from "glamor";
 
-export function applyGlobalStyles() {
-  addResetStyles();
-}
+/***********************************************************/
 
 export const WHITE_COLOR = "hsl(30, 20%, 90%)";
 export const BLACK_COLOR = "#201718";
@@ -17,6 +15,24 @@ export const BOARD_BORDER_WIDTH = "3px";
 export const BOARD_BORDER_COLOR = "rgba(100, 100, 100, 0.8)";
 export const BOARD_PADDING = 0.1;
 export const GLOBAL_PADDING = 10;
+
+/***********************************************************/
+
+const LIGHT_BORDER_ALPHA = 0.45;
+const DARK_BORDER_ALPHA = 0.35;
+const HIGHLIGHT_WIDTH = "0.035em";
+export const $bevelStyle = css({
+  borderBottom: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
+  borderRight: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
+  borderTop: `${HIGHLIGHT_WIDTH} solid rgba(127, 127, 127, ${DARK_BORDER_ALPHA})`,
+  borderLeft: `${HIGHLIGHT_WIDTH} solid rgba(127, 127, 127, ${DARK_BORDER_ALPHA})`
+});
+
+/***********************************************************/
+
+export function applyGlobalStyles() {
+  addResetStyles();
+}
 
 function addResetStyles() {
   css.global("html, body", {
