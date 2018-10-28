@@ -1,5 +1,7 @@
 // @flow
 
+import { RNG } from "./random";
+
 // CONSTS ////////////////////////////
 
 export const COLORS = 5;
@@ -89,9 +91,9 @@ export function createGame(players: number, seed: number): Game {
     factories: [...Array(FACTORIES_BY_PLAYERS[players])].map(() => createColorCountArray(0)),
     leftovers: createColorCountArray(0),
     turn: 0,
-    currentPlayer: 0,
+    currentPlayer: RNG(seed).int(0, players - 1),
     phase: PHASES.refill,
-    randomProps: { seed, counter: 0 }
+    randomProps: { seed, counter: 1 }
   };
 }
 
