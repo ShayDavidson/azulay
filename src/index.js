@@ -36,7 +36,7 @@ const $aboutStyle = css({
 
 const $boardsStyle = css({
   display: "grid",
-  gridTemplateRows: `repeat(2, 1fr)`,
+  gridTemplateRows: `repeat(1, 1fr)`,
   gridGap: GLOBAL_PADDING,
   width: "max-content",
   marginRight: GLOBAL_PADDING

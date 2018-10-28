@@ -31,15 +31,14 @@ const $baseStyle = css({
 const $factoriesStyle = css({
   position: "relative",
   display: "grid",
-  gridTemplateColumns: `repeat(3, 100px)`,
-  gridTemplateRows: `repeat(3, 100px)`,
-  gridGap: GLOBAL_PADDING,
+  gridTemplateColumns: `repeat(3, 104px)`,
+  gridTemplateRows: `repeat(3, 104px)`,
+  gridGap: GLOBAL_PADDING * 2,
   gridAutoFlow: "column"
 });
 
 const $leftoversStyle = css({
-  marginTop: GLOBAL_PADDING,
-  marginBottom: GLOBAL_PADDING,
+  marginTop: 2 * GLOBAL_PADDING,
   borderRadius: "50%",
   width: "100%",
   height: "100%",

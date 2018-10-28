@@ -7,7 +7,7 @@ export function applyGlobalStyles() {
 }
 
 export const TILE_COLORS = ["#2d7dbc", "#f8c548", "#ee3231", "#201718", "#71cbd4"];
-export const BOARD_TILE_SIZE = 40;
+export const BOARD_TILE_SIZE = 50;
 export const PLACEMENT_GAP = 0.08;
 export const BOARD_BORDER_WIDTH = "3px";
 export const BOARD_BORDER_COLOR = "rgba(100, 100, 100, 0.8)";

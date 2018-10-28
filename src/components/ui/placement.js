@@ -12,10 +12,10 @@ import { TILE_COLORS } from "../../styles";
 
 /***********************************************************/
 
-const BORDER_RADIUS = "0.12em";
+const BORDER_RADIUS = "0.1em";
 const LIGHT_BORDER_ALPHA = 0.55;
 const DARK_BORDER_ALPHA = 0.15;
-const HIGHLIGHT_WIDTH = "0.06em";
+const HIGHLIGHT_WIDTH = "0.03em";
 
 /***********************************************************/
 
@@ -33,21 +33,10 @@ type State = {
 
 const $baseStyle = css({
   borderRadius: BORDER_RADIUS,
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  position: "relative"
-});
-
-const $internalStyle = css({
-  width: "100%",
-  height: "100%",
-  borderRadius: BORDER_RADIUS,
   borderBottom: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
   borderRight: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
   borderTop: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${DARK_BORDER_ALPHA})`,
-  borderLeft: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${DARK_BORDER_ALPHA})`,
-  position: "absolute"
+  borderLeft: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${DARK_BORDER_ALPHA})`
 });
 
 const $labelStyle = css({
@@ -72,7 +61,6 @@ export default class Placement extends React.Component<Props, State> {
 
     return (
       <div className={$baseStyle} style={$dynamicStyle}>
-        <div className={$internalStyle} />
         {this.props.hasTileOfColor != undefined ? <Tile color={this.props.hasTileOfColor} /> : null}
         {this.props.label != undefined ? <div className={$labelStyle}>{this.props.label}</div> : null}
       </div>
