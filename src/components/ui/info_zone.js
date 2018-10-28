@@ -4,9 +4,8 @@ import React from "react";
 import { css } from "glamor";
 // types
 import type { TilesColorCounter } from "../../models";
-import { getTilesInColorCounter } from "../../models";
 // helpers
-import { GLOBAL_PADDING } from "../../styles";
+import { GLOBAL_PADDING, TILE_COLORS } from "../../styles";
 
 /***********************************************************/
 
@@ -26,8 +25,13 @@ const $baseStyle = css({
   marginBottom: GLOBAL_PADDING
 });
 
-const $firstStyle = css({
-  marginBottom: GLOBAL_PADDING * 0.75
+const $tdStyle = css({
+  paddingLeft: "0.5em",
+  textAlign: "right"
+});
+
+const $tileStyle = css({
+  textShadow: "1px 1px black"
 });
 
 /***********************************************************/
@@ -36,8 +40,39 @@ export default class InfoZone extends React.Component<Props, State> {
   render() {
     return (
       <div className={$baseStyle}>
-        <div className={$firstStyle}>Tiles in bag: {getTilesInColorCounter(this.props.bag)}</div>
-        <div>Discarded tiles: {getTilesInColorCounter(this.props.box)}</div>
+        <table>
+          <tr>
+            <td>
+              <strong>Tiles in the bag:</strong>
+            </td>
+            {this.props.bag.map((count, colorIndex) => {
+              return (
+                <td className={$tdStyle} key={colorIndex}>
+                  {count}
+                  <span className={$tileStyle} style={{ color: TILE_COLORS[colorIndex] }}>
+                    ▩
+                  </span>
+                </td>
+              );
+            })}
+          </tr>
+          <tr>
+            <td>
+              <strong>Discarded tiles:</strong>
+            </td>
+            {this.props.box.map((count, colorIndex) => {
+              return (
+                <td className={$tdStyle} key={colorIndex}>
+                  {count}
+                  <span className={$tileStyle} style={{ color: TILE_COLORS[colorIndex] }}>
+                    ▩
+                  </span>
+                </td>
+              );
+            })}
+            <td />
+          </tr>
+        </table>
       </div>
     );
   }
