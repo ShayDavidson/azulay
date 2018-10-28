@@ -14,7 +14,7 @@ import { TILE_COLORS, LABEL_COLORS } from "../../styles";
 
 const BORDER_RADIUS = "0.1em";
 const LIGHT_BORDER_ALPHA = 0.55;
-const DARK_BORDER_ALPHA = 0.15;
+const DARK_BORDER_ALPHA = 0.35;
 const HIGHLIGHT_WIDTH = "0.03em";
 
 /***********************************************************/
@@ -35,8 +35,8 @@ const $baseStyle = css({
   borderRadius: BORDER_RADIUS,
   borderBottom: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
   borderRight: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
-  borderTop: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${DARK_BORDER_ALPHA})`,
-  borderLeft: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${DARK_BORDER_ALPHA})`,
+  borderTop: `${HIGHLIGHT_WIDTH} solid rgba(127, 127, 127, ${DARK_BORDER_ALPHA})`,
+  borderLeft: `${HIGHLIGHT_WIDTH} solid rgba(127, 127, 127, ${DARK_BORDER_ALPHA})`,
   position: "relative"
 });
 
