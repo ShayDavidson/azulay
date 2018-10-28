@@ -8,7 +8,8 @@ export function applyGlobalStyles() {
 
 export const WHITE_COLOR = "hsl(30, 20%, 90%)";
 export const BLACK_COLOR = "#201718";
-export const TILE_COLORS = ["#2d7dbc", "#f8c548", "#ee3231", BLACK_COLOR, "#71cbd4"];
+export const BLUE_COLOR = "#2d7dbc";
+export const TILE_COLORS = [BLUE_COLOR, "#f8c548", "#ee3231", BLACK_COLOR, "#71cbd4"];
 export const LABEL_COLORS = [BLACK_COLOR, BLACK_COLOR, BLACK_COLOR, WHITE_COLOR, BLACK_COLOR];
 export const BOARD_TILE_SIZE = 50;
 export const PLACEMENT_GAP = 0.08;

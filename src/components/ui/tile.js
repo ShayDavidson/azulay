@@ -5,7 +5,7 @@ import { css } from "glamor";
 // types
 import type { ColorType } from "../../models";
 // helpers
-import { TILE_COLORS, WHITE_COLOR } from "../../styles";
+import { TILE_COLORS, WHITE_COLOR, BLUE_COLOR } from "../../styles";
 
 /***********************************************************/
 
@@ -44,6 +44,15 @@ const $baseStyle = css({
   borderRight: `${HIGHLIGHT_WIDTH} solid rgba(127, 127, 127, ${DARK_BORDER_ALPHA})`
 });
 
+const $labelStyle = css({
+  fontSize: "0.5em",
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translateX(-50%) translateY(-50%)",
+  color: BLUE_COLOR
+});
+
 /***********************************************************/
 
 export default class Tile extends React.Component<Props, State> {
@@ -52,6 +61,10 @@ export default class Tile extends React.Component<Props, State> {
       backgroundColor: this.props.firstPlayer ? WHITE_COLOR : TILE_COLORS[this.props.color]
     };
 
-    return <div className={$baseStyle} style={$dynamicStyle} />;
+    return (
+      <div className={$baseStyle} style={$dynamicStyle}>
+        {this.props.firstPlayer ? <div className={$labelStyle}>1</div> : null}
+      </div>
+    );
   }
 }
