@@ -3,24 +3,16 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { ColorType } from "../../models";
+import type { TilesColorCounter } from "../../models";
+import { getTilesInColorCounter } from "../../models";
 // helpers
-import { TILE_COLORS, WHITE_COLOR, BLUE_COLOR } from "../../styles";
-
-/***********************************************************/
-
-const BORDER_RADIUS = "0.1em";
-const SHADOW_DISTANCE = "0.04em";
-const HIGHLIGHT_WIDTH = "0.05em";
-const SHADOW_ALPHA = 0.7;
-const LIGHT_BORDER_ALPHA = 0.55;
-const DARK_BORDER_ALPHA = 0.35;
+import { GLOBAL_PADDING } from "../../styles";
 
 /***********************************************************/
 
 type Props = {
-  color: ColorType,
-  firstPlayer?: boolean
+  bag: TilesColorCounter,
+  box: TilesColorCounter
 };
 
 type State = {
@@ -30,40 +22,22 @@ type State = {
 /***********************************************************/
 
 const $baseStyle = css({
-  width: "100%",
-  height: "100%",
-  boxShadow: `${SHADOW_DISTANCE} ${SHADOW_DISTANCE} rgba(0, 0, 0, ${SHADOW_ALPHA})`,
-  borderRadius: BORDER_RADIUS,
-  position: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  overflow: "hidden",
-  borderTop: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
-  borderLeft: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
-  borderBottom: `${HIGHLIGHT_WIDTH} solid rgba(127, 127, 127, ${DARK_BORDER_ALPHA})`,
-  borderRight: `${HIGHLIGHT_WIDTH} solid rgba(127, 127, 127, ${DARK_BORDER_ALPHA})`
+  marginTop: GLOBAL_PADDING,
+  marginBottom: GLOBAL_PADDING
 });
 
-const $labelStyle = css({
-  fontSize: "0.5em",
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translateX(-50%) translateY(-50%)",
-  color: BLUE_COLOR
+const $firstStyle = css({
+  marginBottom: GLOBAL_PADDING * 0.75
 });
 
 /***********************************************************/
 
-export default class Tile extends React.Component<Props, State> {
+export default class InfoZone extends React.Component<Props, State> {
   render() {
-    const $dynamicStyle = {
-      backgroundColor: this.props.firstPlayer ? WHITE_COLOR : TILE_COLORS[this.props.color]
-    };
-
     return (
-      <div className={$baseStyle} style={$dynamicStyle}>
-        {this.props.firstPlayer ? <div className={$labelStyle}>1</div> : null}
+      <div className={$baseStyle}>
+        <div className={$firstStyle}>Tiles in bag: {getTilesInColorCounter(this.props.bag)}</div>
+        <div>Discarded tiles: {getTilesInColorCounter(this.props.box)}</div>
       </div>
     );
   }
