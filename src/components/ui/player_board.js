@@ -10,7 +10,7 @@ import Staging from "./staging";
 import Floor from "./floor";
 import Separator from "./separator";
 // helpers
-import { BOARD_TILE_SIZE, BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, BOARD_PADDING, $bevelStyle } from "../../styles";
+import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, BOARD_PADDING, $bevelStyle } from "../../styles";
 import { PLAYER_TYPE } from "../../models";
 
 /***********************************************************/
@@ -27,7 +27,6 @@ type State = {
 // /***********************************************************/
 
 const $baseStyle = css({
-  fontSize: BOARD_TILE_SIZE,
   border: `${BOARD_BORDER_WIDTH} solid ${BOARD_BORDER_COLOR}`,
   padding: "0.15em",
   borderRadius: "0.1em",

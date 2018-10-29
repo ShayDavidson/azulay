@@ -2,13 +2,19 @@
 
 import React from "react";
 import { css } from "glamor";
+// types
+import type { TilesColorCounter } from "../../models";
+// components
+import Tile from "./tile";
 // helpers
-import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, WHITE_COLOR } from "../../styles";
+import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, WHITE_COLOR, PLACEMENT_GAP } from "../../styles";
+import { reduceColorCounterToArray } from "../../models";
 
 /***********************************************************/
 
 type Props = {
-  type: "normal" | "leftovers"
+  type: "normal" | "leftovers",
+  tiles: TilesColorCounter
 };
 
 type State = {
@@ -29,21 +35,28 @@ const $standardStyle = css($baseStyle, {
   borderLeft: `${BOARD_BORDER_WIDTH} solid #d66313`,
   borderRight: `${BOARD_BORDER_WIDTH} solid #a04b10`,
   borderBottom: `${BOARD_BORDER_WIDTH} solid #a04b10`,
-  gridTemplateColumns: `repeat(2, 1fr)`,
-  gridTemplateRows: `repeat(2, 1fr)`
+  gridTemplateColumns: `repeat(2, 1em)`,
+  gridTemplateRows: `repeat(2, 1em)`,
+  gridGap: "1em"
 });
 
 const $leftoversStyle = css($baseStyle, {
   background: "hsl(10, 10%, 88%)",
   border: `${BOARD_BORDER_WIDTH} solid ${BOARD_BORDER_COLOR}`,
-  gridTemplateColumns: `repeat(7, 1fr)`,
-  gridTemplateRows: `repeat(7, 1fr)`
+  gridTemplateColumns: `repeat(7, 1em)`,
+  gridTemplateRows: `repeat(7, 1em)`
 });
 
 /***********************************************************/
 
 export default class Factory extends React.Component<Props, State> {
   render() {
-    return <div className={this.props.type == "normal" ? $standardStyle : $leftoversStyle} />;
+    let tilesArray = reduceColorCounterToArray(this.props.tiles);
+    return (
+      <div className={this.props.type == "normal" ? $standardStyle : $leftoversStyle}>
+        {" "}
+        {tilesArray.map((tileColor, index) => <Tile color={tileColor} key={index} />)}
+      </div>
+    );
   }
 }

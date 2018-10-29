@@ -16,7 +16,7 @@ type State = {
 /***********************************************************/
 
 const $baseStyle = css({
-  fontSize: "0.75em",
+  fontSize: "0.25em",
   marginTop: 10
 });
 

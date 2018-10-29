@@ -13,7 +13,6 @@ export type RNG = {|
 export function createRNG(seed: number, counter: number = 0): RNG {
   return {
     int(min: number = 0, max: number = 1): number {
-      debugger;
       return Math.floor(randomWithSeed(seed + counter++) * (max - min) + min);
     },
     getCounter(): number {

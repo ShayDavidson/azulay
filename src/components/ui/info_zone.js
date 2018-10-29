@@ -22,7 +22,8 @@ type State = {
 
 const $baseStyle = css({
   marginTop: GLOBAL_PADDING,
-  marginBottom: GLOBAL_PADDING
+  marginBottom: GLOBAL_PADDING,
+  fontSize: "0.35em"
 });
 
 const $tdStyle = css({

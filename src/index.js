@@ -26,7 +26,7 @@ type State = {
 /***********************************************************/
 
 const $titleStyle = css({
-  fontSize: "1.5em",
+  fontSize: "0.5em",
   marginBottom: 5
 });
 

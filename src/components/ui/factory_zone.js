@@ -8,7 +8,6 @@ import type { Factory as FactoryType } from "../../models";
 import Factory from "./factory";
 // helpers
 import { GLOBAL_PADDING } from "../../styles";
-import { FACTORIES_BY_PLAYERS } from "../../models";
 
 /***********************************************************/
 
@@ -51,11 +50,12 @@ const $leftoversStyle = css({
 
 export default class FactoryZone extends React.Component<Props, State> {
   render() {
-    const factories = FACTORIES_BY_PLAYERS[this.props.players];
     return (
       <div className={$baseStyle}>
         <div className={$factoriesStyle}>
-          {[...new Array(factories)].map((_, index) => <Factory key={index} type="normal" />)}
+          {this.props.factories.map((factoryTiles, index) => (
+            <Factory key={index} tiles={factoryTiles} type="normal" />
+          ))}
         </div>
         <div className={$leftoversStyle}>
           <Factory type="leftovers" />

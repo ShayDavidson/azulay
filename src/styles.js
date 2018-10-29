@@ -46,6 +46,7 @@ function addResetStyles() {
     backgroundColor: "hsl(31, 10%, 71%)",
     padding: GLOBAL_PADDING,
     fontFamily: "Helvetica",
+    fontSize: BOARD_TILE_SIZE,
     color: BLACK_COLOR
   });
 

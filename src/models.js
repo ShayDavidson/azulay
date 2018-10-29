@@ -265,3 +265,13 @@ export function getRandomTileFromColorCounter(counter: TilesColorCounter, rng: R
     return undefined;
   }
 }
+
+export function reduceColorCounterToArray(counter: TilesColorCounter): Array<Color> {
+  if (counter == undefined) return [];
+  return counter.reduce((array, count, colorIndex) => {
+    for (let i = 0; i < count; i++) {
+      array.push(colorIndex);
+    }
+    return array;
+  }, []);
+}
