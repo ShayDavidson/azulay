@@ -51,7 +51,8 @@ class Azul extends React.Component<Props, State> {
         <div className={$titleStyle}>Azulay - The Online Azul AI</div>
         <GameProvider players={4} seed={6070}>
           <GameContext.Consumer>
-            {gameState => {
+            {({ gameState, actions }) => {
+              if (gameState == undefined) return null;
               const numberOfPlayers = gameState.players.length;
               const $boardsGridStyle = { gridTemplateColumns: `repeat(${numberOfPlayers > 2 ? 2 : 1}, 1fr)` };
               return (

@@ -5,13 +5,12 @@ export function randomWithSeed(seed: number): number {
   return x - Math.floor(x);
 }
 
-export type RNGType = {|
+export type RNG = {|
   int: (min: number, max: number) => number,
   getCounter: () => number
 |};
 
-export function RNG(seed: number): RNGType {
-  let counter = 0;
+export function createRNG(seed: number, counter: number = 0): RNG {
   return {
     int(min: number = 0, max: number = 1): number {
       return Math.floor(randomWithSeed(seed + counter++) * (max - min) + min);

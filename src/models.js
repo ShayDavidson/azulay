@@ -1,6 +1,7 @@
 // @flow
 
-import { RNG } from "./random";
+import { createRNG } from "./random";
+import type { RNG } from "./random";
 
 // CONSTS ////////////////////////////
 
@@ -11,6 +12,7 @@ export const TILES_PER_COLOR = 20;
 export const ROW_BONUS = 2;
 export const COL_BONUS = 7;
 export const COLOR_BONUS = 10;
+export const FACTORY_MAX_TILES = 4;
 export const PHASES = {
   refill: "refill",
   placement: "placement",
@@ -84,6 +86,7 @@ export type Game = {|
 // FACTORIES ////////////////////////////
 
 export function createGame(players: number, seed: number): Game {
+  let rng = createRNG(seed);
   return {
     players: [...Array(players)].map((_, index) => createPlayer(`Player ${index}`, "human")),
     bag: createColorCountArray(TILES_PER_COLOR),
@@ -91,9 +94,9 @@ export function createGame(players: number, seed: number): Game {
     factories: [...Array(FACTORIES_BY_PLAYERS[players])].map(() => createColorCountArray(0)),
     leftovers: createColorCountArray(0),
     turn: 0,
-    currentPlayer: RNG(seed).int(0, players - 1),
+    currentPlayer: rng.int(0, players - 1),
     phase: PHASES.refill,
-    randomProps: { seed, counter: 1 }
+    randomProps: { seed, counter: rng.getCounter() }
   };
 }
 
@@ -131,18 +134,32 @@ export function createWall(): Wall {
 
 // ACTIONS ////////////////////////////
 
+export function drawTileFromBag(game: Game): Game {
+  let rng = createRNG(game.randomProps.seed, game.randomProps.counter);
+  let pickedColor = getRandomTileFromColorCounter(game.bag, rng);
+  if (pickedColor != undefined) {
+    let bag = getCounterWithNewValue(game.bag, pickedColor, game.bag[pickedColor] - 1);
+    let factories = game.factories.map(
+      factory =>
+        isFactoryFull(factory) ? factory : getCounterWithNewValue(factory, pickedColor, factory[pickedColor] + 1)
+    );
+    return { ...game, bag, factories };
+  } else {
+    return game;
+  }
+}
+
 // INTERNAL ACTIONS ////////////////////////////
 
 function placeTileInWall(wall: Wall, fromStagingRowIndex: number, tileColor: ColorType): Wall {
   let tileWallRow = fromStagingRowIndex;
   let tileWallCol = getWallPlacementCol(tileWallRow, tileColor);
-  return wall.map((wallRow, wallRowIndex) => {
-    if (wallRowIndex == tileWallRow) {
-      return wallRow.slice.map((_, wallColIndex) => wallColIndex == tileWallCol);
-    } else {
-      return wallRow.slice();
-    }
-  });
+  return wall.map(
+    (wallRow, wallRowIndex) =>
+      wallRowIndex == tileWallRow
+        ? wallRow.slice.map((_, wallColIndex) => wallColIndex == tileWallCol)
+        : wallRow.slice()
+  );
 }
 
 // CALCULATIONS ////////////////////////////
@@ -201,6 +218,12 @@ export function calculateTilePlacementScore(wall: Wall, placementRow: number, pl
   return rowScore + colScore;
 }
 
+// IMMUTATORS /////////////////////////
+
+export function getCounterWithNewValue(counter: TilesColorCounter, color: ColorType, value: number): TilesColorCounter {
+  return counter.map((count, index) => (index == color ? value : count));
+}
+
 // HELPERS ////////////////////////////
 
 export function isStagingRowFull(stagingRow: ?StagingRow, index: number): boolean {
@@ -209,6 +232,10 @@ export function isStagingRowFull(stagingRow: ?StagingRow, index: number): boolea
   } else {
     return stagingRow.count == index + 1;
   }
+}
+
+export function isFactoryFull(factory: TilesColorCounter): boolean {
+  return getTilesInColorCounter(factory) == FACTORY_MAX_TILES;
 }
 
 export function placementsForStagingRow(index: number): number {
@@ -225,4 +252,15 @@ export function getWallPlacementColor(row: number, col: number): ColorType {
 
 export function getTilesInColorCounter(counter: TilesColorCounter): number {
   return counter.reduce((a, b) => a + b, 0);
+}
+
+export function getRandomTileFromColorCounter(counter: TilesColorCounter, rng: RNG): ?ColorType {
+  if (getTilesInColorCounter(counter) > 0) {
+    while (true) {
+      let random = rng.int(0, counter.length);
+      if (counter[random] > 0) return random;
+    }
+  } else {
+    return undefined;
+  }
 }

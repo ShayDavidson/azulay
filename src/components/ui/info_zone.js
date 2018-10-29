@@ -41,37 +41,39 @@ export default class InfoZone extends React.Component<Props, State> {
     return (
       <div className={$baseStyle}>
         <table>
-          <tr>
-            <td>
-              <strong>Tiles in the bag:</strong>
-            </td>
-            {this.props.bag.map((count, colorIndex) => {
-              return (
-                <td className={$tdStyle} key={colorIndex}>
-                  {count}
-                  <span className={$tileStyle} style={{ color: TILE_COLORS[colorIndex] }}>
-                    ▩
-                  </span>
-                </td>
-              );
-            })}
-          </tr>
-          <tr>
-            <td>
-              <strong>Discarded tiles:</strong>
-            </td>
-            {this.props.box.map((count, colorIndex) => {
-              return (
-                <td className={$tdStyle} key={colorIndex}>
-                  {count}
-                  <span className={$tileStyle} style={{ color: TILE_COLORS[colorIndex] }}>
-                    ▩
-                  </span>
-                </td>
-              );
-            })}
-            <td />
-          </tr>
+          <tbody>
+            <tr>
+              <td>
+                <strong>Tiles in the bag:</strong>
+              </td>
+              {this.props.bag.map((count, colorIndex) => {
+                return (
+                  <td className={$tdStyle} key={colorIndex}>
+                    {count}
+                    <span className={$tileStyle} style={{ color: TILE_COLORS[colorIndex] }}>
+                      ▩
+                    </span>
+                  </td>
+                );
+              })}
+            </tr>
+            <tr>
+              <td>
+                <strong>Discarded tiles:</strong>
+              </td>
+              {this.props.box.map((count, colorIndex) => {
+                return (
+                  <td className={$tdStyle} key={colorIndex}>
+                    {count}
+                    <span className={$tileStyle} style={{ color: TILE_COLORS[colorIndex] }}>
+                      ▩
+                    </span>
+                  </td>
+                );
+              })}
+              <td />
+            </tr>
+          </tbody>
         </table>
       </div>
     );

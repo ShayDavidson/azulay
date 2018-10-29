@@ -5,7 +5,7 @@ import type { Node } from "react";
 // types
 import type { Game } from "../models";
 // helpers
-import { createGame } from "../models";
+import { createGame, drawTileFromBag } from "../models";
 
 /***********************************************************/
 
@@ -32,6 +32,13 @@ export default class GameProvider extends React.Component<Props, State> {
   }
 
   render() {
-    return <GameContext.Provider value={this.state}>{this.props.children}</GameContext.Provider>;
+    let actions = {
+      drawTileFromBag() {
+        this.setState(game => drawTileFromBag(game));
+      }
+    };
+    return (
+      <GameContext.Provider value={{ gameState: this.state, actions }}>{this.props.children}</GameContext.Provider>
+    );
   }
 }
