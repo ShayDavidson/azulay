@@ -143,7 +143,8 @@ export function drawTileFromBag(game: Game): Game {
       factory =>
         isFactoryFull(factory) ? factory : getCounterWithNewValue(factory, pickedColor, factory[pickedColor] + 1)
     );
-    return { ...game, bag, factories };
+    let randomProps = { ...game.randomProps, counter: rng.getCounter() };
+    return { ...game, bag, factories, randomProps };
   } else {
     return game;
   }

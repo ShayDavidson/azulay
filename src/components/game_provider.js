@@ -32,13 +32,22 @@ export default class GameProvider extends React.Component<Props, State> {
   }
 
   render() {
-    let actions = {
-      drawTileFromBag() {
-        this.setState(game => drawTileFromBag(game));
-      }
-    };
+    let setState = this.setState.bind(this);
     return (
-      <GameContext.Provider value={{ gameState: this.state, actions }}>{this.props.children}</GameContext.Provider>
+      <GameContext.Provider
+        value={{
+          gameState: this.state,
+          actions: {
+            drawTileFromBag() {
+              setState(game => {
+                return drawTileFromBag(game);
+              });
+            }
+          }
+        }}
+      >
+        {this.props.children}
+      </GameContext.Provider>
     );
   }
 }

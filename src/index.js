@@ -57,7 +57,7 @@ class Azul extends React.Component<Props, State> {
               const $boardsGridStyle = { gridTemplateColumns: `repeat(${numberOfPlayers > 2 ? 2 : 1}, 1fr)` };
               return (
                 <div>
-                  <div className={$gameStyle}>
+                  <div className={$gameStyle} onClick={actions.drawTileFromBag}>
                     <div className={$boardsStyle} style={$boardsGridStyle}>
                       {gameState.players.map((player, index) => {
                         return <PlayerBoard player={player} current={gameState.currentPlayer == index} key={index} />;
