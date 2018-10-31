@@ -235,7 +235,7 @@ export function isStagingRowFull(stagingRow: ?StagingRow, index: number): boolea
   }
 }
 
-export function isFactoryFull(factory: TilesColorCounter): boolean {
+export function isFactoryFull(factory: Factory): boolean {
   return getTilesInColorCounter(factory) == FACTORY_MAX_TILES;
 }
 
@@ -266,7 +266,7 @@ export function getRandomTileFromColorCounter(counter: TilesColorCounter, rng: R
   }
 }
 
-export function reduceColorCounterToArray(counter: TilesColorCounter): Array<Color> {
+export function reduceColorCounterToArray(counter: TilesColorCounter): Array<ColorType> {
   if (counter == undefined) return [];
   return counter.reduce((array, count, colorIndex) => {
     for (let i = 0; i < count; i++) {

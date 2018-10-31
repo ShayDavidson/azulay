@@ -63,7 +63,7 @@ class Azul extends React.Component<Props, State> {
                         return <PlayerBoard player={player} current={gameState.currentPlayer == index} key={index} />;
                       })}
                     </div>
-                    <FactoryZone players={numberOfPlayers} factories={gameState.factories} />
+                    <FactoryZone factories={gameState.factories} leftovers={gameState.leftovers} />
                   </div>
                   <InfoZone box={gameState.box} bag={gameState.bag} />
                 </div>

@@ -13,7 +13,7 @@ import { GLOBAL_PADDING } from "../../styles";
 
 type Props = {
   factories: Array<FactoryType>,
-  players: number
+  leftovers: FactoryType
 };
 
 type State = {
@@ -30,9 +30,9 @@ const $baseStyle = css({
 const $factoriesStyle = css({
   position: "relative",
   display: "grid",
-  gridTemplateColumns: `repeat(3, 104px)`,
-  gridTemplateRows: `repeat(3, 104px)`,
-  gridGap: GLOBAL_PADDING * 2,
+  gridTemplateColumns: `repeat(3, 125px)`,
+  gridTemplateRows: `repeat(3, 125px)`,
+  gridGap: GLOBAL_PADDING,
   gridAutoFlow: "column"
 });
 
@@ -40,10 +40,7 @@ const $leftoversStyle = css({
   marginTop: 2 * GLOBAL_PADDING,
   borderRadius: "50%",
   width: "100%",
-  height: "100%",
-  display: "grid"
-  // gridTemplateColumns: `repeat(7, 1fr)`,
-  // gridTemplateRows: `repeat(5, 1fr)`
+  height: "100%"
 });
 
 /***********************************************************/
@@ -58,7 +55,7 @@ export default class FactoryZone extends React.Component<Props, State> {
           ))}
         </div>
         <div className={$leftoversStyle}>
-          <Factory type="leftovers" />
+          <Factory tiles={this.props.leftovers} type="leftovers" />
         </div>
       </div>
     );

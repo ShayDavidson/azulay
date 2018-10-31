@@ -7,7 +7,7 @@ import type { TilesColorCounter } from "../../models";
 // components
 import Tile from "./tile";
 // helpers
-import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, WHITE_COLOR, PLACEMENT_GAP } from "../../styles";
+import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, WHITE_COLOR } from "../../styles";
 import { reduceColorCounterToArray } from "../../models";
 
 /***********************************************************/
@@ -26,7 +26,18 @@ type State = {
 const $baseStyle = css({
   boxShadow: "2px 2px 0 0 rgba(0, 0, 0, 0.1)",
   borderRadius: "50%",
-  display: "grid"
+  height: "100%",
+  width: "100%",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center"
+});
+
+const $containerStyle = css({
+  display: "grid",
+  gridTemplateColumns: `repeat(2, 1em)`,
+  gridTemplateRows: `repeat(2, 1em)`,
+  gridGap: "0.25em"
 });
 
 const $standardStyle = css($baseStyle, {
@@ -34,17 +45,12 @@ const $standardStyle = css($baseStyle, {
   borderTop: `${BOARD_BORDER_WIDTH} solid #d66313`,
   borderLeft: `${BOARD_BORDER_WIDTH} solid #d66313`,
   borderRight: `${BOARD_BORDER_WIDTH} solid #a04b10`,
-  borderBottom: `${BOARD_BORDER_WIDTH} solid #a04b10`,
-  gridTemplateColumns: `repeat(2, 1em)`,
-  gridTemplateRows: `repeat(2, 1em)`,
-  gridGap: "1em"
+  borderBottom: `${BOARD_BORDER_WIDTH} solid #a04b10`
 });
 
 const $leftoversStyle = css($baseStyle, {
   background: "hsl(10, 10%, 88%)",
-  border: `${BOARD_BORDER_WIDTH} solid ${BOARD_BORDER_COLOR}`,
-  gridTemplateColumns: `repeat(7, 1em)`,
-  gridTemplateRows: `repeat(7, 1em)`
+  border: `${BOARD_BORDER_WIDTH} solid ${BOARD_BORDER_COLOR}`
 });
 
 /***********************************************************/
@@ -54,8 +60,13 @@ export default class Factory extends React.Component<Props, State> {
     let tilesArray = reduceColorCounterToArray(this.props.tiles);
     return (
       <div className={this.props.type == "normal" ? $standardStyle : $leftoversStyle}>
-        {" "}
-        {tilesArray.map((tileColor, index) => <Tile color={tileColor} key={index} />)}
+        <div className={$containerStyle}>
+          {tilesArray.map((tileColor, index) => (
+            <div key={index} style={{ transform: `rotate(${Math.random() * 10 - 5}deg)` }}>
+              <Tile color={tileColor} />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
