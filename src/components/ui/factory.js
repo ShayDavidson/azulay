@@ -62,7 +62,7 @@ export default class Factory extends React.Component<Props, State> {
       <div className={this.props.type == "normal" ? $standardStyle : $leftoversStyle}>
         <div className={$containerStyle}>
           {tilesArray.map((tileColor, index) => (
-            <div key={index} style={{ transform: `rotate(${Math.random() * 10 - 5}deg)` }}>
+            <div key={index}>
               <Tile color={tileColor} />
             </div>
           ))}

@@ -1,11 +1,12 @@
 // @flow
 
+import Promise from "bluebird";
 import React from "react";
 import type { Node } from "react";
 // types
 import type { Game } from "../models";
 // helpers
-import { createGame, drawTileFromBag } from "../models";
+import { createGame, drawTileFromBag, PHASES } from "../models";
 
 /***********************************************************/
 
@@ -31,19 +32,34 @@ export default class GameProvider extends React.Component<Props, State> {
     return createGame(players, seed);
   }
 
+  componentDidMount() {
+    this.progressGame();
+  }
+
+  progressGame() {
+    if (this.state.phase == PHASES.refill) {
+      this.dispatch(drawTileFromBag)
+        .delay(20)
+        .then(this.progressGame.bind(this));
+    }
+  }
+
+  dispatch(action: Game => Game) {
+    return new Promise(resolve => {
+      this.setState(action, () => resolve());
+    });
+  }
+
+  // ACTIONS ////////////////////////////
+
+  // RENDER /////////////////////////////
+
   render() {
-    let setState = this.setState.bind(this);
     return (
       <GameContext.Provider
         value={{
           gameState: this.state,
-          actions: {
-            drawTileFromBag() {
-              setState(game => {
-                return drawTileFromBag(game);
-              });
-            }
-          }
+          dispatch: this.dispatch.bind(this)
         }}
       >
         {this.props.children}

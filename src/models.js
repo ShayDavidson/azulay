@@ -139,10 +139,15 @@ export function drawTileFromBag(game: Game): Game {
   let pickedColor = getRandomTileFromColorCounter(game.bag, rng);
   if (pickedColor != undefined) {
     let bag = getCounterWithNewValue(game.bag, pickedColor, game.bag[pickedColor] - 1);
-    let factories = game.factories.map(
-      factory =>
-        isFactoryFull(factory) ? factory : getCounterWithNewValue(factory, pickedColor, factory[pickedColor] + 1)
-    );
+    let filledFactory = false;
+    let factories = game.factories.map(factory => {
+      if (isFactoryFull(factory) || filledFactory) {
+        return factory;
+      } else {
+        filledFactory = true;
+        return getCounterWithNewValue(factory, pickedColor, factory[pickedColor] + 1);
+      }
+    });
     let randomProps = { ...game.randomProps, counter: rng.getCounter() };
     return { ...game, bag, factories, randomProps };
   } else {

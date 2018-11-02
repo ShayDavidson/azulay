@@ -45,19 +45,23 @@ const $gameStyle = css({
 /***********************************************************/
 
 class Azul extends React.Component<Props, State> {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
     return (
       <div>
         <div className={$titleStyle}>Azulay - The Online Azul AI</div>
         <GameProvider players={4} seed={6070}>
           <GameContext.Consumer>
-            {({ gameState, actions }) => {
+            {({ gameState, dispatch }) => {
               if (gameState == undefined) return null;
               const numberOfPlayers = gameState.players.length;
               const $boardsGridStyle = { gridTemplateColumns: `repeat(${numberOfPlayers > 2 ? 2 : 1}, 1fr)` };
               return (
                 <div>
-                  <div className={$gameStyle} onClick={actions.drawTileFromBag}>
+                  <div className={$gameStyle}>
                     <div className={$boardsStyle} style={$boardsGridStyle}>
                       {gameState.players.map((player, index) => {
                         return <PlayerBoard player={player} current={gameState.currentPlayer == index} key={index} />;
