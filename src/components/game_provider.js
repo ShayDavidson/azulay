@@ -7,6 +7,7 @@ import type { Node } from "react";
 import type { Game } from "../models";
 // helpers
 import { createGame, drawTileFromBag, PHASES } from "../models";
+import { playRandom, TILES } from "../sfx";
 
 /***********************************************************/
 
@@ -39,7 +40,8 @@ export default class GameProvider extends React.Component<Props, State> {
   progressGame() {
     if (this.state.phase == PHASES.refill) {
       this.dispatch(drawTileFromBag)
-        .delay(20)
+        .delay(100)
+        .then(() => playRandom(TILES))
         .then(this.progressGame.bind(this));
     }
   }
@@ -49,10 +51,6 @@ export default class GameProvider extends React.Component<Props, State> {
       this.setState(action, () => resolve());
     });
   }
-
-  // ACTIONS ////////////////////////////
-
-  // RENDER /////////////////////////////
 
   render() {
     return (

@@ -26,7 +26,7 @@ module.exports = function(env) {
           use: "css-loader"
         },
         {
-          test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2|mp3)$/,
+          test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2|mp3|wav)$/,
           loader: "url-loader",
           options: {
             limit: 10000
