@@ -1,7 +1,6 @@
 // @flow
 
 import { createRNG } from "./random";
-import type { RNG } from "./random";
 
 // CONSTS ////////////////////////////
 
@@ -42,6 +41,13 @@ export type Floor = Array<?ColorType>;
 
 export type PlayerType = $Keys<typeof PLAYER_TYPE>;
 
+export type TileKind = "first" | "colored";
+
+export type Tile = {
+  kind: TileKind,
+  color: ?ColorType
+};
+
 export type Board = {|
   wall: Wall,
   staging: Staging,
@@ -65,23 +71,20 @@ export type ColorBundle = {|
   count: number
 |};
 
+export type TilesArray = Array<Tile>;
+
 export type TilesColorCounter = Array<number>;
 
-export type Factory = TilesColorCounter;
+export type Factory = TilesArray;
 
 export type Phase = $Keys<typeof PHASES>;
 
-export type Leftovers = {|
-  hasFirstTile: boolean,
-  tiles: TilesColorCounter
-|};
-
 export type Game = {|
   players: Array<Player>,
-  bag: TilesColorCounter,
-  box: TilesColorCounter,
-  factories: Array<TilesColorCounter>,
-  leftovers: Leftovers,
+  bag: TilesArray,
+  box: TilesArray,
+  factories: Array<TilesArray>,
+  leftovers: TilesArray,
   turn: number,
   currentPlayer: number,
   phase: Phase,
@@ -94,13 +97,10 @@ export function createGame(players: number, seed: number): Game {
   let rng = createRNG(seed);
   return {
     players: [...Array(players)].map((_, index) => createPlayer(`Player ${index}`, "human")),
-    bag: createColorCountArray(TILES_PER_COLOR),
-    box: createColorCountArray(0),
-    factories: [...Array(FACTORIES_BY_PLAYERS[players])].map(() => createColorCountArray(0)),
-    leftovers: {
-      hasFirstTile: true,
-      tiles: createColorCountArray(0)
-    },
+    bag: rng.shuffle(createBag()),
+    box: [],
+    factories: [...Array(FACTORIES_BY_PLAYERS[players])].map(() => []),
+    leftovers: [createTile("first")],
     turn: 0,
     currentPlayer: rng.int(0, players - 1),
     phase: PHASES.refill,
@@ -108,8 +108,14 @@ export function createGame(players: number, seed: number): Game {
   };
 }
 
-export function createColorCountArray(count: number): TilesColorCounter {
-  return new Array(COLORS).fill(count);
+export function createBag() {
+  let tiles = [];
+  for (let color = 0; color < COLORS; color++) {
+    for (let count = 0; count < TILES_PER_COLOR; count++) {
+      tiles.push(createTile("colored", color));
+    }
+  }
+  return tiles;
 }
 
 export function createPlayer(name: string, type: PlayerType): Player {
@@ -140,24 +146,37 @@ export function createWall(): Wall {
   return wall;
 }
 
+export function createTile(kind: TileKind, color: ?ColorType): Tile {
+  return { kind, color };
+}
+
 // ACTIONS ////////////////////////////
 
-export function drawTileFromBag(game: Game): Game {
+export function shuffleBag(game: Game): Game {
   let rng = createRNG(game.randomProps.seed, game.randomProps.counter);
-  let pickedColor = getRandomTileFromColorCounter(game.bag, rng);
-  if (pickedColor != undefined) {
-    let bag = getCounterWithNewValue(game.bag, pickedColor, game.bag[pickedColor] - 1);
+  let randomProps = { ...game.randomProps, counter: rng.getCounter() };
+  return { ...game, randomProps };
+}
+
+export function shuffleBoxIntoBag(game: Game): Game {
+  return { ...game, box: [], bag: game.box };
+}
+
+export function drawTileFromBagIntoFactories(game: Game): Game {
+  let pickedTile = game.bag[0];
+  if (pickedTile != undefined) {
+    let bag = game.bag.slice(1, game.bag.length);
     let filledFactory = false;
     let factories = game.factories.map(factory => {
       if (isFactoryFull(factory) || filledFactory) {
         return factory;
       } else {
         filledFactory = true;
-        return getCounterWithNewValue(factory, pickedColor, factory[pickedColor] + 1);
+        return [...factory, pickedTile];
       }
     });
-    let randomProps = { ...game.randomProps, counter: rng.getCounter() };
-    return { ...game, bag, factories, randomProps };
+
+    return { ...game, bag, factories };
   } else {
     return game;
   }
@@ -166,6 +185,13 @@ export function drawTileFromBag(game: Game): Game {
 export function moveToPlacementPhase(game: Game): Game {
   return { ...game, phase: PHASES.placement };
 }
+
+// export function putTilesFromFactoryIntoPlayerStagingRow(
+//   game: Game,
+//   factory: Factory,
+//   tile: Tile,
+//   stagingRow: number
+// ): Game {}
 
 // INTERNAL ACTIONS ////////////////////////////
 
@@ -236,12 +262,6 @@ export function calculateTilePlacementScore(wall: Wall, placementRow: number, pl
   return rowScore + colScore;
 }
 
-// IMMUTATORS /////////////////////////
-
-export function getCounterWithNewValue(counter: TilesColorCounter, color: ColorType, value: number): TilesColorCounter {
-  return counter.map((count, index) => (index == color ? value : count));
-}
-
 // HELPERS ////////////////////////////
 
 export function isStagingRowFull(stagingRow: ?StagingRow, index: number): boolean {
@@ -253,7 +273,7 @@ export function isStagingRowFull(stagingRow: ?StagingRow, index: number): boolea
 }
 
 export function isFactoryFull(factory: Factory): boolean {
-  return getTilesInColorCounter(factory) == FACTORY_MAX_TILES;
+  return factory.length == FACTORY_MAX_TILES;
 }
 
 export function areAllFactoriesFull(game: Game): boolean {
@@ -272,27 +292,14 @@ export function getWallPlacementColor(row: number, col: number): ColorType {
   return (col + row) % COLORS;
 }
 
-export function getTilesInColorCounter(counter: TilesColorCounter): number {
-  return counter.reduce((a, b) => a + b, 0);
-}
-
-export function getRandomTileFromColorCounter(counter: TilesColorCounter, rng: RNG): ?ColorType {
-  if (getTilesInColorCounter(counter) > 0) {
-    while (true) {
-      let random = rng.int(0, counter.length);
-      if (counter[random] > 0) return random;
-    }
-  } else {
-    return undefined;
-  }
-}
-
-export function reduceColorCounterToArray(counter: TilesColorCounter): Array<ColorType> {
-  if (counter == undefined) return [];
-  return counter.reduce((array, count, colorIndex) => {
-    for (let i = 0; i < count; i++) {
-      array.push(colorIndex);
-    }
-    return array;
-  }, []);
+export function getTilesColorCounter(tiles: TilesArray): TilesColorCounter {
+  return tiles.reduce(
+    (counter, tile) => {
+      if (tile.color != undefined) {
+        counter[tile.color] += 1;
+      }
+      return counter;
+    },
+    [0, 0, 0, 0, 0]
+  );
 }

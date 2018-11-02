@@ -3,15 +3,16 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { TilesColorCounter } from "../../models";
+import type { TilesArray } from "../../models";
 // helpers
+import { getTilesColorCounter } from "../../models";
 import { GLOBAL_PADDING, TILE_COLORS } from "../../styles";
 
 /***********************************************************/
 
 type Props = {
-  bag: TilesColorCounter,
-  box: TilesColorCounter
+  bag: TilesArray,
+  box: TilesArray
 };
 
 type State = {
@@ -39,6 +40,8 @@ const $tileStyle = css({
 
 export default class InfoZone extends React.Component<Props, State> {
   render() {
+    let bag = getTilesColorCounter(this.props.bag);
+    let box = getTilesColorCounter(this.props.box);
     return (
       <div className={$baseStyle}>
         <table>
@@ -47,7 +50,7 @@ export default class InfoZone extends React.Component<Props, State> {
               <td>
                 <strong>Tiles in the bag:</strong>
               </td>
-              {this.props.bag.map((count, colorIndex) => {
+              {bag.map((count, colorIndex) => {
                 return (
                   <td className={$tdStyle} key={colorIndex}>
                     {count}
@@ -62,7 +65,7 @@ export default class InfoZone extends React.Component<Props, State> {
               <td>
                 <strong>Discarded tiles:</strong>
               </td>
-              {this.props.box.map((count, colorIndex) => {
+              {box.map((count, colorIndex) => {
                 return (
                   <td className={$tdStyle} key={colorIndex}>
                     {count}

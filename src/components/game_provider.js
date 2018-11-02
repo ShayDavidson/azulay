@@ -6,7 +6,7 @@ import type { Node } from "react";
 // types
 import type { Game } from "../models";
 // helpers
-import { createGame, drawTileFromBag, moveToPlacementPhase, areAllFactoriesFull, PHASES } from "../models";
+import { createGame, drawTileFromBagIntoFactories, moveToPlacementPhase, areAllFactoriesFull, PHASES } from "../models";
 import { playRandom, TILES } from "../sfx";
 
 /***********************************************************/
@@ -42,7 +42,7 @@ export default class GameProvider extends React.Component<Props, State> {
       if (areAllFactoriesFull(this.state)) {
         this.dispatch(moveToPlacementPhase).then(this.progressGame.bind(this));
       } else {
-        this.dispatch(drawTileFromBag)
+        this.dispatch(drawTileFromBagIntoFactories)
           .delay(100)
           .then(() => playRandom(TILES))
           .then(this.progressGame.bind(this));

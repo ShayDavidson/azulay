@@ -3,18 +3,17 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { TilesColorCounter } from "../../models";
+import type { TilesArray } from "../../models";
 // components
 import Tile from "./tile";
 // helpers
 import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, WHITE_COLOR } from "../../styles";
-import { reduceColorCounterToArray } from "../../models";
 
 /***********************************************************/
 
 type Props = {
   type: "normal" | "leftovers",
-  tiles: TilesColorCounter,
+  tiles: TilesArray,
   hasFirstTile?: boolean,
   selectionEnabled?: boolean
 };
@@ -67,14 +66,12 @@ const $leftoversStyle = css($baseStyle, {
 
 export default class Factory extends React.Component<Props, State> {
   render() {
-    let tilesArray = reduceColorCounterToArray(this.props.tiles);
     return (
       <div className={this.props.type == "normal" ? $standardStyle : $leftoversStyle}>
         <div className={this.props.type == "normal" ? $containerStyle : $leftoversContainerStyle}>
-          {this.props.hasFirstTile ? <Tile color={0} firstPlayer={true} /> : null}
-          {tilesArray.map((tileColor, index) => (
+          {this.props.tiles.map((tile, index) => (
             <div key={index}>
-              <Tile color={tileColor} />
+              <Tile tile={tile} />
             </div>
           ))}
         </div>

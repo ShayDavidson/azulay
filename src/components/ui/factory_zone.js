@@ -3,7 +3,7 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { Factory as FactoryType, Leftovers } from "../../models";
+import type { Factory as FactoryType, TilesArray } from "../../models";
 // components
 import Factory from "./factory";
 // helpers
@@ -13,7 +13,7 @@ import { GLOBAL_PADDING } from "../../styles";
 
 type Props = {
   factories: Array<FactoryType>,
-  leftovers: Leftovers
+  leftovers: TilesArray
 };
 
 type State = {
@@ -55,11 +55,7 @@ export default class FactoryZone extends React.Component<Props, State> {
           ))}
         </div>
         <div className={$leftoversStyle}>
-          <Factory
-            tiles={this.props.leftovers.tiles}
-            hasFirstTile={this.props.leftovers.hasFirstTile}
-            type="leftovers"
-          />
+          <Factory tiles={this.props.leftovers} type="leftovers" />
         </div>
       </div>
     );

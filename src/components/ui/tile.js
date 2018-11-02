@@ -3,7 +3,7 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { ColorType } from "../../models";
+import type { Tile as TileType } from "../../models";
 // helpers
 import { TILE_COLORS, WHITE_COLOR, BLUE_COLOR, placeAnimation } from "../../styles";
 
@@ -19,8 +19,8 @@ const DARK_BORDER_ALPHA = 0.35;
 /***********************************************************/
 
 type Props = {
-  color: ColorType,
-  firstPlayer?: boolean
+  tile: TileType,
+  onClick?: TileType => void
 };
 
 type State = {
@@ -58,13 +58,20 @@ const $labelStyle = css({
 
 export default class Tile extends React.Component<Props, State> {
   render() {
+    let { color, kind } = this.props.tile;
+    let isColoredTile = kind == "colored";
+
     const $dynamicStyle = {
-      backgroundColor: this.props.firstPlayer ? WHITE_COLOR : TILE_COLORS[this.props.color]
+      backgroundColor: isColoredTile && color != undefined ? TILE_COLORS[color] : WHITE_COLOR
     };
 
     return (
-      <div className={$baseStyle} style={$dynamicStyle}>
-        {this.props.firstPlayer ? <div className={$labelStyle}>1</div> : null}
+      <div
+        className={$baseStyle}
+        style={$dynamicStyle}
+        onClick={() => this.props.onClick && this.props.onClick(this.props.tile)}
+      >
+        {isColoredTile ? null : <div className={$labelStyle}>1</div>}
       </div>
     );
   }
