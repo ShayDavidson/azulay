@@ -71,12 +71,17 @@ export type Factory = TilesColorCounter;
 
 export type Phase = $Keys<typeof PHASES>;
 
+export type Leftovers = {|
+  hasFirstTile: boolean,
+  tiles: TilesColorCounter
+|};
+
 export type Game = {|
   players: Array<Player>,
   bag: TilesColorCounter,
   box: TilesColorCounter,
   factories: Array<TilesColorCounter>,
-  leftovers: TilesColorCounter,
+  leftovers: Leftovers,
   turn: number,
   currentPlayer: number,
   phase: Phase,
@@ -92,7 +97,10 @@ export function createGame(players: number, seed: number): Game {
     bag: createColorCountArray(TILES_PER_COLOR),
     box: createColorCountArray(0),
     factories: [...Array(FACTORIES_BY_PLAYERS[players])].map(() => createColorCountArray(0)),
-    leftovers: createColorCountArray(0),
+    leftovers: {
+      hasFirstTile: true,
+      tiles: createColorCountArray(0)
+    },
     turn: 0,
     currentPlayer: rng.int(0, players - 1),
     phase: PHASES.refill,
@@ -153,6 +161,10 @@ export function drawTileFromBag(game: Game): Game {
   } else {
     return game;
   }
+}
+
+export function moveToPlacementPhase(game: Game): Game {
+  return { ...game, phase: PHASES.placement };
 }
 
 // INTERNAL ACTIONS ////////////////////////////
@@ -242,6 +254,10 @@ export function isStagingRowFull(stagingRow: ?StagingRow, index: number): boolea
 
 export function isFactoryFull(factory: Factory): boolean {
   return getTilesInColorCounter(factory) == FACTORY_MAX_TILES;
+}
+
+export function areAllFactoriesFull(game: Game): boolean {
+  return game.factories.find(factory => !isFactoryFull(factory)) == undefined;
 }
 
 export function placementsForStagingRow(index: number): number {

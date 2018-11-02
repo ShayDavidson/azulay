@@ -14,7 +14,9 @@ import { reduceColorCounterToArray } from "../../models";
 
 type Props = {
   type: "normal" | "leftovers",
-  tiles: TilesColorCounter
+  tiles: TilesColorCounter,
+  hasFirstTile?: boolean,
+  selectionEnabled?: boolean
 };
 
 type State = {
@@ -40,6 +42,13 @@ const $containerStyle = css({
   gridGap: "0.25em"
 });
 
+const $leftoversContainerStyle = css({
+  display: "grid",
+  gridTemplateColumns: `repeat(7, 1em)`,
+  gridTemplateRows: `repeat(4, 1em)`,
+  gridGap: "0.25em"
+});
+
 const $standardStyle = css($baseStyle, {
   background: `linear-gradient(135deg, ${WHITE_COLOR} 0%, ${WHITE_COLOR} 50%, hsl(10, 10%, 88%) 50%, hsl(10, 10%, 88%) 100%)`,
   borderTop: `${BOARD_BORDER_WIDTH} solid #d66313`,
@@ -50,6 +59,7 @@ const $standardStyle = css($baseStyle, {
 
 const $leftoversStyle = css($baseStyle, {
   background: "hsl(10, 10%, 88%)",
+  borderRadius: "1em",
   border: `${BOARD_BORDER_WIDTH} solid ${BOARD_BORDER_COLOR}`
 });
 
@@ -60,7 +70,8 @@ export default class Factory extends React.Component<Props, State> {
     let tilesArray = reduceColorCounterToArray(this.props.tiles);
     return (
       <div className={this.props.type == "normal" ? $standardStyle : $leftoversStyle}>
-        <div className={$containerStyle}>
+        <div className={this.props.type == "normal" ? $containerStyle : $leftoversContainerStyle}>
+          {this.props.hasFirstTile ? <Tile color={0} firstPlayer={true} /> : null}
           {tilesArray.map((tileColor, index) => (
             <div key={index}>
               <Tile color={tileColor} />

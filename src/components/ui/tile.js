@@ -5,7 +5,7 @@ import { css } from "glamor";
 // types
 import type { ColorType } from "../../models";
 // helpers
-import { TILE_COLORS, WHITE_COLOR, BLUE_COLOR } from "../../styles";
+import { TILE_COLORS, WHITE_COLOR, BLUE_COLOR, placeAnimation } from "../../styles";
 
 /***********************************************************/
 
@@ -30,6 +30,7 @@ type State = {
 /***********************************************************/
 
 const $baseStyle = css({
+  animation: `${placeAnimation} 0.1s ease-out both`,
   width: "100%",
   height: "100%",
   boxShadow: `${SHADOW_DISTANCE} ${SHADOW_DISTANCE} rgba(0, 0, 0, ${SHADOW_ALPHA})`,

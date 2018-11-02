@@ -4,7 +4,7 @@ import { css } from "glamor";
 
 /***********************************************************/
 
-export const WHITE_COLOR = "hsl(30, 20%, 90%)";
+export const WHITE_COLOR = "hsl(30, 20%, 95%)";
 export const BLACK_COLOR = "#201718";
 export const BLUE_COLOR = "#2d7dbc";
 export const TILE_COLORS = [BLUE_COLOR, "#f8c548", "#ee3231", BLACK_COLOR, "#71cbd4"];
@@ -26,6 +26,13 @@ export const $bevelStyle = css({
   borderRight: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
   borderTop: `${HIGHLIGHT_WIDTH} solid rgba(127, 127, 127, ${DARK_BORDER_ALPHA})`,
   borderLeft: `${HIGHLIGHT_WIDTH} solid rgba(127, 127, 127, ${DARK_BORDER_ALPHA})`
+});
+
+/***********************************************************/
+
+export const placeAnimation = css.keyframes({
+  "0%": { transform: "scale(2.0)" },
+  "100": { transform: "scale(1)" }
 });
 
 /***********************************************************/
