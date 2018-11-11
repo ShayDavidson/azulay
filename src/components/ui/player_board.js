@@ -10,7 +10,14 @@ import Staging from "./staging";
 import Floor from "./floor";
 import Separator from "./separator";
 // helpers
-import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, BOARD_PADDING, BOARD_COLOR, $bevelStyle } from "../../styles";
+import {
+  BOARD_BORDER_WIDTH,
+  BOARD_BORDER_COLOR,
+  BOARD_PADDING,
+  BOARD_COLOR,
+  WHITE_COLOR,
+  $bevelStyle
+} from "../../styles";
 import { PLAYER_TYPE } from "../../models";
 
 /***********************************************************/
@@ -63,7 +70,14 @@ export default class PlayerBoard extends React.Component<Props, State> {
     return (
       <div
         className={$baseStyle}
-        style={this.props.current ? { border: `calc(${BOARD_BORDER_WIDTH} * 2) solid white` } : {}}
+        style={
+          this.props.current
+            ? {
+                border: `${BOARD_BORDER_WIDTH} solid ${WHITE_COLOR}`,
+                boxShadow: `inset 0 0 0 ${BOARD_BORDER_WIDTH} ${WHITE_COLOR}`
+              }
+            : {}
+        }
       >
         <div className={$rowContainerStyle} style={{ width: "max-content" }}>
           <Staging selectionEnabled={this.props.current} staging={staging} />

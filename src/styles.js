@@ -56,7 +56,8 @@ function addResetStyles() {
     padding: GLOBAL_PADDING,
     fontFamily: "Helvetica",
     fontSize: BOARD_TILE_SIZE,
-    color: BLACK_COLOR
+    color: BLACK_COLOR,
+    overflow: "hidden"
   });
 
   css.global("*", {

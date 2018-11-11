@@ -5,7 +5,7 @@ import type { Game, Tile, Factory } from "./models";
 import type { UI } from "./ui_models";
 // action handlers
 import { drawTileFromBagIntoFactories, moveToPlacementPhase, PHASES, FLOOR_SLOTS, areAllFactoriesFull } from "./models";
-// import { createResetUI } from "./ui_models";
+import { createResetUI } from "./ui_models";
 
 /***********************************************************/
 
@@ -66,12 +66,21 @@ export function reduce(state: State, action: Action): State {
           .filter(tile => tile.color == selectedTile.color || tile.kind == "first")
           .sort((a, b) => (a.kind == "first" ? -1 : b.kind == "first" ? 1 : 0));
         const remainingTiles = selectedFactory.filter(tile => tile.color != selectedTile.color && tile.kind != "first");
-        const roomLeftInFloor = FLOOR_SLOTS.length - relevantTiles.length;
+        const roomLeftInFloor = FLOOR_SLOTS.length - currentPlayer.board.floor.length;
         const floor = currentPlayer.board.floor.concat(relevantTiles.slice(0, roomLeftInFloor));
-        const box = game.bag.concat(relevantTiles.slice(roomLeftInFloor, remainingTiles.length - roomLeftInFloor));
+        const factories = game.factories.map(factory => (factory == selectedFactory ? [] : factory));
+        const leftovers = game.leftovers
+          .concat(remainingTiles)
+          .sort((a: Tile, b: Tile) => (a.color != undefined ? a.color : -1) - (b.color != undefined ? b.color : 0));
+        const box = game.box.concat(relevantTiles.slice(roomLeftInFloor, remainingTiles.length - roomLeftInFloor));
         const newPlayer = { ...currentPlayer, board: { ...currentPlayer.board, floor } };
         const players = game.players.map(player => (player == currentPlayer ? newPlayer : player));
-        return { ...state, game: { ...state.game, players, box } };
+        const newCurrentPlayer = (game.currentPlayer + 1) % game.players.length;
+        return {
+          ...state,
+          game: { ...state.game, players, factories, box, currentPlayer: newCurrentPlayer, leftovers },
+          ui: createResetUI()
+        };
       } else {
         return state;
       }
@@ -89,16 +98,35 @@ export function reduce(state: State, action: Action): State {
 /***********************************************************/
 
 export function validate(state: State, action: Action): ?Error {
-  const { game } = state;
+  const { game, ui } = state;
   switch (action.type) {
-    case ACTIONS.moveToPlacementPhase:
+    case ACTIONS.selectTileInFactory: {
+      return game.phase == PHASES.placement ? undefined : new Error("can't interact while refilling tiles");
+    }
+
+    case ACTIONS.moveToPlacementPhase: {
       return game.phase == PHASES.refill ? undefined : new Error("not in right phase");
+    }
 
-    case ACTIONS.drawTileFromBagIntoFactories:
-      return !areAllFactoriesFull(game) && game.phase == PHASES.refill ? undefined : new Error("factories are full");
+    case ACTIONS.drawTileFromBagIntoFactories: {
+      if (areAllFactoriesFull(game)) {
+        return new Error("factories are full");
+      } else if (game.phase != PHASES.refill) {
+        return new Error("can't refill factory in this phase");
+      } else {
+        return undefined;
+      }
+    }
 
-    case ACTIONS.putTilesFromFactoryIntoStagingRow:
-      return undefined;
+    case ACTIONS.putTilesFromFactoryIntoStagingRow: {
+      if (ui.selectedFactory == undefined || ui.selectedTile == undefined) {
+        return new Error("no selected tile in factory");
+      } else if (game.phase != PHASES.placement) {
+        return new Error("can't put tile in board in this phase");
+      } else {
+        return undefined;
+      }
+    }
 
     default:
       return undefined;

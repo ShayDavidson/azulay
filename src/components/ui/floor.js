@@ -10,6 +10,8 @@ import { GameContext } from "../game_provider";
 // helpers
 import { FLOOR_SLOTS } from "../../models";
 import { PLACEMENT_GAP } from "../../styles";
+import { getPutTilesFromFactoryIntoFloorAction } from "../../actions";
+import { play, CLICK } from "../../sfx";
 
 /***********************************************************/
 
@@ -37,12 +39,22 @@ export default class Floor extends React.Component<Props, State> {
   render() {
     return (
       <GameContext.Consumer>
-        {({ uiState }) => {
+        {({ uiState, dispatch }) => {
           let canPlaceInFloor = this.props.selectionEnabled && uiState.selectedTile;
           return (
-            <div className={$baseStyle}>
+            <div
+              className={$baseStyle}
+              onClick={() => {
+                dispatch(getPutTilesFromFactoryIntoFloorAction()).then(() => play(CLICK));
+              }}
+            >
               {FLOOR_SLOTS.map((score, index) => (
-                <Placement label={score.toString()} highlighted={canPlaceInFloor} key={index} />
+                <Placement
+                  tile={this.props.floor[index]}
+                  label={score.toString()}
+                  highlighted={canPlaceInFloor}
+                  key={index}
+                />
               ))}
             </div>
           );

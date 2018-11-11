@@ -76,7 +76,7 @@ export default class Placement extends React.Component<Props, State> {
 
     return (
       <div className={$dynamicBaseStyle} style={$dynamicStyle}>
-        {this.props.tile != undefined ? <Tile tile={this.props.tile} /> : null}
+        {this.props.tile != undefined ? <Tile surpressLabel={true} tile={this.props.tile} /> : null}
         {this.props.label != undefined ? (
           <div className={$labelStyle} style={$dynamicLabelStyle}>
             {this.props.label}
