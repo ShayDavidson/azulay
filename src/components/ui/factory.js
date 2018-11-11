@@ -7,7 +7,7 @@ import type { TilesArray } from "../../models";
 // components
 import Tile from "./tile";
 // helpers
-import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, WHITE_COLOR } from "../../styles";
+import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, WHITE_COLOR, BOARD_COLOR } from "../../styles";
 
 /***********************************************************/
 
@@ -57,7 +57,7 @@ const $standardStyle = css($baseStyle, {
 });
 
 const $leftoversStyle = css($baseStyle, {
-  background: "hsl(10, 10%, 88%)",
+  background: BOARD_COLOR,
   borderRadius: "1em",
   border: `${BOARD_BORDER_WIDTH} solid ${BOARD_BORDER_COLOR}`
 });

@@ -5,6 +5,7 @@ import { css } from "glamor";
 /***********************************************************/
 
 export const WHITE_COLOR = "hsl(30, 20%, 95%)";
+export const BOARD_COLOR = "rgb(211, 182, 152)";
 export const BLACK_COLOR = "#201718";
 export const BLUE_COLOR = "#2d7dbc";
 export const TILE_COLORS = [BLUE_COLOR, "#f8c548", "#ee3231", BLACK_COLOR, "#71cbd4"];
@@ -31,8 +32,8 @@ export const $bevelStyle = css({
 /***********************************************************/
 
 export const placeAnimation = css.keyframes({
-  "0%": { transform: "scale(2.0)" },
-  "90%": { transform: "scale(0.9)" },
+  "0%": { transform: "scale(2.0) rotate(10deg)" },
+  "90%": { transform: "scale(0.95)" },
   "100%": { transform: "scale(1)" }
 });
 

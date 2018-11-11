@@ -22,7 +22,8 @@ type Props = {
   tile: TileType,
   highlighted?: boolean,
   animated?: boolean,
-  onClick?: TileType => void
+  onClick?: TileType => void,
+  surpressLabel?: boolean
 };
 
 type State = {
@@ -56,7 +57,7 @@ const $labelStyle = css({
 });
 
 const $animatedStyle = css({
-  animation: `${placeAnimation} 0.1s ease-out both`
+  animation: `${placeAnimation} 0.15s ease-out both`
 });
 
 const $highlightedStyle = css({
@@ -84,7 +85,7 @@ export default class Tile extends React.Component<Props, State> {
         style={$dynamicStyle}
         onClick={() => this.props.onClick && this.props.onClick(this.props.tile)}
       >
-        {isColoredTile ? null : <div className={$labelStyle}>1</div>}
+        {isColoredTile || this.props.surpressLabel ? null : <div className={$labelStyle}>1</div>}
       </div>
     );
   }

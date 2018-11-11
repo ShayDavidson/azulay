@@ -10,7 +10,7 @@ import Staging from "./staging";
 import Floor from "./floor";
 import Separator from "./separator";
 // helpers
-import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, BOARD_PADDING, $bevelStyle } from "../../styles";
+import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, BOARD_PADDING, BOARD_COLOR, $bevelStyle } from "../../styles";
 import { PLAYER_TYPE } from "../../models";
 
 /***********************************************************/
@@ -30,7 +30,7 @@ const $baseStyle = css({
   border: `${BOARD_BORDER_WIDTH} solid ${BOARD_BORDER_COLOR}`,
   padding: "0.15em",
   borderRadius: "0.1em",
-  backgroundColor: "rgb(211, 182, 152)",
+  backgroundColor: BOARD_COLOR,
   boxShadow: "2px 2px 0 0 rgba(0, 0, 0, 0.1)",
   width: "max-content"
 });
