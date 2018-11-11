@@ -72,7 +72,7 @@ export default class PlayerBoard extends React.Component<Props, State> {
         </div>
         <Separator type="horizontal" />
         <div className={$rowContainerStyle} style={{ width: "100%" }}>
-          <Floor floor={floor} />
+          <Floor selectionEnabled={this.props.current} floor={floor} />
           <div className={$scoreZoneStyle}>
             <span className={$spanStyle}>
               {`${name} - ${type == PLAYER_TYPE.human ? "Human" : "CPU"}`}

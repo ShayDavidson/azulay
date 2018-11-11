@@ -43,7 +43,7 @@ const $labelStyle = css({
 });
 
 const $highlightedStyle = css({
-  boxShadow: `0px 0px 0px 3px ${BLACK_COLOR}`
+  boxShadow: `inset 0px 0px 0px 3px ${BLACK_COLOR}`
 });
 
 /***********************************************************/
