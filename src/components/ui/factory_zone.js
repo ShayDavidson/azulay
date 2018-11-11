@@ -47,15 +47,16 @@ const $leftoversStyle = css({
 
 export default class FactoryZone extends React.Component<Props, State> {
   render() {
+    const selectionEnabled = true;
     return (
       <div className={$baseStyle}>
         <div className={$factoriesStyle}>
           {this.props.factories.map((factoryTiles, index) => (
-            <Factory key={index} tiles={factoryTiles} type="normal" />
+            <Factory key={index} tiles={factoryTiles} type="normal" selectionEnabled={selectionEnabled} />
           ))}
         </div>
         <div className={$leftoversStyle}>
-          <Factory tiles={this.props.leftovers} type="leftovers" />
+          <Factory tiles={this.props.leftovers} type="leftovers" selectionEnabled={selectionEnabled} />
         </div>
       </div>
     );

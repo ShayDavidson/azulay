@@ -4,9 +4,11 @@ import Promise from "bluebird";
 import React from "react";
 import type { Node } from "react";
 // types
-import type { Game, Tile, Factory as FactoryType } from "../models";
+import type { Game } from "../models";
+import type { UI } from "../ui_models";
 // helpers
 import { createGame, drawTileFromBagIntoFactories, moveToPlacementPhase, areAllFactoriesFull, PHASES } from "../models";
+import { createResetUI } from "../ui_models";
 import { playRandom, TILES } from "../sfx";
 
 /***********************************************************/
@@ -14,8 +16,6 @@ import { playRandom, TILES } from "../sfx";
 export const GameContext: Object = React.createContext();
 
 /***********************************************************/
-
-type UI = {| selectedFactory: ?FactoryType, selectedTile: ?Tile |};
 
 type Props = {
   players: number,
@@ -37,10 +37,7 @@ export default class GameProvider extends React.Component<Props, State> {
     const { players, seed } = nextProps;
     return {
       game: createGame(players, seed),
-      ui: {
-        selectedFactory: undefined,
-        selectedTile: undefined
-      }
+      ui: createResetUI()
     };
   }
 
@@ -66,7 +63,7 @@ export default class GameProvider extends React.Component<Props, State> {
     return new Promise(resolve => {
       this.setState(
         state => {
-          return { game: action(state.game) };
+          return { game: action(state.game), ui: createResetUI() };
         },
         () => resolve()
       );

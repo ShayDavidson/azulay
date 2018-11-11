@@ -6,6 +6,7 @@ import { css } from "glamor";
 import type { TilesArray } from "../../models";
 // components
 import Tile from "./tile";
+// import { GameContext } from "../game_provider";
 // helpers
 import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, WHITE_COLOR, BOARD_COLOR } from "../../styles";
 
