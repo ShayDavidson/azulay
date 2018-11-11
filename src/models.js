@@ -284,6 +284,33 @@ export function placementsForStagingRow(index: number): number {
   return index + 1;
 }
 
+export function canPlaceTilesInStagingRow(
+  player: Player,
+  stagingRowIndex: number,
+  tileColor: ColorType,
+  tileCount: number
+): boolean {
+  let stagingRow = player.board.staging[stagingRowIndex];
+  if (stagingRow.color != tileColor) {
+    return false;
+  } else if (placementsForStagingRow(stagingRowIndex) - stagingRow.count < tileCount) {
+    return false;
+  } else if (doesWallRowHasTileColor(player.board.wall, stagingRowIndex, tileColor)) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+export function doesWallRowHasTileColor(wall: Wall, rowIndex: number, color: ColorType): boolean {
+  let row = wall[rowIndex];
+  return (
+    row.find((hasTile, colIndex) => {
+      return hasTile && getWallPlacementColor(rowIndex, colIndex) == color;
+    }) != undefined
+  );
+}
+
 export function getWallPlacementCol(row: number, color: ColorType): number {
   return (row + color) % COLORS;
 }
