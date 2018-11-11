@@ -3,18 +3,19 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { TilesArray } from "../../models";
+import type { Factory as FactoryType } from "../../models";
 // components
 import Tile from "./tile";
-// import { GameContext } from "../game_provider";
+import { GameContext } from "../game_provider";
 // helpers
 import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, WHITE_COLOR, BOARD_COLOR } from "../../styles";
+import { getSelectTileInFactoryAction } from "../../actions";
 
 /***********************************************************/
 
 type Props = {
   type: "normal" | "leftovers",
-  tiles: TilesArray,
+  factory: FactoryType,
   hasFirstTile?: boolean,
   selectionEnabled?: boolean
 };
@@ -67,16 +68,28 @@ const $leftoversStyle = css($baseStyle, {
 
 export default class Factory extends React.Component<Props, State> {
   render() {
+    let tiles = this.props.factory;
+
     return (
-      <div className={this.props.type == "normal" ? $standardStyle : $leftoversStyle}>
-        <div className={this.props.type == "normal" ? $containerStyle : $leftoversContainerStyle}>
-          {this.props.tiles.map((tile, index) => (
-            <div key={index}>
-              <Tile tile={tile} animated={true} />
+      <GameContext.Consumer>
+        {({ dispatch }) => {
+          return (
+            <div className={this.props.type == "normal" ? $standardStyle : $leftoversStyle}>
+              <div className={this.props.type == "normal" ? $containerStyle : $leftoversContainerStyle}>
+                {tiles.map((tile, index) => (
+                  <div key={index}>
+                    <Tile
+                      tile={tile}
+                      animated={true}
+                      onClick={tile => dispatch(getSelectTileInFactoryAction(this.props.factory, tile))}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
+          );
+        }}
+      </GameContext.Consumer>
     );
   }
 }

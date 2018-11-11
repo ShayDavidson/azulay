@@ -3,7 +3,7 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { Factory as FactoryType, TilesArray } from "../../models";
+import type { Factory as FactoryType } from "../../models";
 // components
 import Factory from "./factory";
 // helpers
@@ -13,7 +13,7 @@ import { GLOBAL_PADDING } from "../../styles";
 
 type Props = {
   factories: Array<FactoryType>,
-  leftovers: TilesArray
+  leftovers: FactoryType
 };
 
 type State = {
@@ -51,12 +51,12 @@ export default class FactoryZone extends React.Component<Props, State> {
     return (
       <div className={$baseStyle}>
         <div className={$factoriesStyle}>
-          {this.props.factories.map((factoryTiles, index) => (
-            <Factory key={index} tiles={factoryTiles} type="normal" selectionEnabled={selectionEnabled} />
+          {this.props.factories.map((factory, index) => (
+            <Factory key={index} factory={factory} type="normal" selectionEnabled={selectionEnabled} />
           ))}
         </div>
         <div className={$leftoversStyle}>
-          <Factory tiles={this.props.leftovers} type="leftovers" selectionEnabled={selectionEnabled} />
+          <Factory factory={this.props.leftovers} type="leftovers" selectionEnabled={selectionEnabled} />
         </div>
       </div>
     );

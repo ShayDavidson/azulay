@@ -4,18 +4,20 @@
 import type { Game, Tile, Factory } from "./models";
 import type { UI } from "./ui_models";
 // action handlers
-import { drawTileFromBagIntoFactories, moveToPlacementPhase } from "./models";
+import { drawTileFromBagIntoFactories, moveToPlacementPhase, PHASES, areAllFactoriesFull } from "./models";
 import { createResetUI } from "./ui_models";
 
 /***********************************************************/
 
 export type Action = {
-  type: $Values<typeof ACTIONS>,
+  type: ActionName,
   payload?: {
     factory?: Factory,
     tile?: Tile
   }
 };
+
+export type ActionName = $Values<typeof ACTIONS>;
 
 export type State = {
   game: Game,
@@ -32,7 +34,13 @@ export const ACTIONS = {
 
 /***********************************************************/
 
-export function reducer({ game, ui }: State, action: Action): State {
+export function reducer(state: State, action: Action): State {
+  const { game } = state;
+  if (!validateAction(state, action)) {
+    console.error("Invalid action", state, action);
+    return state;
+  }
+
   switch (action.type) {
     case ACTIONS.moveToPlacementPhase:
       return { game: moveToPlacementPhase(game), ui: createResetUI() };
@@ -47,7 +55,23 @@ export function reducer({ game, ui }: State, action: Action): State {
         }
       };
     default:
-      return { game, ui };
+      return state;
+  }
+}
+
+/***********************************************************/
+
+export function validateAction(state: State, action: Action): boolean {
+  const { game } = state;
+  switch (action.type) {
+    case ACTIONS.moveToPlacementPhase:
+      return game.phase == PHASES.refill;
+    case ACTIONS.drawTileFromBagIntoFactories:
+      return !areAllFactoriesFull(game) && game.phase == PHASES.refill;
+    case ACTIONS.selectTileInFactory:
+      return game.phase == PHASES.placement;
+    default:
+      return true;
   }
 }
 
