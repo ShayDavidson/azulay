@@ -293,7 +293,7 @@ export function canPlaceTilesInStagingRow(
   let stagingRow = player.board.staging[stagingRowIndex];
   if (stagingRow.color != tileColor) {
     return false;
-  } else if (placementsForStagingRow(stagingRowIndex) - stagingRow.count < tileCount) {
+  } else if (placementsForStagingRow(stagingRowIndex) - stagingRow.count + 1 >= tileCount) {
     return false;
   } else if (doesWallRowHasTileColor(player.board.wall, stagingRowIndex, tileColor)) {
     return false;
