@@ -6,14 +6,16 @@ import { css } from "glamor";
 import type { Staging as StagingType } from "../../models";
 // components
 import Placement from "./placement";
+import { GameContext } from "../game_provider";
 // helpers
-import { placementsForStagingRow, COLORS } from "../../models";
+import { placementsForStagingRow, canPlaceTilesInStagingRow, COLORS } from "../../models";
 import { PLACEMENT_GAP } from "../../styles";
 
 /***********************************************************/
 
 type Props = {
-  staging: StagingType
+  staging: StagingType,
+  selectionEnabled?: boolean
 };
 
 type State = {
@@ -41,15 +43,27 @@ const $stagingRowStyle = css({
 export default class Staging extends React.Component<Props, State> {
   render() {
     return (
-      <div className={$containerStyle}>
-        {this.props.staging.map((stagingRow, index) => {
+      <GameContext.Consumer>
+        {({ gameState, uiState }) => {
           return (
-            <div className={$stagingRowStyle} key={index}>
-              {[...Array(placementsForStagingRow(index))].map((_, col) => <Placement key={col} />)}
+            <div className={$containerStyle}>
+              {this.props.staging.map((stagingRow, index) => {
+                let canPlaceInStagingRow =
+                  this.props.selectionEnabled &&
+                  uiState.selectedTile &&
+                  canPlaceTilesInStagingRow(gameState.players[gameState.currentPlayer], index, uiState.selectedTile, 1);
+                return (
+                  <div className={$stagingRowStyle} key={index}>
+                    {[...Array(placementsForStagingRow(index))].map((_, col) => (
+                      <Placement key={col} highlighted={canPlaceInStagingRow} />
+                    ))}
+                  </div>
+                );
+              })}
             </div>
           );
-        })}
-      </div>
+        }}
+      </GameContext.Consumer>
     );
   }
 }

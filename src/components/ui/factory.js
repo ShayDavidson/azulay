@@ -77,20 +77,22 @@ export default class Factory extends React.Component<Props, State> {
           return (
             <div className={this.props.type == "normal" ? $standardStyle : $leftoversStyle}>
               <div className={this.props.type == "normal" ? $containerStyle : $leftoversContainerStyle}>
-                {tiles.map((tile, index) => (
-                  <div key={index}>
-                    <Tile
-                      tile={tile}
-                      animated={true}
-                      highlighted={
-                        uiState.selectedFactory == this.props.factory && uiState.selectedTile.color == tile.color
-                      }
-                      onClick={tile =>
-                        dispatch(getSelectTileInFactoryAction(this.props.factory, tile)).then(() => play(CLICK))
-                      }
-                    />
-                  </div>
-                ))}
+                {tiles.map((tile, index) => {
+                  const highlighted =
+                    uiState.selectedFactory == this.props.factory && uiState.selectedTile.color == tile.color;
+                  return (
+                    <div key={index}>
+                      <Tile
+                        tile={tile}
+                        animated={true}
+                        highlighted={highlighted}
+                        onClick={tile =>
+                          dispatch(getSelectTileInFactoryAction(this.props.factory, tile)).then(() => play(CLICK))
+                        }
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </div>
           );

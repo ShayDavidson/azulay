@@ -130,7 +130,9 @@ export function createPlayer(name: string, type: PlayerType): Player {
 export function createBoard(): Board {
   return {
     wall: createWall(),
-    staging: [...new Array(COLORS)],
+    staging: [...new Array(COLORS)].map(() => {
+      return { color: undefined, count: 0 };
+    }),
     floor: [...new Array(FLOOR_SLOTS.length)]
   };
 }
@@ -287,15 +289,17 @@ export function placementsForStagingRow(index: number): number {
 export function canPlaceTilesInStagingRow(
   player: Player,
   stagingRowIndex: number,
-  tileColor: ColorType,
+  tile: Tile,
   tileCount: number
 ): boolean {
   let stagingRow = player.board.staging[stagingRowIndex];
-  if (stagingRow.color != tileColor) {
+  if (tile.kind == "first") {
     return false;
-  } else if (placementsForStagingRow(stagingRowIndex) - stagingRow.count + 1 >= tileCount) {
+  } else if (stagingRow.color != undefined && stagingRow.color != tile.color) {
     return false;
-  } else if (doesWallRowHasTileColor(player.board.wall, stagingRowIndex, tileColor)) {
+  } else if (placementsForStagingRow(stagingRowIndex) - stagingRow.count + 1 < tileCount) {
+    return false;
+  } else if (tile.color != undefined && doesWallRowHasTileColor(player.board.wall, stagingRowIndex, tile.color)) {
     return false;
   } else {
     return true;

@@ -5,7 +5,7 @@ import type { Game, Tile, Factory } from "./models";
 import type { UI } from "./ui_models";
 // action handlers
 import { drawTileFromBagIntoFactories, moveToPlacementPhase, PHASES, areAllFactoriesFull } from "./models";
-import { createResetUI } from "./ui_models";
+// import { createResetUI } from "./ui_models";
 
 /***********************************************************/
 
@@ -39,17 +39,24 @@ export function reduce(state: State, action: Action): State {
 
   switch (action.type) {
     case ACTIONS.moveToPlacementPhase:
-      return { game: moveToPlacementPhase(game), ui: createResetUI() };
+      return { ...state, game: moveToPlacementPhase(game) };
     case ACTIONS.drawTileFromBagIntoFactories:
-      return { game: drawTileFromBagIntoFactories(game), ui };
-    case ACTIONS.selectTileInFactory:
+      return { ...state, game: drawTileFromBagIntoFactories(game) };
+    case ACTIONS.selectTileInFactory: {
+      const deselect =
+        action.payload &&
+        action.payload.factory &&
+        action.payload.factory == ui.selectedFactory &&
+        action.payload.tile &&
+        action.payload.tile == ui.selectedTile;
       return {
-        game,
+        ...state,
         ui: {
-          selectedFactory: action.payload && action.payload.factory,
-          selectedTile: action.payload && action.payload.tile
+          selectedFactory: deselect ? undefined : action.payload && action.payload.factory,
+          selectedTile: deselect ? undefined : action.payload && action.payload.tile
         }
       };
+    }
     default:
       return state;
   }

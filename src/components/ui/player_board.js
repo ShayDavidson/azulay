@@ -66,7 +66,7 @@ export default class PlayerBoard extends React.Component<Props, State> {
         style={this.props.current ? { border: `calc(${BOARD_BORDER_WIDTH} * 2) solid white` } : {}}
       >
         <div className={$rowContainerStyle} style={{ width: "max-content" }}>
-          <Staging staging={staging} />
+          <Staging selectionEnabled={this.props.current} staging={staging} />
           <Separator type="vertical" />
           <Wall wall={wall} />
         </div>
