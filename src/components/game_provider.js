@@ -4,7 +4,7 @@ import Promise from "bluebird";
 import React from "react";
 import type { Node } from "react";
 // types
-import type { Game } from "../models";
+import type { Game, Tile, Factory as FactoryType } from "../models";
 // helpers
 import { createGame, drawTileFromBagIntoFactories, moveToPlacementPhase, areAllFactoriesFull, PHASES } from "../models";
 import { playRandom, TILES } from "../sfx";
@@ -21,7 +21,10 @@ type Props = {
   children?: Node
 };
 
-type State = Game;
+type State = {
+  game: Game,
+  ui: {| selectedFactory: ?FactoryType, selectedTile: ?Tile |}
+};
 
 /***********************************************************/
 
@@ -30,7 +33,13 @@ export default class GameProvider extends React.Component<Props, State> {
 
   static getDerivedStateFromProps(nextProps: Props) {
     const { players, seed } = nextProps;
-    return createGame(players, seed);
+    return {
+      game: createGame(players, seed),
+      ui: {
+        selectedFactory: undefined,
+        selectedTile: undefined
+      }
+    };
   }
 
   componentDidMount() {
@@ -38,8 +47,9 @@ export default class GameProvider extends React.Component<Props, State> {
   }
 
   progressGame() {
-    if (this.state.phase == PHASES.refill) {
-      if (areAllFactoriesFull(this.state)) {
+    let { game } = this.state;
+    if (game.phase == PHASES.refill) {
+      if (areAllFactoriesFull(game)) {
         this.dispatch(moveToPlacementPhase).then(this.progressGame.bind(this));
       } else {
         this.dispatch(drawTileFromBagIntoFactories)
@@ -52,7 +62,12 @@ export default class GameProvider extends React.Component<Props, State> {
 
   dispatch(action: Game => Game) {
     return new Promise(resolve => {
-      this.setState(action, () => resolve());
+      this.setState(
+        state => {
+          return { game: action(state.game) };
+        },
+        () => resolve()
+      );
     });
   }
 
@@ -60,7 +75,8 @@ export default class GameProvider extends React.Component<Props, State> {
     return (
       <GameContext.Provider
         value={{
-          gameState: this.state,
+          gameState: this.state.game,
+          uiState: this.state.ui,
           dispatch: this.dispatch.bind(this)
         }}
       >

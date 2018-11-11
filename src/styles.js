@@ -32,7 +32,8 @@ export const $bevelStyle = css({
 
 export const placeAnimation = css.keyframes({
   "0%": { transform: "scale(2.0)" },
-  "100": { transform: "scale(1)" }
+  "90%": { transform: "scale(0.9)" },
+  "100%": { transform: "scale(1)" }
 });
 
 /***********************************************************/

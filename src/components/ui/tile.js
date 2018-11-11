@@ -5,7 +5,7 @@ import { css } from "glamor";
 // types
 import type { Tile as TileType } from "../../models";
 // helpers
-import { TILE_COLORS, WHITE_COLOR, BLUE_COLOR, placeAnimation } from "../../styles";
+import { TILE_COLORS, WHITE_COLOR, BLACK_COLOR, BLUE_COLOR, placeAnimation } from "../../styles";
 
 /***********************************************************/
 
@@ -20,6 +20,8 @@ const DARK_BORDER_ALPHA = 0.35;
 
 type Props = {
   tile: TileType,
+  highlighted?: boolean,
+  animated?: boolean,
   onClick?: TileType => void
 };
 
@@ -30,7 +32,6 @@ type State = {
 /***********************************************************/
 
 const $baseStyle = css({
-  animation: `${placeAnimation} 0.1s ease-out both`,
   width: "100%",
   height: "100%",
   boxShadow: `${SHADOW_DISTANCE} ${SHADOW_DISTANCE} rgba(0, 0, 0, ${SHADOW_ALPHA})`,
@@ -54,6 +55,14 @@ const $labelStyle = css({
   color: BLUE_COLOR
 });
 
+const $animatedStyle = css({
+  animation: `${placeAnimation} 0.1s ease-out both`
+});
+
+const $highlightedStyle = css({
+  boxShadow: `0px 0px 0px 3px ${BLACK_COLOR}`
+});
+
 /***********************************************************/
 
 export default class Tile extends React.Component<Props, State> {
@@ -65,9 +74,13 @@ export default class Tile extends React.Component<Props, State> {
       backgroundColor: isColoredTile && color != undefined ? TILE_COLORS[color] : WHITE_COLOR
     };
 
+    let $staticStyle = $baseStyle;
+    if (this.props.animated) $staticStyle = css($staticStyle, $animatedStyle);
+    if (this.props.highlighted) $staticStyle = css($staticStyle, $highlightedStyle);
+
     return (
       <div
-        className={$baseStyle}
+        className={$staticStyle}
         style={$dynamicStyle}
         onClick={() => this.props.onClick && this.props.onClick(this.props.tile)}
       >

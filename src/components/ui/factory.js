@@ -71,7 +71,7 @@ export default class Factory extends React.Component<Props, State> {
         <div className={this.props.type == "normal" ? $containerStyle : $leftoversContainerStyle}>
           {this.props.tiles.map((tile, index) => (
             <div key={index}>
-              <Tile tile={tile} />
+              <Tile tile={tile} animated={true} />
             </div>
           ))}
         </div>
