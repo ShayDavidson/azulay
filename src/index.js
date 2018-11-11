@@ -50,10 +50,14 @@ class Azul extends React.Component<Props, State> {
   }
 
   render() {
+    const params = new URL(window.location).searchParams;
+    const seed = params.get("seed");
+    const players = params.get("players");
+
     return (
       <div>
         <div className={$titleStyle}>Azulay - The Online Azul AI</div>
-        <GameProvider players={4} seed={1000} log={true}>
+        <GameProvider players={players ? parseInt(players) : 4} seed={seed ? parseInt(seed) : 1000} log={true}>
           <GameContext.Consumer>
             {({ gameState }) => {
               if (gameState == undefined) return null;

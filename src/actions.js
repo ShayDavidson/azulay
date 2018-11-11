@@ -1,7 +1,7 @@
 // @flow
 
 // types
-import type { Game, Tile, Factory } from "./models";
+import type { Game, Tile, Factory, Floor } from "./models";
 import type { UI } from "./ui_models";
 // action handlers
 import { drawTileFromBagIntoFactories, moveToPlacementPhase, PHASES, FLOOR_SLOTS, areAllFactoriesFull } from "./models";
@@ -13,7 +13,8 @@ export type Action = {
   type: ActionName,
   payload?: {
     factory?: Factory,
-    tile?: Tile
+    tile?: Tile,
+    floor?: Floor
   }
 };
 
@@ -65,6 +66,7 @@ export function reduce(state: State, action: Action): State {
         const relevantTiles = selectedFactory
           .filter(tile => tile.color == selectedTile.color || tile.kind == "first")
           .sort((a, b) => (a.kind == "first" ? -1 : b.kind == "first" ? 1 : 0));
+        const tookFirst = relevantTiles.find(tile => tile.kind == "first") != undefined;
         const remainingTiles = selectedFactory.filter(tile => tile.color != selectedTile.color && tile.kind != "first");
         const roomLeftInFloor = FLOOR_SLOTS.length - currentPlayer.board.floor.length;
         const floor = currentPlayer.board.floor.concat(relevantTiles.slice(0, roomLeftInFloor));
@@ -77,13 +79,21 @@ export function reduce(state: State, action: Action): State {
                 .sort(
                   (a: Tile, b: Tile) => (a.color != undefined ? a.color : -1) - (b.color != undefined ? b.color : 0)
                 );
-        const box = game.box.concat(relevantTiles.slice(roomLeftInFloor, remainingTiles.length - roomLeftInFloor));
+        const box = game.box.concat(relevantTiles.slice(roomLeftInFloor, relevantTiles.length));
         const newPlayer = { ...currentPlayer, board: { ...currentPlayer.board, floor } };
         const players = game.players.map(player => (player == currentPlayer ? newPlayer : player));
         const newCurrentPlayer = (game.currentPlayer + 1) % game.players.length;
         return {
           ...state,
-          game: { ...state.game, players, factories, box, currentPlayer: newCurrentPlayer, leftovers },
+          game: {
+            ...state.game,
+            players,
+            factories,
+            box,
+            currentPlayer: newCurrentPlayer,
+            nextPlayer: tookFirst ? game.currentPlayer : game.nextPlayer,
+            leftovers
+          },
           ui: createResetUI()
         };
       } else {
@@ -123,11 +133,13 @@ export function validate(state: State, action: Action): ?Error {
       }
     }
 
-    case ACTIONS.putTilesFromFactoryIntoStagingRow: {
+    case ACTIONS.putTilesFromFactoryIntoFloor: {
       if (ui.selectedFactory == undefined || ui.selectedTile == undefined) {
         return new Error("no selected tile in factory");
       } else if (game.phase != PHASES.placement) {
         return new Error("can't put tile in board in this phase");
+      } else if (action.payload && action.payload.floor != game.players[game.currentPlayer].board.floor) {
+        return new Error("wrong player's floor");
       } else {
         return undefined;
       }
@@ -174,9 +186,10 @@ export function getDrawTileFromBagIntoFactoriesAction(): Action {
   };
 }
 
-export function getPutTilesFromFactoryIntoFloorAction(): Action {
+export function getPutTilesFromFactoryIntoFloorAction(floor: Floor): Action {
   return {
-    type: ACTIONS.putTilesFromFactoryIntoFloor
+    type: ACTIONS.putTilesFromFactoryIntoFloor,
+    payload: { floor }
   };
 }
 

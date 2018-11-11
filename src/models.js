@@ -87,6 +87,7 @@ export type Game = {|
   leftovers: Factory,
   turn: number,
   currentPlayer: number,
+  nextPlayer: number,
   phase: Phase,
   randomProps: RandomProps
 |};
@@ -103,6 +104,7 @@ export function createGame(players: number, seed: number): Game {
     leftovers: [createTile("first")],
     turn: 0,
     currentPlayer: rng.int(0, players - 1),
+    nextPlayer: 0,
     phase: PHASES.refill,
     randomProps: { seed, counter: rng.getCounter() }
   };

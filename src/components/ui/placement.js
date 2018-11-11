@@ -8,7 +8,7 @@ import type { ColorType, Tile as TileType } from "../../models";
 // components
 import Tile from "./tile";
 // helpers
-import { TILE_COLORS, LABEL_COLORS, BLACK_COLOR, $bevelStyle } from "../../styles";
+import { TILE_COLORS, LABEL_COLORS, BLACK_COLOR, HIGHLIGHT_WIDTH, $bevelStyle } from "../../styles";
 
 /***********************************************************/
 
@@ -43,7 +43,7 @@ const $labelStyle = css({
 });
 
 const $highlightedStyle = css({
-  boxShadow: `inset 0px 0px 0px 3px ${BLACK_COLOR}`
+  border: `calc(2 * ${HIGHLIGHT_WIDTH}) solid ${BLACK_COLOR}`
 });
 
 /***********************************************************/
@@ -76,7 +76,7 @@ export default class Placement extends React.Component<Props, State> {
 
     return (
       <div className={$dynamicBaseStyle} style={$dynamicStyle}>
-        {this.props.tile != undefined ? <Tile surpressLabel={true} tile={this.props.tile} /> : null}
+        {this.props.tile != undefined ? <Tile animated={true} surpressLabel={true} tile={this.props.tile} /> : null}
         {this.props.label != undefined ? (
           <div className={$labelStyle} style={$dynamicLabelStyle}>
             {this.props.label}

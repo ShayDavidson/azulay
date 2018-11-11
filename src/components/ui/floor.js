@@ -45,7 +45,7 @@ export default class Floor extends React.Component<Props, State> {
             <div
               className={$baseStyle}
               onClick={() => {
-                dispatch(getPutTilesFromFactoryIntoFloorAction()).then(() => play(CLICK));
+                dispatch(getPutTilesFromFactoryIntoFloorAction(this.props.floor)).then(() => play(CLICK));
               }}
             >
               {FLOOR_SLOTS.map((score, index) => (

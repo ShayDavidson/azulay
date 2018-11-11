@@ -21,7 +21,7 @@ export const GLOBAL_PADDING = 10;
 
 const LIGHT_BORDER_ALPHA = 0.45;
 const DARK_BORDER_ALPHA = 0.35;
-const HIGHLIGHT_WIDTH = "0.035em";
+export const HIGHLIGHT_WIDTH = "0.035em";
 export const $bevelStyle = css({
   borderBottom: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
   borderRight: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
