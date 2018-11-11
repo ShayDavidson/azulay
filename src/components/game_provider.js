@@ -5,6 +5,7 @@ import React from "react";
 import type { Node } from "react";
 // types
 import type { Game } from "../models";
+import type { State, Action } from "../actions";
 import type { UI } from "../ui_models";
 // helpers
 import { createGame, drawTileFromBagIntoFactories, moveToPlacementPhase, areAllFactoriesFull, PHASES } from "../models";
@@ -21,11 +22,6 @@ type Props = {
   players: number,
   seed: number,
   children?: Node
-};
-
-type State = {
-  game: Game,
-  ui: UI
 };
 
 /***********************************************************/
@@ -80,6 +76,8 @@ export default class GameProvider extends React.Component<Props, State> {
       );
     });
   }
+
+  dispatch(action: Action) {}
 
   render() {
     return (
