@@ -43,7 +43,6 @@ export default class GameProvider extends React.Component<Props, State> {
 
   progressGame() {
     let { game } = this.state;
-    debugger;
     if (game.phase == PHASES.refill) {
       if (areAllFactoriesFull(game)) {
         this.dispatch(getMoveToPlacementPhaseAction()).then(this.progressGame.bind(this));
@@ -63,6 +62,7 @@ export default class GameProvider extends React.Component<Props, State> {
           const newState = reducer(prevState, action);
           if (this.props.log) {
             console.log({
+              type: action.type,
               action,
               prevState,
               newState
