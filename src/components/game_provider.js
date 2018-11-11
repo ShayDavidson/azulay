@@ -4,12 +4,11 @@ import Promise from "bluebird";
 import React from "react";
 import type { Node } from "react";
 // types
-import type { Game } from "../models";
 import type { State, Action } from "../actions";
-import type { UI } from "../ui_models";
 // helpers
-import { createGame, drawTileFromBagIntoFactories, moveToPlacementPhase, areAllFactoriesFull, PHASES } from "../models";
+import { createGame, areAllFactoriesFull, PHASES } from "../models";
 import { createResetUI } from "../ui_models";
+import { reducer, getDrawTileFromBagIntoFactoriesAction, getMoveToPlacementPhaseAction } from "../actions";
 import { playRandom, TILES } from "../sfx";
 
 /***********************************************************/
@@ -21,6 +20,7 @@ export const GameContext: Object = React.createContext();
 type Props = {
   players: number,
   seed: number,
+  log?: boolean,
   children?: Node
 };
 
@@ -43,11 +43,12 @@ export default class GameProvider extends React.Component<Props, State> {
 
   progressGame() {
     let { game } = this.state;
+    debugger;
     if (game.phase == PHASES.refill) {
       if (areAllFactoriesFull(game)) {
-        this.dispatchGame(moveToPlacementPhase).then(this.progressGame.bind(this));
+        this.dispatch(getMoveToPlacementPhaseAction()).then(this.progressGame.bind(this));
       } else {
-        this.dispatchGame(drawTileFromBagIntoFactories)
+        this.dispatch(getDrawTileFromBagIntoFactoriesAction())
           .delay(100)
           .then(() => playRandom(TILES))
           .then(this.progressGame.bind(this));
@@ -55,29 +56,24 @@ export default class GameProvider extends React.Component<Props, State> {
     }
   }
 
-  dispatchGame(action: Game => Game) {
+  dispatch(action: Action) {
     return new Promise(resolve => {
       this.setState(
-        state => {
-          return { game: action(state.game), ui: createResetUI() };
+        prevState => {
+          const newState = reducer(prevState, action);
+          if (this.props.log) {
+            console.log({
+              action,
+              prevState,
+              newState
+            });
+          }
+          return newState;
         },
         () => resolve()
       );
     });
   }
-
-  dispatchUI(action: UI => UI) {
-    return new Promise(resolve => {
-      this.setState(
-        state => {
-          return { ui: action(state.ui) };
-        },
-        () => resolve()
-      );
-    });
-  }
-
-  dispatch(action: Action) {}
 
   render() {
     return (
@@ -85,7 +81,7 @@ export default class GameProvider extends React.Component<Props, State> {
         value={{
           gameState: this.state.game,
           uiState: this.state.ui,
-          dispatch: { game: this.dispatchGame.bind(this), ui: this.dispatchUI.bind(this) }
+          dispatch: this.dispatch.bind(this)
         }}
       >
         {this.props.children}

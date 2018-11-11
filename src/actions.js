@@ -4,7 +4,7 @@
 import type { Game, Tile, Factory } from "./models";
 import type { UI } from "./ui_models";
 // action handlers
-import { drawTileFromBagIntoFactories } from "./models";
+import { drawTileFromBagIntoFactories, moveToPlacementPhase } from "./models";
 import { createResetUI } from "./ui_models";
 
 /***********************************************************/
@@ -25,6 +25,7 @@ export type State = {
 /***********************************************************/
 
 export const ACTIONS = {
+  moveToPlacementPhase: "GAME/moveToPlacementPhase",
   drawTileFromBagIntoFactories: "GAME/drawTileFromBagIntoFactories",
   selectTileInFactory: "UI/selectTileInFactory"
 };
@@ -33,6 +34,8 @@ export const ACTIONS = {
 
 export function reducer({ game, ui }: State, action: Action): State {
   switch (action.type) {
+    case ACTIONS.moveToPlacementPhase:
+      return { game: moveToPlacementPhase(game), ui: createResetUI() };
     case ACTIONS.drawTileFromBagIntoFactories:
       return { game: drawTileFromBagIntoFactories(game), ui: createResetUI() };
     case ACTIONS.selectTileInFactory:
@@ -50,7 +53,7 @@ export function reducer({ game, ui }: State, action: Action): State {
 
 /***********************************************************/
 
-export function selectTileInFactoryAction(factory: Factory, tile: Tile): Action {
+export function getSelectTileInFactoryAction(factory: Factory, tile: Tile): Action {
   return {
     type: ACTIONS.selectTileInFactory,
     payload: {
@@ -60,7 +63,13 @@ export function selectTileInFactoryAction(factory: Factory, tile: Tile): Action 
   };
 }
 
-export function drawTileFromBagIntoFactoriesAction(): Action {
+export function getMoveToPlacementPhaseAction(): Action {
+  return {
+    type: ACTIONS.moveToPlacementPhase
+  };
+}
+
+export function getDrawTileFromBagIntoFactoriesAction(): Action {
   return {
     type: ACTIONS.drawTileFromBagIntoFactories
   };
