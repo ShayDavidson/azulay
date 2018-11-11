@@ -34,18 +34,14 @@ export const ACTIONS = {
 
 /***********************************************************/
 
-export function reducer(state: State, action: Action): State {
-  const { game } = state;
-  if (!validateAction(state, action)) {
-    console.error("Invalid action", state, action);
-    return state;
-  }
+export function reduce(state: State, action: Action): State {
+  const { game, ui } = state;
 
   switch (action.type) {
     case ACTIONS.moveToPlacementPhase:
       return { game: moveToPlacementPhase(game), ui: createResetUI() };
     case ACTIONS.drawTileFromBagIntoFactories:
-      return { game: drawTileFromBagIntoFactories(game), ui: createResetUI() };
+      return { game: drawTileFromBagIntoFactories(game), ui };
     case ACTIONS.selectTileInFactory:
       return {
         game,
@@ -61,17 +57,17 @@ export function reducer(state: State, action: Action): State {
 
 /***********************************************************/
 
-export function validateAction(state: State, action: Action): boolean {
+export function validate(state: State, action: Action): ?Error {
   const { game } = state;
   switch (action.type) {
     case ACTIONS.moveToPlacementPhase:
-      return game.phase == PHASES.refill;
+      return game.phase == PHASES.refill ? null : new Error("not in right phase");
     case ACTIONS.drawTileFromBagIntoFactories:
-      return !areAllFactoriesFull(game) && game.phase == PHASES.refill;
+      return !areAllFactoriesFull(game) && game.phase == PHASES.refill ? null : new Error("factories are full");
     case ACTIONS.selectTileInFactory:
-      return game.phase == PHASES.placement;
+      return null;
     default:
-      return true;
+      return null;
   }
 }
 

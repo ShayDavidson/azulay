@@ -10,6 +10,7 @@ import { GameContext } from "../game_provider";
 // helpers
 import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, WHITE_COLOR, BOARD_COLOR } from "../../styles";
 import { getSelectTileInFactoryAction } from "../../actions";
+import { play, CLICK } from "../../sfx";
 
 /***********************************************************/
 
@@ -72,7 +73,7 @@ export default class Factory extends React.Component<Props, State> {
 
     return (
       <GameContext.Consumer>
-        {({ dispatch }) => {
+        {({ uiState, dispatch }) => {
           return (
             <div className={this.props.type == "normal" ? $standardStyle : $leftoversStyle}>
               <div className={this.props.type == "normal" ? $containerStyle : $leftoversContainerStyle}>
@@ -81,7 +82,12 @@ export default class Factory extends React.Component<Props, State> {
                     <Tile
                       tile={tile}
                       animated={true}
-                      onClick={tile => dispatch(getSelectTileInFactoryAction(this.props.factory, tile))}
+                      highlighted={
+                        uiState.selectedFactory == this.props.factory && uiState.selectedTile.color == tile.color
+                      }
+                      onClick={tile =>
+                        dispatch(getSelectTileInFactoryAction(this.props.factory, tile)).then(() => play(CLICK))
+                      }
                     />
                   </div>
                 ))}

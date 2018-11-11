@@ -8,7 +8,7 @@ import type { State, Action } from "../actions";
 // helpers
 import { createGame, areAllFactoriesFull, PHASES } from "../models";
 import { createResetUI } from "../ui_models";
-import { reducer, getDrawTileFromBagIntoFactoriesAction, getMoveToPlacementPhaseAction } from "../actions";
+import { reduce, validate, getDrawTileFromBagIntoFactoriesAction, getMoveToPlacementPhaseAction } from "../actions";
 import { playRandom, TILES } from "../sfx";
 
 /***********************************************************/
@@ -56,10 +56,17 @@ export default class GameProvider extends React.Component<Props, State> {
   }
 
   dispatch(action: Action) {
-    return new Promise(resolve => {
+    let state = this.state;
+    return new Promise((resolve, reject) => {
+      let validationError = validate(state, action);
+      if (validationError) {
+        reject(validationError);
+        return;
+      }
+
       this.setState(
         prevState => {
-          const newState = reducer(prevState, action);
+          const newState = reduce(prevState, action);
           if (this.props.log) {
             console.log({
               type: action.type,
@@ -72,7 +79,7 @@ export default class GameProvider extends React.Component<Props, State> {
         },
         () => resolve()
       );
-    });
+    }).catch(validationError => console.warn(validationError.message, action, state));
   }
 
   render() {

@@ -6,4 +6,6 @@
 * Multiplier.
 * AI.
 * Responsive design.
-* Organizer actions, models, index, provider etc
+* Organizer actions, models, index, provider etc.
+* ORganize tiles in factories and groups.
+* Fix invalid actions still triggering their thens.
