@@ -37,7 +37,7 @@ export type Wall = Array<Array<WallPlacement>>;
 
 export type Staging = Array<StagingRow>;
 
-export type Floor = Array<?ColorType>;
+export type Floor = Array<Tile>;
 
 export type PlayerType = $Keys<typeof PLAYER_TYPE>;
 
@@ -133,7 +133,7 @@ export function createBoard(): Board {
     staging: [...new Array(COLORS)].map(() => {
       return { color: undefined, count: 0 };
     }),
-    floor: [...new Array(FLOOR_SLOTS.length)]
+    floor: []
   };
 }
 
