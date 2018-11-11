@@ -14,3 +14,4 @@
 * Make sure anything you put in floor beyond goes to box.
 * Make sure first tile is selected with leftovers.
 * Highlight/animate tile counters when they change.
+* Immutable helpers.

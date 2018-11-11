@@ -84,7 +84,7 @@ export type Game = {|
   bag: TilesArray,
   box: TilesArray,
   factories: Array<TilesArray>,
-  leftovers: TilesArray,
+  leftovers: Factory,
   turn: number,
   currentPlayer: number,
   phase: Phase,

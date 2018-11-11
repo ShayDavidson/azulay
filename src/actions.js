@@ -69,9 +69,14 @@ export function reduce(state: State, action: Action): State {
         const roomLeftInFloor = FLOOR_SLOTS.length - currentPlayer.board.floor.length;
         const floor = currentPlayer.board.floor.concat(relevantTiles.slice(0, roomLeftInFloor));
         const factories = game.factories.map(factory => (factory == selectedFactory ? [] : factory));
-        const leftovers = game.leftovers
-          .concat(remainingTiles)
-          .sort((a: Tile, b: Tile) => (a.color != undefined ? a.color : -1) - (b.color != undefined ? b.color : 0));
+        const leftovers =
+          game.leftovers == selectedFactory
+            ? remainingTiles
+            : game.leftovers
+                .concat(remainingTiles)
+                .sort(
+                  (a: Tile, b: Tile) => (a.color != undefined ? a.color : -1) - (b.color != undefined ? b.color : 0)
+                );
         const box = game.box.concat(relevantTiles.slice(roomLeftInFloor, remainingTiles.length - roomLeftInFloor));
         const newPlayer = { ...currentPlayer, board: { ...currentPlayer.board, floor } };
         const players = game.players.map(player => (player == currentPlayer ? newPlayer : player));
