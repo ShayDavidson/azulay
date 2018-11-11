@@ -8,7 +8,7 @@ import type { ColorType, Tile as TileType } from "../../models";
 // components
 import Tile from "./tile";
 // helpers
-import { TILE_COLORS, LABEL_COLORS, $bevelStyle } from "../../styles";
+import { TILE_COLORS, LABEL_COLORS, BLACK_COLOR, $bevelStyle } from "../../styles";
 
 /***********************************************************/
 
@@ -19,7 +19,8 @@ const BORDER_RADIUS = "0.1em";
 type Props = {
   color?: ColorType,
   tile?: TileType,
-  label?: string
+  label?: string,
+  highlighted?: boolean
 };
 
 type State = {
@@ -41,6 +42,10 @@ const $labelStyle = css({
   transform: "translateX(-50%) translateY(-50%)"
 });
 
+const $highlightedStyle = css({
+  boxShadow: `0px 0px 0px 3px ${BLACK_COLOR}`
+});
+
 /***********************************************************/
 
 export default class Placement extends React.Component<Props, State> {
@@ -56,6 +61,12 @@ export default class Placement extends React.Component<Props, State> {
             backgroundColor: "rgba(0, 0, 0, 0.25)"
           };
 
+    let $dynamicBaseStyle = $baseStyle;
+
+    if (this.props.highlighted) {
+      $dynamicBaseStyle = css($dynamicBaseStyle, $highlightedStyle);
+    }
+
     const $dynamicLabelStyle =
       this.props.tile && this.props.tile.color != undefined
         ? {
@@ -64,7 +75,7 @@ export default class Placement extends React.Component<Props, State> {
         : { color: LABEL_COLORS[0] };
 
     return (
-      <div className={$baseStyle} style={$dynamicStyle}>
+      <div className={$dynamicBaseStyle} style={$dynamicStyle}>
         {this.props.tile != undefined ? <Tile tile={this.props.tile} /> : null}
         {this.props.label != undefined ? (
           <div className={$labelStyle} style={$dynamicLabelStyle}>
