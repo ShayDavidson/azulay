@@ -15,6 +15,8 @@ export const GameContext: Object = React.createContext();
 
 /***********************************************************/
 
+type UI = {| selectedFactory: ?FactoryType, selectedTile: ?Tile |};
+
 type Props = {
   players: number,
   seed: number,
@@ -23,7 +25,7 @@ type Props = {
 
 type State = {
   game: Game,
-  ui: {| selectedFactory: ?FactoryType, selectedTile: ?Tile |}
+  ui: UI
 };
 
 /***********************************************************/
@@ -50,9 +52,9 @@ export default class GameProvider extends React.Component<Props, State> {
     let { game } = this.state;
     if (game.phase == PHASES.refill) {
       if (areAllFactoriesFull(game)) {
-        this.dispatch(moveToPlacementPhase).then(this.progressGame.bind(this));
+        this.dispatchGame(moveToPlacementPhase).then(this.progressGame.bind(this));
       } else {
-        this.dispatch(drawTileFromBagIntoFactories)
+        this.dispatchGame(drawTileFromBagIntoFactories)
           .delay(100)
           .then(() => playRandom(TILES))
           .then(this.progressGame.bind(this));
@@ -60,11 +62,22 @@ export default class GameProvider extends React.Component<Props, State> {
     }
   }
 
-  dispatch(action: Game => Game) {
+  dispatchGame(action: Game => Game) {
     return new Promise(resolve => {
       this.setState(
         state => {
           return { game: action(state.game) };
+        },
+        () => resolve()
+      );
+    });
+  }
+
+  dispatchUI(action: UI => UI) {
+    return new Promise(resolve => {
+      this.setState(
+        state => {
+          return { ui: action(state.ui) };
         },
         () => resolve()
       );
@@ -77,7 +90,7 @@ export default class GameProvider extends React.Component<Props, State> {
         value={{
           gameState: this.state.game,
           uiState: this.state.ui,
-          dispatch: this.dispatch.bind(this)
+          dispatch: { game: this.dispatchGame.bind(this), ui: this.dispatchUI.bind(this) }
         }}
       >
         {this.props.children}
