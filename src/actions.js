@@ -33,10 +33,10 @@ export type ActionName = $Values<typeof ACTIONS>;
 export type ActionDispatcher = (action: Action) => Promise<any>;
 export type ActionDispatcherPromise = (dispatch: ActionDispatcher) => Promise<any>;
 
-export type ValidationError = Error & {|
-  action: Action,
-  state: State
-|};
+export type ValidationError = Error & {
+  action?: Action,
+  state?: State
+};
 
 export type State = {
   game: Game,
@@ -103,13 +103,8 @@ export function reduce(state: State, action: Action): State {
 
 export function validate(state: State, action: Action): ?Error {
   const { game, ui } = state;
-  let error;
+  let error: ?ValidationError;
   switch (action.type) {
-    case ACTIONS.selectTileInFactory: {
-      error = game.phase == PHASES.placement ? undefined : new Error("can't interact while refilling tiles");
-      break;
-    }
-
     case ACTIONS.moveToPlacementPhase: {
       error = game.phase == PHASES.refill ? undefined : new Error("not in right phase");
       break;
@@ -124,20 +119,32 @@ export function validate(state: State, action: Action): ?Error {
       break;
     }
 
+    case ACTIONS.selectTileInFactory: {
+      error = game.phase == PHASES.placement ? undefined : new Error("can't interact while refilling tiles");
+      break;
+    }
+
     case ACTIONS.putTilesFromFactoryIntoFloor: {
       if (ui.selectedFactory == undefined || ui.selectedTile == undefined) {
-        return new Error("no selected tile in factory");
+        error = new Error("no selected tile in factory");
       } else if (game.phase != PHASES.placement) {
-        return new Error("can't put tile in board in this phase");
+        error = new Error("can't put tile in board in this phase");
       } else if (action.payload && action.payload.floor != game.players[game.currentPlayer].board.floor) {
-        return new Error("wrong player's floor");
+        error = new Error("wrong player's floor");
       }
       break;
     }
 
-    default:
-      return undefined;
+    case ACTIONS.putTilesFromFactoryIntoStagingRow: {
+      break;
+    }
   }
+
+  if (error) {
+    error.state = state;
+    error.action = action;
+  }
+
   return error;
 }
 

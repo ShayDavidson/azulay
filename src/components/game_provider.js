@@ -4,7 +4,7 @@ import Promise from "bluebird";
 import React from "react";
 import type { Node } from "react";
 // types
-import type { State, Action, ActionDispatcherPromise } from "../actions";
+import type { State, Action, ActionDispatcherPromise, ValidationError } from "../actions";
 // helpers
 import { createGame, areAllFactoriesFull, PHASES } from "../models";
 import { createResetUI } from "../ui_models";
@@ -15,6 +15,11 @@ import { reduce, validate, getDrawTileFromBagIntoFactoriesAction, getMoveToPlace
 export const GameContext: Object = React.createContext();
 
 /***********************************************************/
+
+type ActionResult = {|
+  action: Action,
+  state: State
+|};
 
 type Props = {
   players: number,
@@ -54,7 +59,7 @@ export default class GameProvider extends React.Component<Props, State> {
   dispatch(actionPromiser: ActionDispatcherPromise) {
     return actionPromiser(this.internalDispatch.bind(this))
       .then(this.progressGame.bind(this))
-      .catch(validationError => console.warn(validationError.message));
+      .catch(this.logValidationError.bind(this));
   }
 
   internalDispatch(action: Action) {
@@ -64,22 +69,20 @@ export default class GameProvider extends React.Component<Props, State> {
           let validationError = validate(prevState, action);
           if (validationError) {
             reject(validationError);
-            return {};
           }
-          const newState = reduce(prevState, action);
-          if (this.props.log) {
-            console.log({
-              type: action.type,
-              action,
-              prevState,
-              newState
-            });
-          }
-          return newState;
+          return reduce(prevState, action);
         },
-        () => resolve()
+        () => resolve({ action, state: this.state })
       );
-    });
+    }).then(this.logActionResult.bind(this));
+  }
+
+  logActionResult(result: ActionResult) {
+    if (this.props.log) console.log(result.action.type, result);
+  }
+
+  logValidationError(error: ValidationError) {
+    if (this.props.log) console.warn(error.message, error.action, error.state);
   }
 
   render() {

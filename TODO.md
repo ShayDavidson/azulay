@@ -1,6 +1,8 @@
 # Env
 
-* Logging as side effect.
+* Logging as side effect
+* Validations to trigger actions and game progress.
+* Generic game provider.
 * Side effects (move animations and sounds and delay outside of provider).
 * Random rotations for tiles.
 * Multiplier.
