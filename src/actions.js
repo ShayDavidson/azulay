@@ -196,13 +196,13 @@ export function getMoveToPlacementPhaseAction(): ActionDispatcherPromise {
 }
 
 export function getDrawTileFromBagIntoFactoriesAction(): ActionDispatcherPromise {
-  return (dispatch, fallbackDispatch) => {
+  return (dispatch, followupDispatch) => {
     return dispatch({
       type: ACTIONS.drawTileFromBagIntoFactories
     })
       .then(() => playRandom(TILES))
       .delay(100)
-      .then(() => fallbackDispatch(getDrawTileFromBagIntoFactoriesAction()));
+      .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }
 

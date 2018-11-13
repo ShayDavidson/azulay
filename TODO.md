@@ -16,10 +16,11 @@
 
 ## Refactors
 
-* Validations to trigger actions and game progress.
+* Followup dispatch.
+* Error fallback flow type crap.
 * Immutable helpers.
 * Flow type checking better for context.
-* Generic game provider.1
+* Generic game provider.
 * Organizer actions, models, index, provider etc.
 * Make it an SDK.
 
