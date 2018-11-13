@@ -4,7 +4,14 @@
 import type { Game, Tile, Factory, Floor } from "./models";
 import type { UI } from "./ui_models";
 // action handlers
-import { drawTileFromBagIntoFactories, moveToPlacementPhase, PHASES, FLOOR_SLOTS, areAllFactoriesFull } from "./models";
+import {
+  drawTileFromBagIntoFactories,
+  moveToPlacementPhase,
+  PHASES,
+  FLOOR_SLOTS,
+  areAllFactoriesFull,
+  putTilesFromFactoryIntoFloor
+} from "./models";
 import { createResetUI } from "./ui_models";
 
 /***********************************************************/
@@ -62,38 +69,9 @@ export function reduce(state: State, action: Action): State {
 
     case ACTIONS.putTilesFromFactoryIntoFloor: {
       if (selectedFactory != undefined && selectedTile != undefined) {
-        const currentPlayer = game.players[game.currentPlayer];
-        const relevantTiles = selectedFactory
-          .filter(tile => tile.color == selectedTile.color || tile.kind == "first")
-          .sort((a, b) => (a.kind == "first" ? -1 : b.kind == "first" ? 1 : 0));
-        const tookFirst = relevantTiles.find(tile => tile.kind == "first") != undefined;
-        const remainingTiles = selectedFactory.filter(tile => tile.color != selectedTile.color && tile.kind != "first");
-        const roomLeftInFloor = FLOOR_SLOTS.length - currentPlayer.board.floor.length;
-        const floor = currentPlayer.board.floor.concat(relevantTiles.slice(0, roomLeftInFloor));
-        const factories = game.factories.map(factory => (factory == selectedFactory ? [] : factory));
-        const leftovers =
-          game.leftovers == selectedFactory
-            ? remainingTiles
-            : game.leftovers
-                .concat(remainingTiles)
-                .sort(
-                  (a: Tile, b: Tile) => (a.color != undefined ? a.color : -1) - (b.color != undefined ? b.color : 0)
-                );
-        const box = game.box.concat(relevantTiles.slice(roomLeftInFloor, relevantTiles.length));
-        const newPlayer = { ...currentPlayer, board: { ...currentPlayer.board, floor } };
-        const players = game.players.map(player => (player == currentPlayer ? newPlayer : player));
-        const newCurrentPlayer = (game.currentPlayer + 1) % game.players.length;
         return {
           ...state,
-          game: {
-            ...state.game,
-            players,
-            factories,
-            box,
-            currentPlayer: newCurrentPlayer,
-            nextPlayer: tookFirst ? game.currentPlayer : game.nextPlayer,
-            leftovers
-          },
+          game: putTilesFromFactoryIntoFloor(game, selectedFactory, selectedTile),
           ui: createResetUI()
         };
       } else {

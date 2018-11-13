@@ -79,7 +79,9 @@ export default class GameProvider extends React.Component<Props, State> {
         },
         () => resolve()
       );
-    }).catch(validationError => console.warn(validationError.message, action, state));
+    })
+      .then(() => this.progressGame())
+      .catch(validationError => console.warn(validationError.message, action, state));
   }
 
   render() {
