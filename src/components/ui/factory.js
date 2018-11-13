@@ -10,7 +10,6 @@ import { GameContext } from "../game_provider";
 // helpers
 import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, WHITE_COLOR, BOARD_COLOR } from "../../styles";
 import { getSelectTileInFactoryAction } from "../../actions";
-import { play, CLICK } from "../../sfx";
 
 /***********************************************************/
 
@@ -86,9 +85,7 @@ export default class Factory extends React.Component<Props, State> {
                         tile={tile}
                         animated={true}
                         highlighted={highlighted}
-                        onClick={tile =>
-                          dispatch(getSelectTileInFactoryAction(this.props.factory, tile)).then(() => play(CLICK))
-                        }
+                        onClick={tile => dispatch(getSelectTileInFactoryAction(this.props.factory, tile))}
                       />
                     </div>
                   );

@@ -1,18 +1,22 @@
 // @flow
 
+import Promise from "bluebird";
+
 // types
 import type { Game, Tile, Factory, Floor } from "./models";
 import type { UI } from "./ui_models";
+
 // action handlers
 import {
   drawTileFromBagIntoFactories,
   moveToPlacementPhase,
   PHASES,
-  FLOOR_SLOTS,
   areAllFactoriesFull,
   putTilesFromFactoryIntoFloor
 } from "./models";
 import { createResetUI } from "./ui_models";
+// helpers
+import { play, playRandom, TILES, CLICK } from "./sfx";
 
 /***********************************************************/
 
@@ -26,6 +30,13 @@ export type Action = {
 };
 
 export type ActionName = $Values<typeof ACTIONS>;
+export type ActionDispatcher = (action: Action) => Promise<any>;
+export type ActionDispatcherPromise = (dispatch: ActionDispatcher) => Promise<any>;
+
+export type ValidationError = Error & {|
+  action: Action,
+  state: State
+|};
 
 export type State = {
   game: Game,
@@ -92,23 +103,25 @@ export function reduce(state: State, action: Action): State {
 
 export function validate(state: State, action: Action): ?Error {
   const { game, ui } = state;
+  let error;
   switch (action.type) {
     case ACTIONS.selectTileInFactory: {
-      return game.phase == PHASES.placement ? undefined : new Error("can't interact while refilling tiles");
+      error = game.phase == PHASES.placement ? undefined : new Error("can't interact while refilling tiles");
+      break;
     }
 
     case ACTIONS.moveToPlacementPhase: {
-      return game.phase == PHASES.refill ? undefined : new Error("not in right phase");
+      error = game.phase == PHASES.refill ? undefined : new Error("not in right phase");
+      break;
     }
 
     case ACTIONS.drawTileFromBagIntoFactories: {
       if (areAllFactoriesFull(game)) {
-        return new Error("factories are full");
+        error = new Error("factories are full");
       } else if (game.phase != PHASES.refill) {
-        return new Error("can't refill factory in this phase");
-      } else {
-        return undefined;
+        error = new Error("can't refill factory in this phase");
       }
+      break;
     }
 
     case ACTIONS.putTilesFromFactoryIntoFloor: {
@@ -118,14 +131,14 @@ export function validate(state: State, action: Action): ?Error {
         return new Error("can't put tile in board in this phase");
       } else if (action.payload && action.payload.floor != game.players[game.currentPlayer].board.floor) {
         return new Error("wrong player's floor");
-      } else {
-        return undefined;
       }
+      break;
     }
 
     default:
       return undefined;
   }
+  return error;
 }
 
 /***********************************************************/
@@ -142,40 +155,52 @@ export function isDeselect(action: Action, ui: UI): boolean {
 
 /***********************************************************/
 
-export function getSelectTileInFactoryAction(factory: Factory, tile: Tile): Action {
-  return {
-    type: ACTIONS.selectTileInFactory,
-    payload: {
-      factory,
-      tile
-    }
+export function getSelectTileInFactoryAction(factory: Factory, tile: Tile): ActionDispatcherPromise {
+  return dispatch => {
+    return dispatch({
+      type: ACTIONS.selectTileInFactory,
+      payload: {
+        factory,
+        tile
+      }
+    }).then(() => play(CLICK));
   };
 }
 
-export function getMoveToPlacementPhaseAction(): Action {
-  return {
-    type: ACTIONS.moveToPlacementPhase
+export function getMoveToPlacementPhaseAction(): ActionDispatcherPromise {
+  return dispatch => {
+    return dispatch({
+      type: ACTIONS.moveToPlacementPhase
+    });
   };
 }
 
-export function getDrawTileFromBagIntoFactoriesAction(): Action {
-  return {
-    type: ACTIONS.drawTileFromBagIntoFactories
+export function getDrawTileFromBagIntoFactoriesAction(): ActionDispatcherPromise {
+  return dispatch => {
+    return dispatch({
+      type: ACTIONS.drawTileFromBagIntoFactories
+    })
+      .delay(100)
+      .then(() => playRandom(TILES));
   };
 }
 
-export function getPutTilesFromFactoryIntoFloorAction(floor: Floor): Action {
-  return {
-    type: ACTIONS.putTilesFromFactoryIntoFloor,
-    payload: { floor }
+export function getPutTilesFromFactoryIntoFloorAction(floor: Floor): ActionDispatcherPromise {
+  return dispatch => {
+    return dispatch({
+      type: ACTIONS.putTilesFromFactoryIntoFloor,
+      payload: { floor }
+    });
   };
 }
 
-export function getPutTilesFromFactoryIntoStagingRowAction(stagingRowIndex: number): Action {
-  return {
-    type: ACTIONS.putTilesFromFactoryIntoStagingRow,
-    payload: {
-      stagingRowIndex
-    }
+export function getPutTilesFromFactoryIntoStagingRowAction(stagingRowIndex: number): ActionDispatcherPromise {
+  return dispatch => {
+    return dispatch({
+      type: ACTIONS.putTilesFromFactoryIntoStagingRow,
+      payload: {
+        stagingRowIndex
+      }
+    });
   };
 }

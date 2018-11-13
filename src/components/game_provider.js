@@ -4,12 +4,11 @@ import Promise from "bluebird";
 import React from "react";
 import type { Node } from "react";
 // types
-import type { State, Action } from "../actions";
+import type { State, Action, ActionDispatcherPromise } from "../actions";
 // helpers
 import { createGame, areAllFactoriesFull, PHASES } from "../models";
 import { createResetUI } from "../ui_models";
 import { reduce, validate, getDrawTileFromBagIntoFactoriesAction, getMoveToPlacementPhaseAction } from "../actions";
-import { playRandom, TILES } from "../sfx";
 
 /***********************************************************/
 
@@ -45,27 +44,28 @@ export default class GameProvider extends React.Component<Props, State> {
     let { game } = this.state;
     if (game.phase == PHASES.refill) {
       if (areAllFactoriesFull(game)) {
-        this.dispatch(getMoveToPlacementPhaseAction()).then(this.progressGame.bind(this));
+        return this.dispatch(getMoveToPlacementPhaseAction());
       } else {
-        this.dispatch(getDrawTileFromBagIntoFactoriesAction())
-          .delay(100)
-          .then(() => playRandom(TILES))
-          .then(this.progressGame.bind(this));
+        return this.dispatch(getDrawTileFromBagIntoFactoriesAction());
       }
     }
   }
 
-  dispatch(action: Action) {
-    let state = this.state;
-    return new Promise((resolve, reject) => {
-      let validationError = validate(state, action);
-      if (validationError) {
-        reject(validationError);
-        return;
-      }
+  dispatch(actionPromiser: ActionDispatcherPromise) {
+    return actionPromiser(this.internalDispatch.bind(this))
+      .then(this.progressGame.bind(this))
+      .catch(validationError => console.warn(validationError.message));
+  }
 
+  internalDispatch(action: Action) {
+    return new Promise((resolve, reject) => {
       this.setState(
         prevState => {
+          let validationError = validate(prevState, action);
+          if (validationError) {
+            reject(validationError);
+            return {};
+          }
           const newState = reduce(prevState, action);
           if (this.props.log) {
             console.log({
@@ -79,9 +79,7 @@ export default class GameProvider extends React.Component<Props, State> {
         },
         () => resolve()
       );
-    })
-      .then(() => this.progressGame())
-      .catch(validationError => console.warn(validationError.message, action, state));
+    });
   }
 
   render() {
