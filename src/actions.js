@@ -31,11 +31,16 @@ export type Action = {
 
 export type ActionName = $Values<typeof ACTIONS>;
 export type ActionDispatcher = (action: Action) => Promise<any>;
-export type ActionDispatcherPromise = (dispatch: ActionDispatcher) => Promise<any>;
+export type ActionFallbackDispatcher = (actionPromise: ActionDispatcherPromise) => Promise<any>;
+export type ActionDispatcherPromise = (
+  dispatch: ActionDispatcher,
+  fallbackDispatch: ActionFallbackDispatcher
+) => Promise<any>;
 
 export type ValidationError = Error & {
   action?: Action,
-  state?: State
+  state?: State,
+  fallbackAction?: ActionDispatcherPromise
 };
 
 export type State = {
@@ -101,18 +106,23 @@ export function reduce(state: State, action: Action): State {
 
 /***********************************************************/
 
-export function validate(state: State, action: Action): ?Error {
+export function validate(state: State, action: Action): ?ValidationError {
   const { game, ui } = state;
   let error: ?ValidationError;
+  let fallbackAction: ?ActionDispatcherPromise;
+
   switch (action.type) {
     case ACTIONS.moveToPlacementPhase: {
-      error = game.phase == PHASES.refill ? undefined : new Error("not in right phase");
+      if (game.phase != PHASES.refill) {
+        error = new Error("not in right phase");
+      }
       break;
     }
 
     case ACTIONS.drawTileFromBagIntoFactories: {
       if (areAllFactoriesFull(game)) {
         error = new Error("factories are full");
+        fallbackAction = getMoveToPlacementPhaseAction();
       } else if (game.phase != PHASES.refill) {
         error = new Error("can't refill factory in this phase");
       }
@@ -120,7 +130,9 @@ export function validate(state: State, action: Action): ?Error {
     }
 
     case ACTIONS.selectTileInFactory: {
-      error = game.phase == PHASES.placement ? undefined : new Error("can't interact while refilling tiles");
+      if (game.phase != PHASES.placement) {
+        error = new Error("can't interact while refilling tiles");
+      }
       break;
     }
 
@@ -143,6 +155,7 @@ export function validate(state: State, action: Action): ?Error {
   if (error) {
     error.state = state;
     error.action = action;
+    (error: any).fallbackAction = fallbackAction; // casting due to weird flowtype issue
   }
 
   return error;
@@ -183,12 +196,13 @@ export function getMoveToPlacementPhaseAction(): ActionDispatcherPromise {
 }
 
 export function getDrawTileFromBagIntoFactoriesAction(): ActionDispatcherPromise {
-  return dispatch => {
+  return (dispatch, fallbackDispatch) => {
     return dispatch({
       type: ACTIONS.drawTileFromBagIntoFactories
     })
+      .then(() => playRandom(TILES))
       .delay(100)
-      .then(() => playRandom(TILES));
+      .then(() => fallbackDispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }
 

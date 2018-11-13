@@ -6,9 +6,9 @@ import type { Node } from "react";
 // types
 import type { State, Action, ActionDispatcherPromise, ValidationError } from "../actions";
 // helpers
-import { createGame, areAllFactoriesFull, PHASES } from "../models";
+import { createGame } from "../models";
 import { createResetUI } from "../ui_models";
-import { reduce, validate, getDrawTileFromBagIntoFactoriesAction, getMoveToPlacementPhaseAction } from "../actions";
+import { reduce, validate, getDrawTileFromBagIntoFactoriesAction } from "../actions";
 
 /***********************************************************/
 
@@ -42,24 +42,13 @@ export default class GameProvider extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.progressGame();
-  }
-
-  progressGame() {
-    let { game } = this.state;
-    if (game.phase == PHASES.refill) {
-      if (areAllFactoriesFull(game)) {
-        return this.dispatch(getMoveToPlacementPhaseAction());
-      } else {
-        return this.dispatch(getDrawTileFromBagIntoFactoriesAction());
-      }
-    }
+    this.dispatch(getDrawTileFromBagIntoFactoriesAction());
   }
 
   dispatch(actionPromiser: ActionDispatcherPromise) {
-    return actionPromiser(this.internalDispatch.bind(this))
-      .then(this.progressGame.bind(this))
-      .catch(this.logValidationError.bind(this));
+    return actionPromiser(this.internalDispatch.bind(this), this.dispatch.bind(this)).catch(
+      this.handleValidationError.bind(this)
+    );
   }
 
   internalDispatch(action: Action) {
@@ -69,6 +58,7 @@ export default class GameProvider extends React.Component<Props, State> {
           let validationError = validate(prevState, action);
           if (validationError) {
             reject(validationError);
+            return;
           }
           return reduce(prevState, action);
         },
@@ -79,6 +69,13 @@ export default class GameProvider extends React.Component<Props, State> {
 
   logActionResult(result: ActionResult) {
     if (this.props.log) console.log(result.action.type, result);
+  }
+
+  handleValidationError(error: ValidationError) {
+    this.logValidationError(error);
+    if (error.fallbackAction != undefined) {
+      return this.dispatch(error.fallbackAction);
+    }
   }
 
   logValidationError(error: ValidationError) {

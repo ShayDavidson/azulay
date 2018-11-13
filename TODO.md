@@ -1,18 +1,37 @@
-# Env
+# TODO
 
-* Logging as side effect
-* Validations to trigger actions and game progress.
-* Generic game provider.
-* Side effects (move animations and sounds and delay outside of provider).
+## Actions
+
+* Put into staging row.
+* Next turn.
+* Shuffle bag into
+* Calculate score.
+* Show scores at end.
+
+## Delight
+
+* Organize tiles in factories and groups.
+* Highlight/animate tile counters when they change.
 * Random rotations for tiles.
-* Multiplier.
+
+## Refactors
+
+* Validations to trigger actions and game progress.
+* Immutable helpers.
 * Flow type checking better for context.
-* AI.
-* Responsive design.
+* Generic game provider.1
 * Organizer actions, models, index, provider etc.
-* ORganize tiles in factories and groups.
+* Make it an SDK.
+
+## Logic
+
 * Make sure you can pick -1 tile and put it in floor right away.
 * Make sure anything you put in floor beyond goes to box.
 * Make sure first tile is selected with leftovers.
-* Highlight/animate tile counters when they change.
-* Immutable helpers.
+
+## Next Phase
+
+* UI for picking seed / players.
+* Responsive design - mobile.
+* Multiplier.
+* AI.
