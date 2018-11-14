@@ -54,10 +54,7 @@ export type Board = {|
   floor: Floor
 |};
 
-export type StagingRow = {|
-  color: ?ColorType,
-  count: number
-|};
+export type StagingRow = TilesArray;
 
 export type Player = {|
   score: number,
@@ -133,7 +130,7 @@ export function createBoard(): Board {
   return {
     wall: createWall(),
     staging: [...new Array(COLORS)].map(() => {
-      return { color: undefined, count: 0 };
+      return [];
     }),
     floor: []
   };
@@ -223,9 +220,9 @@ export function putTilesFromFactoryIntoStagingRow(
   const currentPlayer = getCurrentPlayer(game);
   const { relevantTiles, remainingTiles, tookFirst } = takeTilesFromFactory(selectedFactory, selectedTile);
   const stagingRow = currentPlayer.board.staging[stagingRowIndex];
-  const roomLeftInRow = placementsForStagingRow(stagingRowIndex) - stagingRow.count;
+  const roomLeftInRow = placementsForStagingRow(stagingRowIndex) - stagingRow.length;
   const [tilesToPutInRow, tilesToPutInFloor] = slice(relevantTiles, roomLeftInRow);
-  const newStagingRow = { color: selectedTile.color, count: stagingRow.count + tilesToPutInRow.length };
+  const newStagingRow = stagingRow.concat(tilesToPutInRow);
   const staging = immutableArrayUpdate(currentPlayer.board.staging, stagingRow, newStagingRow);
   const roomLeftInFloor = FLOOR_SLOTS.length - currentPlayer.board.floor.length;
   const [tilesToActuallyPutInFloor, tilesToPutInBox] = slice(tilesToPutInFloor, roomLeftInFloor);
@@ -266,7 +263,7 @@ function placeTileInWall(wall: Wall, fromStagingRowIndex: number, tileColor: Col
 export function calculateBoardAddedScore(board: Board): number {
   return board.staging.reduce((score, stagingRow, stagingRowIndex) => {
     if (isStagingRowFull(stagingRow, stagingRowIndex)) {
-      let placementColor = stagingRow.color;
+      let placementColor = getStagingRowColor(stagingRow);
       if (placementColor != undefined) {
         let newWall = placeTileInWall(board.wall, stagingRowIndex, placementColor);
         let placementRow = stagingRowIndex;
@@ -362,7 +359,7 @@ export function isStagingRowFull(stagingRow: ?StagingRow, index: number): boolea
   if (stagingRow == undefined) {
     return false;
   } else {
-    return stagingRow.count == index + 1;
+    return stagingRow.length == index + 1;
   }
 }
 
@@ -387,7 +384,7 @@ export function canPlaceTilesInStagingRow(
   let stagingRow = player.board.staging[stagingRowIndex];
   if (tile.kind == "first") {
     return false;
-  } else if (stagingRow.color != undefined && stagingRow.color != tile.color) {
+  } else if (getStagingRowColor(stagingRow) != null && getStagingRowColor(stagingRow) != tile.color) {
     return false;
   } else if (tile.color != undefined && doesWallRowHasTileColor(player.board.wall, stagingRowIndex, tile.color)) {
     return false;
@@ -427,4 +424,8 @@ export function getTilesColorCounter(tiles: TilesArray): TilesColorCounter {
     },
     [0, 0, 0, 0, 0]
   );
+}
+
+export function getStagingRowColor(row: StagingRow): ?ColorType {
+  return row[0] ? row[0].color : undefined;
 }

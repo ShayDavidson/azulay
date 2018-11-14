@@ -69,7 +69,7 @@ export default class Staging extends React.Component<Props, State> {
                     }}
                   >
                     {[...Array(placementsForStagingRow(stagingRowIndex))].map((_, col) => (
-                      <Placement key={col} highlighted={canPlaceInStagingRow} />
+                      <Placement tile={stagingRow[col]} key={col} highlighted={canPlaceInStagingRow} />
                     ))}
                   </div>
                 );
