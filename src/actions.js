@@ -152,7 +152,11 @@ export function validate(state: State, action: Action): ?ValidationError {
         error = new Error("can't refill factory in this phase");
       } else if (game.bag.length == 0) {
         error = new Error("bag is empty");
-        fallbackAction = getShuffleBoxIntoBagAction();
+        if (game.box.length == 0) {
+          fallbackAction = getMoveToPlacementPhaseAction();
+        } else {
+          fallbackAction = getShuffleBoxIntoBagAction();
+        }
       }
       break;
     }
@@ -325,12 +329,13 @@ export function getMoveToScoringPhaseAction(): ActionDispatcherPromise {
 }
 
 export function getShuffleBoxIntoBagAction(): ActionDispatcherPromise {
-  return dispatch => {
+  return (dispatch, followupDispatch) => {
     return dispatch({
       type: ACTIONS.shuffleBoxIntoBag,
       payload: {}
     })
       .then(() => play(SHUFFLE))
-      .delay(500);
+      .delay(500)
+      .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }
