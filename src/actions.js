@@ -66,6 +66,8 @@ export const ACTIONS = {
   putTilesFromFactoryIntoStagingRow: "putTilesFromFactoryIntoStagingRow",
   moveToNextPlayerPlacement: "moveToNextPlayerPlacement",
   moveToScoringPhase: "moveToScoringPhase",
+  showScoringAct: "showScoringAct",
+  moveToNextPlayerScoring: "moveToNextPlayerScoring",
   shuffleBoxIntoBag: "shuffleBoxIntoBag"
 };
 
@@ -88,6 +90,7 @@ export function reduce(state: State, action: Action): State {
       return {
         ...state,
         ui: {
+          ...state.ui,
           selectedFactory: isDeselect(action, ui) ? undefined : action.payload.factory,
           selectedTile: isDeselect(action, ui) ? undefined : action.payload.tile
         }
@@ -124,6 +127,14 @@ export function reduce(state: State, action: Action): State {
 
     case ACTIONS.moveToScoringPhase: {
       return { ...state, game: moveToScoringPhase(game) };
+    }
+
+    case ACTIONS.showScoringAct: {
+      return state;
+    }
+
+    case ACTIONS.moveToNextPlayerScoring: {
+      return state;
     }
 
     case ACTIONS.shuffleBoxIntoBag: {
@@ -221,6 +232,14 @@ export function validate(state: State, action: Action): ?ValidationError {
       break;
     }
 
+    case ACTIONS.showScoringAct: {
+      break;
+    }
+
+    case ACTIONS.moveToNextPlayerScoring: {
+      break;
+    }
+
     case ACTIONS.shuffleBoxIntoBag: {
       if (game.phase != PHASES.refill) {
         error = new Error("not in right phase");
@@ -293,7 +312,7 @@ export function getPutTilesFromFactoryIntoFloorAction(floor: Floor): ActionDispa
       payload: { floor }
     })
       .then(() => play(CLICK))
-      .then(() => followupDispatch(getmoveToNextPlayerPlacementAction()));
+      .then(() => followupDispatch(getMoveToNextPlayerPlacementAction()));
   };
 }
 
@@ -306,11 +325,11 @@ export function getPutTilesFromFactoryIntoStagingRowAction(stagingRowIndex: numb
       }
     })
       .then(() => play(CLICK))
-      .then(() => followupDispatch(getmoveToNextPlayerPlacementAction()));
+      .then(() => followupDispatch(getMoveToNextPlayerPlacementAction()));
   };
 }
 
-export function getmoveToNextPlayerPlacementAction(): ActionDispatcherPromise {
+export function getMoveToNextPlayerPlacementAction(): ActionDispatcherPromise {
   return dispatch => {
     return dispatch({
       type: ACTIONS.moveToNextPlayerPlacement,
@@ -323,6 +342,24 @@ export function getMoveToScoringPhaseAction(): ActionDispatcherPromise {
   return dispatch => {
     return dispatch({
       type: ACTIONS.moveToScoringPhase,
+      payload: {}
+    });
+  };
+}
+
+export function getShowScoringActAction(): ActionDispatcherPromise {
+  return dispatch => {
+    return dispatch({
+      type: ACTIONS.showScoringAct,
+      payload: {}
+    });
+  };
+}
+
+export function getMoveToNextPlayerScoringAction(): ActionDispatcherPromise {
+  return dispatch => {
+    return dispatch({
+      type: ACTIONS.moveToNextPlayerScoring,
       payload: {}
     });
   };

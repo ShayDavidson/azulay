@@ -77,11 +77,15 @@ export type Factory = TilesArray;
 export type Phase = $Keys<typeof PHASES>;
 
 export type Scoring = {|
+  player: Player,
   forTiles: Array<{|
     row: number,
     col: number,
     scoringTilesInCol: Array<[number, number]>,
     scoringTilesInRow: Array<[number, number]>,
+    totalScoreAfterRow: number,
+    totalScoreAfterCol: number,
+    totalScoreAfter: number,
     rowScore: number,
     colScore: number
   |}>,
@@ -266,7 +270,8 @@ export function shuffleBoxIntoBag(game: Game): Game {
 
 // HELPERS ////////////////////////////
 
-export function getBoardScoring(board: Board): Scoring {
+export function getBoardScoring(player: Player): Scoring {
+  const board = player.board;
   let forTiles = [];
   let totalScore = 0;
 
@@ -316,6 +321,9 @@ export function getBoardScoring(board: Board): Scoring {
         row: placementRow,
         col: placementCol,
         scoringTilesInRow,
+        totalScoreAfterRow: totalScore + rowScore,
+        totalScoreAfterCol: totalScore + colScore,
+        totalScoreAfter: totalScore + rowScore + colScore,
         scoringTilesInCol,
         rowScore,
         colScore
@@ -324,6 +332,7 @@ export function getBoardScoring(board: Board): Scoring {
     }
   });
   return {
+    player,
     forTiles,
     totalScore
   };
