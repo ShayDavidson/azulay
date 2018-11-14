@@ -16,13 +16,14 @@ import {
   putTilesFromFactoryIntoStagingRow,
   moveToNextPlayer,
   moveToScoringPhase,
+  shuffleBoxIntoBag,
   getCurrentPlayer,
   areAllFactoriesEmpty,
   canPlaceTilesInStagingRow
 } from "./models";
 import { createResetUI } from "./ui_models";
 // helpers
-import { play, playRandom, TILES, CLICK } from "./sfx";
+import { play, playRandom, TILES, CLICK, SHUFFLE } from "./sfx";
 
 /***********************************************************/
 
@@ -64,7 +65,8 @@ export const ACTIONS = {
   putTilesFromFactoryIntoFloor: "putTilesFromFactoryIntoFloor",
   putTilesFromFactoryIntoStagingRow: "putTilesFromFactoryIntoStagingRow",
   moveToNextPlayer: "moveToNextPlayer",
-  moveToScoringPhase: "moveToScoringPhase"
+  moveToScoringPhase: "moveToScoringPhase",
+  shuffleBoxIntoBag: "shuffleBoxIntoBag"
 };
 
 /***********************************************************/
@@ -124,6 +126,10 @@ export function reduce(state: State, action: Action): State {
       return { ...state, game: moveToScoringPhase(game) };
     }
 
+    case ACTIONS.shuffleBoxIntoBag: {
+      return { ...state, game: shuffleBoxIntoBag(game) };
+    }
+
     default:
       return state;
   }
@@ -144,6 +150,9 @@ export function validate(state: State, action: Action): ?ValidationError {
         fallbackAction = getMoveToPlacementPhaseAction();
       } else if (game.phase != PHASES.refill) {
         error = new Error("can't refill factory in this phase");
+      } else if (game.bag.length == 0) {
+        error = new Error("bag is empty");
+        fallbackAction = getShuffleBoxIntoBagAction();
       }
       break;
     }
@@ -204,6 +213,15 @@ export function validate(state: State, action: Action): ?ValidationError {
     case ACTIONS.moveToScoringPhase: {
       if (game.phase != PHASES.placement) {
         error = new Error("not in right phase");
+      }
+      break;
+    }
+
+    case ACTIONS.shuffleBoxIntoBag: {
+      if (game.phase != PHASES.refill) {
+        error = new Error("not in right phase");
+      } else if (game.bag.length != 0) {
+        error = new Error("bag is not emtpy");
       }
       break;
     }
@@ -303,5 +321,16 @@ export function getMoveToScoringPhaseAction(): ActionDispatcherPromise {
       type: ACTIONS.moveToScoringPhase,
       payload: {}
     });
+  };
+}
+
+export function getShuffleBoxIntoBagAction(): ActionDispatcherPromise {
+  return dispatch => {
+    return dispatch({
+      type: ACTIONS.shuffleBoxIntoBag,
+      payload: {}
+    })
+      .then(() => play(SHUFFLE))
+      .delay(500);
   };
 }

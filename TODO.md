@@ -2,8 +2,6 @@
 
 ## Actions
 
-* Next turn.
-* Shuffle box into bag.
 * Calculate score.
 * Show scores at end.
 
@@ -20,11 +18,10 @@
 * Can't be wrong in floor placement - always for current player.
 * Followup dispatch.
 * Error fallback flow type crap.
-* Immutable helpers.
+* More Immutable helpers.
 * Flow type checking better for context.
 * Generic game provider.
 * Organizer actions, models, index, provider etc.
-* Make it an SDK.
 
 ## Logic
 
@@ -34,6 +31,7 @@
 
 ## Next Phase
 
+* Make it an SDK.
 * UI for picking seed / players.
 * Responsive design - mobile.
 * Multiplier.

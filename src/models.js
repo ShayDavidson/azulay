@@ -153,16 +153,6 @@ export function createTile(kind: TileKind, color: ?ColorType): Tile {
 
 // ACTIONS ////////////////////////////
 
-export function shuffleBag(game: Game): Game {
-  let rng = createRNG(game.randomProps.seed, game.randomProps.counter);
-  let randomProps = { ...game.randomProps, counter: rng.getCounter() };
-  return { ...game, randomProps };
-}
-
-export function shuffleBoxIntoBag(game: Game): Game {
-  return { ...game, box: [], bag: game.box };
-}
-
 export function drawTileFromBagIntoFactories(game: Game): Game {
   let pickedTile = game.bag[0];
   if (pickedTile != undefined) {
@@ -255,17 +245,11 @@ export function moveToScoringPhase(game: Game): Game {
   return { ...game, phase: PHASES.scoring };
 }
 
-// INTERNAL ACTIONS ////////////////////////////
-
-function placeTileInWall(wall: Wall, fromStagingRowIndex: number, tileColor: ColorType): Wall {
-  let tileWallRow = fromStagingRowIndex;
-  let tileWallCol = getWallPlacementCol(tileWallRow, tileColor);
-  return wall.map(
-    (wallRow, wallRowIndex) =>
-      wallRowIndex == tileWallRow
-        ? wallRow.slice.map((_, wallColIndex) => wallColIndex == tileWallCol)
-        : wallRow.slice()
-  );
+export function shuffleBoxIntoBag(game: Game): Game {
+  let rng = createRNG(game.randomProps.seed, game.randomProps.counter);
+  let shuffledTiles = rng.shuffle(game.box);
+  let randomProps = { ...game.randomProps, counter: rng.getCounter() };
+  return { ...game, randomProps, box: [], bag: shuffledTiles };
 }
 
 // CALCULATIONS ////////////////////////////
@@ -325,6 +309,17 @@ export function calculateTilePlacementScore(wall: Wall, placementRow: number, pl
 }
 
 // HELPERS ////////////////////////////
+
+function placeTileInWall(wall: Wall, fromStagingRowIndex: number, tileColor: ColorType): Wall {
+  let tileWallRow = fromStagingRowIndex;
+  let tileWallCol = getWallPlacementCol(tileWallRow, tileColor);
+  return wall.map(
+    (wallRow, wallRowIndex) =>
+      wallRowIndex == tileWallRow
+        ? wallRow.slice.map((_, wallColIndex) => wallColIndex == tileWallCol)
+        : wallRow.slice()
+  );
+}
 
 export function getNextPlayer(game: Game): number {
   return (game.currentPlayer + 1) % game.players.length;
