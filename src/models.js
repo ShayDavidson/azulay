@@ -221,11 +221,12 @@ export function putTilesFromFactoryIntoStagingRow(
   selectedTile: Tile
 ): Game {
   const currentPlayer = getCurrentPlayer(game);
-  const { relevantTiles, remainingTiles, tookFirst } = takeTilesFromFactory(selectedFactory, selectedTile, false);
+  const { relevantTiles, remainingTiles, tookFirst } = takeTilesFromFactory(selectedFactory, selectedTile);
   const stagingRow = currentPlayer.board.staging[stagingRowIndex];
   const roomLeftInRow = placementsForStagingRow(stagingRowIndex) - stagingRow.count;
   const [tilesToPutInRow, tilesToPutInFloor] = slice(relevantTiles, roomLeftInRow);
-  const staging = immutableArrayUpdate(currentPlayer.board.staging, stagingRow, stagingRow);
+  const newStagingRow = { color: selectedTile.color, count: stagingRow.count + tilesToPutInRow.length };
+  const staging = immutableArrayUpdate(currentPlayer.board.staging, stagingRow, newStagingRow);
   const roomLeftInFloor = FLOOR_SLOTS.length - currentPlayer.board.floor.length;
   const [tilesToActuallyPutInFloor, tilesToPutInBox] = slice(tilesToPutInFloor, roomLeftInFloor);
   const floor = currentPlayer.board.floor.concat(tilesToActuallyPutInFloor);
@@ -340,12 +341,12 @@ export function slice(array: TilesArray, at: number): [TilesArray, TilesArray] {
   return [array.slice(0, at), array.slice(at, array.length)];
 }
 
-export function takeTilesFromFactory(selectedFactory: Factory, selectedTile: Tile, includeFirst: boolean = true) {
+export function takeTilesFromFactory(selectedFactory: Factory, selectedTile: Tile) {
   const relevantTiles: TilesArray = selectedFactory
-    .filter(tile => tile.color == selectedTile.color || (includeFirst && tile.kind == "first"))
+    .filter(tile => tile.color == selectedTile.color || tile.kind == "first")
     .sort(tilesComparator);
   const remainingTiles: TilesArray = selectedFactory.filter(
-    tile => tile.color != selectedTile.color && (!includeFirst || tile.kind != "first")
+    tile => tile.color != selectedTile.color && tile.kind != "first"
   );
 
   const tookFirst = relevantTiles.find(tile => tile.kind == "first") != undefined;
