@@ -3,10 +3,10 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { TilesArray } from "../../models";
+import type { TilesArray } from "../models";
 // helpers
-import { getTilesColorCounter } from "../../models";
-import { GLOBAL_PADDING, TILE_COLORS } from "../../styles";
+import { getTilesColorCounter } from "../models";
+import { GLOBAL_PADDING, TILE_COLORS } from "../styles";
 
 /***********************************************************/
 

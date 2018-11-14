@@ -3,15 +3,15 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { Floor as FloorType } from "../../models";
+import type { Floor as FloorType } from "../models";
 // components
 import Placement from "./placement";
 import { GameContext } from "../game_provider";
 // helpers
-import { FLOOR_SLOTS } from "../../models";
-import { PLACEMENT_GAP } from "../../styles";
-import { getPutTilesFromFactoryIntoFloorAction } from "../../actions";
-import { play, CLICK } from "../../sfx";
+import { FLOOR_SLOTS } from "../models";
+import { PLACEMENT_GAP } from "../styles";
+import { getPutTilesFromFactoryIntoFloorAction } from "../actions";
+import { play, CLICK } from "../sfx";
 
 /***********************************************************/
 

@@ -4,11 +4,11 @@ import Promise from "bluebird";
 import React from "react";
 import type { Node } from "react";
 // types
-import type { State, Action, ActionDispatcherPromise, ValidationError } from "../actions";
+import type { State, Action, ActionDispatcherPromise, ValidationError } from "./actions";
 // helpers
-import { createGame } from "../models";
-import { createResetUI } from "../ui_models";
-import { reduce, validate, getDrawTileFromBagIntoFactoriesAction } from "../actions";
+import { createGame } from "./models";
+import { createResetUI } from "./ui_models";
+import { reduce, validate, getDrawTileFromBagIntoFactoriesAction } from "./actions";
 
 /***********************************************************/
 

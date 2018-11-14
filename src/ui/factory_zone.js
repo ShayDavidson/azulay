@@ -3,11 +3,11 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { Factory as FactoryType } from "../../models";
+import type { Factory as FactoryType } from "../models";
 // components
 import Factory from "./factory";
 // helpers
-import { GLOBAL_PADDING } from "../../styles";
+import { GLOBAL_PADDING } from "../styles";
 
 /***********************************************************/
 

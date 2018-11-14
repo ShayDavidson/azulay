@@ -4,11 +4,11 @@ import React from "react";
 import { css } from "glamor";
 import Color from "color";
 // types
-import type { ColorType, Tile as TileType } from "../../models";
+import type { ColorType, Tile as TileType } from "../models";
 // components
 import Tile from "./tile";
 // helpers
-import { TILE_COLORS, LABEL_COLORS, BLACK_COLOR, HIGHLIGHT_WIDTH, $bevelStyle } from "../../styles";
+import { TILE_COLORS, LABEL_COLORS, BLACK_COLOR, HIGHLIGHT_WIDTH, $bevelStyle } from "../styles";
 
 /***********************************************************/
 

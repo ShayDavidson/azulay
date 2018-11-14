@@ -3,14 +3,14 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { Staging as StagingType } from "../../models";
+import type { Staging as StagingType } from "../models";
 // components
 import Placement from "./placement";
 import { GameContext } from "../game_provider";
 // helpers
-import { placementsForStagingRow, canPlaceTilesInStagingRow, COLORS } from "../../models";
-import { PLACEMENT_GAP } from "../../styles";
-import { getPutTilesFromFactoryIntoStagingRowAction } from "../../actions";
+import { placementsForStagingRow, canPlaceTilesInStagingRow, COLORS } from "../models";
+import { PLACEMENT_GAP } from "../styles";
+import { getPutTilesFromFactoryIntoStagingRowAction } from "../actions";
 
 /***********************************************************/
 

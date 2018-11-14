@@ -3,7 +3,7 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { Player } from "../../models";
+import type { Player } from "../models";
 // components
 import Wall from "./wall";
 import Staging from "./staging";
@@ -17,8 +17,8 @@ import {
   BOARD_COLOR,
   WHITE_COLOR,
   $bevelStyle
-} from "../../styles";
-import { PLAYER_TYPE } from "../../models";
+} from "../styles";
+import { PLAYER_TYPE } from "../models";
 
 /***********************************************************/
 

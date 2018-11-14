@@ -9,25 +9,20 @@
 
 * Organize tiles in factories and groups.
 * Highlight/animate tile counters when they change.
+* Tile transition from places in the window.
 * Random rotations for tiles.
-* Deselect current player while in scoring phase.
+* Highlight more board when it's a player's turn (scale? flash?).
 
 ## Refactors
 
 * Flowtype for actions hard-typed
 * Can't be wrong in floor placement - always for current player.
-* Followup dispatch.
+* Followup dispatch is weird. Get rid of it?
 * Error fallback flow type crap.
 * More Immutable helpers.
 * Flow type checking better for context.
 * Generic game provider.
 * Organizer actions, models, index, provider etc.
-
-## Logic
-
-* Make sure you can pick -1 tile and put it in floor right away.
-* Make sure anything you put in floor beyond goes to box.
-* Make sure first tile is selected with leftovers.
 
 ## Next Phase
 

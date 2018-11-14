@@ -3,7 +3,7 @@
 import React from "react";
 import { css } from "glamor";
 // helpers
-import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, BOARD_PADDING } from "../../styles";
+import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, BOARD_PADDING } from "../styles";
 
 /***********************************************************/
 

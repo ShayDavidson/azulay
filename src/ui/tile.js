@@ -3,9 +3,9 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { Tile as TileType } from "../../models";
+import type { Tile as TileType } from "../models";
 // helpers
-import { TILE_COLORS, WHITE_COLOR, BLACK_COLOR, BLUE_COLOR, placeAnimation } from "../../styles";
+import { TILE_COLORS, WHITE_COLOR, BLACK_COLOR, BLUE_COLOR, placeAnimation } from "../styles";
 
 /***********************************************************/
 

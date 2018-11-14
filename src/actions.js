@@ -256,7 +256,7 @@ export function getDrawTileFromBagIntoFactoriesAction(): ActionDispatcherPromise
       payload: {}
     })
       .then(() => playRandom(TILES))
-      .delay(50)
+      .delay(75)
       .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }

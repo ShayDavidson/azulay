@@ -4,12 +4,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { css } from "glamor";
 // components
-import GameProvider, { GameContext } from "./components/game_provider";
-import PlayerBoard from "./components/ui/player_board";
-import FactoryZone from "./components/ui/factory_zone";
-import Separator from "./components/ui/separator";
-import InfoZone from "./components/ui/info_zone";
-import AboutLabel from "./components/ui/about_label";
+import GameProvider, { GameContext } from "./game_provider";
+import PlayerBoard from "./ui/player_board";
+import FactoryZone from "./ui/factory_zone";
+import Separator from "./ui/separator";
+import InfoZone from "./ui/info_zone";
+import AboutLabel from "./ui/about_label";
 // helpers
 import { applyGlobalStyles, GLOBAL_PADDING } from "./styles.js";
 

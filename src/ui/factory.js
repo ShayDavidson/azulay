@@ -3,13 +3,13 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { Factory as FactoryType } from "../../models";
+import type { Factory as FactoryType } from "../models";
 // components
 import Tile from "./tile";
 import { GameContext } from "../game_provider";
 // helpers
-import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, WHITE_COLOR, BOARD_COLOR } from "../../styles";
-import { getSelectTileInFactoryAction } from "../../actions";
+import { BOARD_BORDER_WIDTH, BOARD_BORDER_COLOR, WHITE_COLOR, BOARD_COLOR } from "../styles";
+import { getSelectTileInFactoryAction } from "../actions";
 
 /***********************************************************/
 

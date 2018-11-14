@@ -3,12 +3,12 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { Wall as WallType } from "../../models";
+import type { Wall as WallType } from "../models";
 // components
 import Placement from "./placement";
 // helpers
-import { COLORS, getWallPlacementColor } from "../../models";
-import { PLACEMENT_GAP } from "../../styles";
+import { COLORS, getWallPlacementColor } from "../models";
+import { PLACEMENT_GAP } from "../styles";
 
 /***********************************************************/
 
