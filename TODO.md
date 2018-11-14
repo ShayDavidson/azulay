@@ -2,9 +2,8 @@
 
 ## Actions
 
-* Put into staging row.
 * Next turn.
-* Shuffle bag into
+* Shuffle box into bag.
 * Calculate score.
 * Show scores at end.
 
@@ -13,6 +12,7 @@
 * Organize tiles in factories and groups.
 * Highlight/animate tile counters when they change.
 * Random rotations for tiles.
+* Deselect current player while in scoring phase.
 
 ## Refactors
 

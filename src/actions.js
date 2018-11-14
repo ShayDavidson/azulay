@@ -14,7 +14,10 @@ import {
   areAllFactoriesFull,
   putTilesFromFactoryIntoFloor,
   putTilesFromFactoryIntoStagingRow,
+  moveToNextPlayer,
+  moveToScoringPhase,
   getCurrentPlayer,
+  areAllFactoriesEmpty,
   canPlaceTilesInStagingRow
 } from "./models";
 import { createResetUI } from "./ui_models";
@@ -55,11 +58,13 @@ export type State = {
 /***********************************************************/
 
 export const ACTIONS = {
-  moveToPlacementPhase: "moveToPlacementPhase",
   drawTileFromBagIntoFactories: "drawTileFromBagIntoFactories",
+  moveToPlacementPhase: "moveToPlacementPhase",
   selectTileInFactory: "selectTileInFactory",
   putTilesFromFactoryIntoFloor: "putTilesFromFactoryIntoFloor",
-  putTilesFromFactoryIntoStagingRow: "putTilesFromFactoryIntoStagingRow"
+  putTilesFromFactoryIntoStagingRow: "putTilesFromFactoryIntoStagingRow",
+  moveToNextPlayer: "moveToNextPlayer",
+  moveToScoringPhase: "moveToScoringPhase"
 };
 
 /***********************************************************/
@@ -69,12 +74,12 @@ export function reduce(state: State, action: Action): State {
   const { selectedFactory, selectedTile } = ui;
 
   switch (action.type) {
-    case ACTIONS.moveToPlacementPhase: {
-      return { ...state, game: moveToPlacementPhase(game) };
-    }
-
     case ACTIONS.drawTileFromBagIntoFactories: {
       return { ...state, game: drawTileFromBagIntoFactories(game) };
+    }
+
+    case ACTIONS.moveToPlacementPhase: {
+      return { ...state, game: moveToPlacementPhase(game) };
     }
 
     case ACTIONS.selectTileInFactory: {
@@ -111,6 +116,14 @@ export function reduce(state: State, action: Action): State {
       }
     }
 
+    case ACTIONS.moveToNextPlayer: {
+      return { ...state, game: moveToNextPlayer(game) };
+    }
+
+    case ACTIONS.moveToScoringPhase: {
+      return { ...state, game: moveToScoringPhase(game) };
+    }
+
     default:
       return state;
   }
@@ -125,19 +138,19 @@ export function validate(state: State, action: Action): ?ValidationError {
   let fallbackAction: ?ActionDispatcherPromise;
 
   switch (type) {
-    case ACTIONS.moveToPlacementPhase: {
-      if (game.phase != PHASES.refill) {
-        error = new Error("not in right phase");
-      }
-      break;
-    }
-
     case ACTIONS.drawTileFromBagIntoFactories: {
       if (areAllFactoriesFull(game)) {
         error = new Error("factories are full");
         fallbackAction = getMoveToPlacementPhaseAction();
       } else if (game.phase != PHASES.refill) {
         error = new Error("can't refill factory in this phase");
+      }
+      break;
+    }
+
+    case ACTIONS.moveToPlacementPhase: {
+      if (game.phase != PHASES.refill) {
+        error = new Error("not in right phase");
       }
       break;
     }
@@ -175,6 +188,24 @@ export function validate(state: State, action: Action): ?ValidationError {
       } else if (!canPlaceTilesInStagingRow(getCurrentPlayer(game), stagingRowIndex, selectedFactory, selectedTile)) {
         error = new Error("staging area cannot contain tile");
       }
+      break;
+    }
+
+    case ACTIONS.moveToNextPlayer: {
+      if (game.phase != PHASES.placement) {
+        error = new Error("not in right phase");
+      } else if (areAllFactoriesEmpty(game)) {
+        error = new Error("factories are empty");
+        fallbackAction = getMoveToScoringPhaseAction();
+      }
+      break;
+    }
+
+    case ACTIONS.moveToScoringPhase: {
+      if (game.phase != PHASES.placement) {
+        error = new Error("not in right phase");
+      }
+      break;
     }
   }
 
@@ -200,15 +231,15 @@ export function isDeselect(action: Action, ui: UI): boolean {
 
 /***********************************************************/
 
-export function getSelectTileInFactoryAction(factory: Factory, tile: Tile): ActionDispatcherPromise {
-  return dispatch => {
+export function getDrawTileFromBagIntoFactoriesAction(): ActionDispatcherPromise {
+  return (dispatch, followupDispatch) => {
     return dispatch({
-      type: ACTIONS.selectTileInFactory,
-      payload: {
-        factory,
-        tile
-      }
-    }).then(() => play(CLICK));
+      type: ACTIONS.drawTileFromBagIntoFactories,
+      payload: {}
+    })
+      .then(() => playRandom(TILES))
+      .delay(50)
+      .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }
 
@@ -221,34 +252,56 @@ export function getMoveToPlacementPhaseAction(): ActionDispatcherPromise {
   };
 }
 
-export function getDrawTileFromBagIntoFactoriesAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch) => {
+export function getSelectTileInFactoryAction(factory: Factory, tile: Tile): ActionDispatcherPromise {
+  return dispatch => {
     return dispatch({
-      type: ACTIONS.drawTileFromBagIntoFactories,
-      payload: {}
-    })
-      .then(() => playRandom(TILES))
-      .delay(100)
-      .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
+      type: ACTIONS.selectTileInFactory,
+      payload: {
+        factory,
+        tile
+      }
+    }).then(() => play(CLICK));
   };
 }
 
 export function getPutTilesFromFactoryIntoFloorAction(floor: Floor): ActionDispatcherPromise {
-  return dispatch => {
+  return (dispatch, followupDispatch) => {
     return dispatch({
       type: ACTIONS.putTilesFromFactoryIntoFloor,
       payload: { floor }
-    });
+    })
+      .then(() => play(CLICK))
+      .then(() => followupDispatch(getMoveToNextPlayerAction()));
   };
 }
 
 export function getPutTilesFromFactoryIntoStagingRowAction(stagingRowIndex: number): ActionDispatcherPromise {
-  return dispatch => {
+  return (dispatch, followupDispatch) => {
     return dispatch({
       type: ACTIONS.putTilesFromFactoryIntoStagingRow,
       payload: {
         stagingRowIndex
       }
+    })
+      .then(() => play(CLICK))
+      .then(() => followupDispatch(getMoveToNextPlayerAction()));
+  };
+}
+
+export function getMoveToNextPlayerAction(): ActionDispatcherPromise {
+  return dispatch => {
+    return dispatch({
+      type: ACTIONS.moveToNextPlayer,
+      payload: {}
+    });
+  };
+}
+
+export function getMoveToScoringPhaseAction(): ActionDispatcherPromise {
+  return dispatch => {
+    return dispatch({
+      type: ACTIONS.moveToScoringPhase,
+      payload: {}
     });
   };
 }

@@ -199,13 +199,11 @@ export function putTilesFromFactoryIntoFloor(game: Game, selectedFactory: Factor
   const box = game.box.concat(tilesToPutInBox);
   const newPlayer = { ...currentPlayer, board: { ...currentPlayer.board, floor } };
   const players = immutableArrayUpdate(game.players, currentPlayer, newPlayer);
-  const newCurrentPlayer = getNextPlayer(game);
   return {
     ...game,
     players,
     factories,
     box,
-    currentPlayer: newCurrentPlayer,
     nextPlayer: tookFirst ? game.currentPlayer : game.nextPlayer,
     leftovers
   };
@@ -218,31 +216,43 @@ export function putTilesFromFactoryIntoStagingRow(
   selectedTile: Tile
 ): Game {
   const currentPlayer = getCurrentPlayer(game);
-  const { relevantTiles, remainingTiles, tookFirst } = takeTilesFromFactory(selectedFactory, selectedTile);
+  let { relevantTiles, remainingTiles, tookFirst } = takeTilesFromFactory(selectedFactory, selectedTile);
   const stagingRow = currentPlayer.board.staging[stagingRowIndex];
   const roomLeftInRow = placementsForStagingRow(stagingRowIndex) - stagingRow.length;
-  const [tilesToPutInRow, tilesToPutInFloor] = slice(relevantTiles, roomLeftInRow);
+  let firstTile;
+  if (tookFirst) [relevantTiles, firstTile] = filterFirstTile(relevantTiles);
+  let [tilesToPutInRow, tilesToPutInFloor] = slice(relevantTiles, roomLeftInRow);
+  if (firstTile) tilesToPutInFloor = [...tilesToPutInFloor, ((firstTile: any): Tile)];
   const newStagingRow = stagingRow.concat(tilesToPutInRow);
   const staging = immutableArrayUpdate(currentPlayer.board.staging, stagingRow, newStagingRow);
   const roomLeftInFloor = FLOOR_SLOTS.length - currentPlayer.board.floor.length;
   const [tilesToActuallyPutInFloor, tilesToPutInBox] = slice(tilesToPutInFloor, roomLeftInFloor);
-  const floor = currentPlayer.board.floor.concat(tilesToActuallyPutInFloor);
+  const floor = currentPlayer.board.floor.concat(tilesToActuallyPutInFloor.sort(tilesComparator));
   const box = game.box.concat(tilesToPutInBox);
   const factories = immutableArrayUpdate(game.factories, selectedFactory, []);
   const leftovers =
     game.leftovers == selectedFactory ? remainingTiles : game.leftovers.concat(remainingTiles).sort(tilesComparator);
   const newPlayer = { ...currentPlayer, board: { ...currentPlayer.board, floor, staging } };
   const players = immutableArrayUpdate(game.players, currentPlayer, newPlayer);
-  const newCurrentPlayer = getNextPlayer(game);
   return {
     ...game,
     players,
     factories,
     box,
-    currentPlayer: newCurrentPlayer,
     nextPlayer: tookFirst ? game.currentPlayer : game.nextPlayer,
     leftovers
   };
+}
+
+export function moveToNextPlayer(game: Game): Game {
+  return {
+    ...game,
+    currentPlayer: getNextPlayer(game)
+  };
+}
+
+export function moveToScoringPhase(game: Game): Game {
+  return { ...game, phase: PHASES.scoring };
 }
 
 // INTERNAL ACTIONS ////////////////////////////
@@ -334,6 +344,10 @@ export function tilesComparator(a: Tile, b: Tile): number {
   }
 }
 
+export function filterFirstTile(array: TilesArray): [TilesArray, ?Tile] {
+  return [array.filter(tile => tile.kind != "first"), array.find(tile => (tile.kind = "first"))];
+}
+
 export function slice(array: TilesArray, at: number): [TilesArray, TilesArray] {
   return [array.slice(0, at), array.slice(at, array.length)];
 }
@@ -367,8 +381,16 @@ export function isFactoryFull(factory: Factory): boolean {
   return factory.length == FACTORY_MAX_TILES;
 }
 
+export function isFactoryEmpty(factory: Factory): boolean {
+  return factory.length == 0;
+}
+
 export function areAllFactoriesFull(game: Game): boolean {
   return game.factories.find(factory => !isFactoryFull(factory)) == undefined;
+}
+
+export function areAllFactoriesEmpty(game: Game): boolean {
+  return game.factories.find(factory => !isFactoryEmpty(factory)) == undefined && isFactoryEmpty(game.leftovers);
 }
 
 export function placementsForStagingRow(index: number): number {
@@ -388,13 +410,11 @@ export function canPlaceTilesInStagingRow(
     return false;
   } else if (tile.color != undefined && doesWallRowHasTileColor(player.board.wall, stagingRowIndex, tile.color)) {
     return false;
+  } else if (isStagingRowFull(stagingRow, stagingRowIndex)) {
+    return false;
   } else {
     return true;
   }
-}
-
-export function tilesFromFactoryOfColor(factory: Factory, tile: Tile): Array<Tile> {
-  return factory.filter(tileInFactory => tileInFactory.kind == tile.kind && tileInFactory.color == tile.color);
 }
 
 export function doesWallRowHasTileColor(wall: Wall, rowIndex: number, color: ColorType): boolean {
