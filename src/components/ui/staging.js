@@ -10,6 +10,7 @@ import { GameContext } from "../game_provider";
 // helpers
 import { placementsForStagingRow, canPlaceTilesInStagingRow, COLORS } from "../../models";
 import { PLACEMENT_GAP } from "../../styles";
+import { getPutTilesFromFactoryIntoStagingRowAction } from "../../actions";
 
 /***********************************************************/
 
@@ -44,17 +45,30 @@ export default class Staging extends React.Component<Props, State> {
   render() {
     return (
       <GameContext.Consumer>
-        {({ gameState, uiState }) => {
+        {({ gameState, uiState, dispatch }) => {
           return (
             <div className={$containerStyle}>
-              {this.props.staging.map((stagingRow, index) => {
+              {this.props.staging.map((stagingRow, stagingRowIndex) => {
                 let canPlaceInStagingRow =
                   this.props.selectionEnabled &&
                   uiState.selectedTile &&
-                  canPlaceTilesInStagingRow(gameState.players[gameState.currentPlayer], index, uiState.selectedTile, 1);
+                  canPlaceTilesInStagingRow(
+                    gameState.players[gameState.currentPlayer],
+                    stagingRowIndex,
+                    uiState.selectedFactory,
+                    uiState.selectedTile
+                  );
                 return (
-                  <div className={$stagingRowStyle} key={index}>
-                    {[...Array(placementsForStagingRow(index))].map((_, col) => (
+                  <div
+                    className={$stagingRowStyle}
+                    key={stagingRowIndex}
+                    onClick={() => {
+                      if (canPlaceInStagingRow) {
+                        dispatch(getPutTilesFromFactoryIntoStagingRowAction(stagingRowIndex));
+                      }
+                    }}
+                  >
+                    {[...Array(placementsForStagingRow(stagingRowIndex))].map((_, col) => (
                       <Placement key={col} highlighted={canPlaceInStagingRow} />
                     ))}
                   </div>

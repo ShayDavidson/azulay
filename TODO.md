@@ -16,6 +16,8 @@
 
 ## Refactors
 
+* Flowtype for actions hard-typed
+* Can't be wrong in floor placement - always for current player.
 * Followup dispatch.
 * Error fallback flow type crap.
 * Immutable helpers.

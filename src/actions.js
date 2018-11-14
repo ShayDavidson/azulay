@@ -8,11 +8,14 @@ import type { UI } from "./ui_models";
 
 // action handlers
 import {
+  PHASES,
   drawTileFromBagIntoFactories,
   moveToPlacementPhase,
-  PHASES,
   areAllFactoriesFull,
-  putTilesFromFactoryIntoFloor
+  putTilesFromFactoryIntoFloor,
+  putTilesFromFactoryIntoStagingRow,
+  getCurrentPlayer,
+  canPlaceTilesInStagingRow
 } from "./models";
 import { createResetUI } from "./ui_models";
 // helpers
@@ -22,10 +25,11 @@ import { play, playRandom, TILES, CLICK } from "./sfx";
 
 export type Action = {
   type: ActionName,
-  payload?: {
+  payload: {
     factory?: Factory,
     tile?: Tile,
-    floor?: Floor
+    floor?: Floor,
+    stagingRowIndex?: number
   }
 };
 
@@ -77,8 +81,8 @@ export function reduce(state: State, action: Action): State {
       return {
         ...state,
         ui: {
-          selectedFactory: isDeselect(action, ui) ? undefined : action.payload && action.payload.factory,
-          selectedTile: isDeselect(action, ui) ? undefined : action.payload && action.payload.tile
+          selectedFactory: isDeselect(action, ui) ? undefined : action.payload.factory,
+          selectedTile: isDeselect(action, ui) ? undefined : action.payload.tile
         }
       };
     }
@@ -96,7 +100,15 @@ export function reduce(state: State, action: Action): State {
     }
 
     case ACTIONS.putTilesFromFactoryIntoStagingRow: {
-      return state;
+      if (selectedFactory != undefined && selectedTile != undefined && action.payload.stagingRowIndex != undefined) {
+        return {
+          ...state,
+          game: putTilesFromFactoryIntoStagingRow(game, action.payload.stagingRowIndex, selectedFactory, selectedTile),
+          ui: createResetUI()
+        };
+      } else {
+        return state;
+      }
     }
 
     default:
@@ -108,10 +120,11 @@ export function reduce(state: State, action: Action): State {
 
 export function validate(state: State, action: Action): ?ValidationError {
   const { game, ui } = state;
+  const { type, payload } = action;
   let error: ?ValidationError;
   let fallbackAction: ?ActionDispatcherPromise;
 
-  switch (action.type) {
+  switch (type) {
     case ACTIONS.moveToPlacementPhase: {
       if (game.phase != PHASES.refill) {
         error = new Error("not in right phase");
@@ -137,18 +150,31 @@ export function validate(state: State, action: Action): ?ValidationError {
     }
 
     case ACTIONS.putTilesFromFactoryIntoFloor: {
-      if (ui.selectedFactory == undefined || ui.selectedTile == undefined) {
+      const { selectedFactory, selectedTile } = ui;
+      if (selectedFactory == null || selectedTile == null) {
         error = new Error("no selected tile in factory");
       } else if (game.phase != PHASES.placement) {
         error = new Error("can't put tile in board in this phase");
-      } else if (action.payload && action.payload.floor != game.players[game.currentPlayer].board.floor) {
+      } else if (payload.floor != game.players[game.currentPlayer].board.floor) {
         error = new Error("wrong player's floor");
       }
       break;
     }
 
     case ACTIONS.putTilesFromFactoryIntoStagingRow: {
-      break;
+      const { selectedFactory, selectedTile } = ui;
+      const { stagingRowIndex } = payload;
+      if (selectedFactory == null || selectedTile == null) {
+        error = new Error("no selected tile in factory");
+      } else if (stagingRowIndex == null) {
+        error = new Error("no selected staging row");
+      } else if (game.phase != PHASES.placement) {
+        error = new Error("can't put tile in board in this phase");
+      } else if (selectedTile.kind == "first") {
+        error = new Error("can't put first tile in staging");
+      } else if (!canPlaceTilesInStagingRow(getCurrentPlayer(game), stagingRowIndex, selectedFactory, selectedTile)) {
+        error = new Error("staging area cannot contain tile");
+      }
     }
   }
 
@@ -164,8 +190,7 @@ export function validate(state: State, action: Action): ?ValidationError {
 /***********************************************************/
 
 export function isDeselect(action: Action, ui: UI): boolean {
-  return action.payload &&
-    action.payload.factory &&
+  return action.payload.factory &&
     action.payload.factory == ui.selectedFactory &&
     action.payload.tile &&
     action.payload.tile == ui.selectedTile
@@ -190,7 +215,8 @@ export function getSelectTileInFactoryAction(factory: Factory, tile: Tile): Acti
 export function getMoveToPlacementPhaseAction(): ActionDispatcherPromise {
   return dispatch => {
     return dispatch({
-      type: ACTIONS.moveToPlacementPhase
+      type: ACTIONS.moveToPlacementPhase,
+      payload: {}
     });
   };
 }
@@ -198,7 +224,8 @@ export function getMoveToPlacementPhaseAction(): ActionDispatcherPromise {
 export function getDrawTileFromBagIntoFactoriesAction(): ActionDispatcherPromise {
   return (dispatch, followupDispatch) => {
     return dispatch({
-      type: ACTIONS.drawTileFromBagIntoFactories
+      type: ACTIONS.drawTileFromBagIntoFactories,
+      payload: {}
     })
       .then(() => playRandom(TILES))
       .delay(100)

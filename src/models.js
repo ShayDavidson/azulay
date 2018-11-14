@@ -186,6 +186,10 @@ export function drawTileFromBagIntoFactories(game: Game): Game {
   }
 }
 
+export function moveToPlacementPhase(game: Game): Game {
+  return { ...game, phase: PHASES.placement };
+}
+
 export function putTilesFromFactoryIntoFloor(game: Game, selectedFactory: Factory, selectedTile: Tile): Game {
   const currentPlayer = getCurrentPlayer(game);
   const relevantTiles = selectedFactory
@@ -218,16 +222,9 @@ export function putTilesFromFactoryIntoFloor(game: Game, selectedFactory: Factor
   };
 }
 
-export function moveToPlacementPhase(game: Game): Game {
-  return { ...game, phase: PHASES.placement };
+export function putTilesFromFactoryIntoStagingRow(game: Game, stagingRow: number, factory: Factory, tile: Tile): Game {
+  return game;
 }
-
-// export function putTilesFromFactoryIntoPlayerStagingRow(
-//   game: Game,
-//   factory: Factory,
-//   tile: Tile,
-//   stagingRow: number
-// ): Game {}
 
 // INTERNAL ACTIONS ////////////////////////////
 
@@ -327,10 +324,11 @@ export function placementsForStagingRow(index: number): number {
 export function canPlaceTilesInStagingRow(
   player: Player,
   stagingRowIndex: number,
-  tile: Tile,
-  tileCount: number
+  fromFactory: Factory,
+  tile: Tile
 ): boolean {
   let stagingRow = player.board.staging[stagingRowIndex];
+  let tileCount = tilesFromFactoryOfColor(fromFactory, tile).length;
   if (tile.kind == "first") {
     return false;
   } else if (stagingRow.color != undefined && stagingRow.color != tile.color) {
@@ -342,6 +340,10 @@ export function canPlaceTilesInStagingRow(
   } else {
     return true;
   }
+}
+
+export function tilesFromFactoryOfColor(factory: Factory, tile: Tile): Array<Tile> {
+  return factory.filter(tileInFactory => tileInFactory.kind == tile.kind && tileInFactory.color == tile.color);
 }
 
 export function doesWallRowHasTileColor(wall: Wall, rowIndex: number, color: ColorType): boolean {
