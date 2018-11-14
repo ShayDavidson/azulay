@@ -76,6 +76,18 @@ export type Factory = TilesArray;
 
 export type Phase = $Keys<typeof PHASES>;
 
+export type Scoring = {|
+  forTiles: Array<{|
+    row: number,
+    col: number,
+    scoringTilesInCol: Array<[number, number]>,
+    scoringTilesInRow: Array<[number, number]>,
+    rowScore: number,
+    colScore: number
+  |}>,
+  totalScore: number
+|};
+
 export type Game = {|
   players: Array<Player>,
   bag: TilesArray,
@@ -92,7 +104,7 @@ export type Game = {|
 // FACTORIES ////////////////////////////
 
 export function createGame(players: number, seed: number): Game {
-  let rng = createRNG(seed);
+  const rng = createRNG(seed);
   return {
     players: [...Array(players)].map((_, index) => createPlayer(`Player ${index}`, "human")),
     bag: rng.shuffle(createBag()),
@@ -137,7 +149,7 @@ export function createBoard(): Board {
 }
 
 export function createWall(): Wall {
-  let wall = new Array(COLORS);
+  const wall = new Array(COLORS);
   for (let row = 0; row < COLORS; row++) {
     wall[row] = new Array(COLORS);
     for (let col = 0; col < COLORS; col++) {
@@ -154,11 +166,11 @@ export function createTile(kind: TileKind, color: ?ColorType): Tile {
 // ACTIONS ////////////////////////////
 
 export function drawTileFromBagIntoFactories(game: Game): Game {
-  let pickedTile = game.bag[0];
+  const pickedTile = game.bag[0];
   if (pickedTile != undefined) {
-    let bag = game.bag.slice(1, game.bag.length);
+    const bag = game.bag.slice(1, game.bag.length);
     let filledFactory = false;
-    let factories = game.factories.map(factory => {
+    const factories = game.factories.map(factory => {
       if (isFactoryFull(factory) || filledFactory) {
         return factory;
       } else {
@@ -246,73 +258,80 @@ export function moveToScoringPhase(game: Game): Game {
 }
 
 export function shuffleBoxIntoBag(game: Game): Game {
-  let rng = createRNG(game.randomProps.seed, game.randomProps.counter);
-  let shuffledTiles = rng.shuffle(game.box);
-  let randomProps = { ...game.randomProps, counter: rng.getCounter() };
+  const rng = createRNG(game.randomProps.seed, game.randomProps.counter);
+  const shuffledTiles = rng.shuffle(game.box);
+  const randomProps = { ...game.randomProps, counter: rng.getCounter() };
   return { ...game, randomProps, box: [], bag: shuffledTiles };
-}
-
-// CALCULATIONS ////////////////////////////
-
-export function calculateBoardAddedScore(board: Board): number {
-  return board.staging.reduce((score, stagingRow, stagingRowIndex) => {
-    if (isStagingRowFull(stagingRow, stagingRowIndex)) {
-      let placementColor = getStagingRowColor(stagingRow);
-      if (placementColor != undefined) {
-        let newWall = placeTileInWall(board.wall, stagingRowIndex, placementColor);
-        let placementRow = stagingRowIndex;
-        let placementCol = getWallPlacementCol(placementRow, placementColor);
-        return score + calculateTilePlacementScore(newWall, placementRow, placementCol);
-      } else {
-        return score;
-      }
-    } else {
-      return score;
-    }
-  }, 0);
-}
-
-export function calculateTilePlacementScore(wall: Wall, placementRow: number, placementCol: number): number {
-  var rowScore = 0;
-  var encounteredTileInRow = false;
-  for (let col = 0; col < COLORS; col++) {
-    let inPlacement = col == placementCol;
-    if (inPlacement) {
-      encounteredTileInRow = true;
-    }
-    if (inPlacement || wall[placementRow][col]) {
-      rowScore += 1;
-    } else if (encounteredTileInRow) {
-      break;
-    } else {
-      rowScore = 0;
-    }
-  }
-
-  var colScore = 0;
-  var encounteredTileInCol = false;
-  for (let row = 0; row < COLORS; row++) {
-    let inPlacement = row == placementRow;
-    if (inPlacement) {
-      encounteredTileInRow = true;
-    }
-    if (inPlacement || wall[row][placementCol]) {
-      colScore += 1;
-    } else if (encounteredTileInCol) {
-      break;
-    } else {
-      colScore = 0;
-    }
-  }
-
-  return rowScore + colScore;
 }
 
 // HELPERS ////////////////////////////
 
+export function getBoardScoring(board: Board): Scoring {
+  let forTiles = [];
+  let totalScore = 0;
+
+  board.staging.forEach((stagingRow, stagingRowIndex) => {
+    const placementColor = getStagingRowColor(stagingRow);
+    if (isStagingRowFull(stagingRow, stagingRowIndex) && placementColor != undefined) {
+      const wall = placeTileInWall(board.wall, stagingRowIndex, placementColor);
+      const placementRow = stagingRowIndex;
+      const placementCol = getWallPlacementCol(placementRow, placementColor);
+
+      let rowScore = 0;
+      let encounteredTileInRow = false;
+      let scoringTilesInRow = [];
+      for (let col = 0; col < COLORS; col++) {
+        let inPlacement = col == placementCol;
+        if (inPlacement) {
+          encounteredTileInRow = true;
+        }
+        if (inPlacement || wall[placementRow][col]) {
+          rowScore += 1;
+          scoringTilesInRow.push([placementRow, col]);
+        } else if (encounteredTileInRow) {
+          break;
+        } else {
+          rowScore = 0;
+        }
+      }
+
+      let colScore = 0;
+      let encounteredTileInCol = false;
+      let scoringTilesInCol = [];
+      for (let row = 0; row < COLORS; row++) {
+        let inPlacement = row == placementRow;
+        if (inPlacement) {
+          encounteredTileInRow = true;
+        }
+        if (inPlacement || wall[row][placementCol]) {
+          colScore += 1;
+          scoringTilesInRow.push([row, placementCol]);
+        } else if (encounteredTileInCol) {
+          break;
+        } else {
+          colScore = 0;
+        }
+      }
+      forTiles.push({
+        row: placementRow,
+        col: placementCol,
+        scoringTilesInRow,
+        scoringTilesInCol,
+        rowScore,
+        colScore
+      });
+      totalScore += rowScore + colScore;
+    }
+  });
+  return {
+    forTiles,
+    totalScore
+  };
+}
+
 function placeTileInWall(wall: Wall, fromStagingRowIndex: number, tileColor: ColorType): Wall {
-  let tileWallRow = fromStagingRowIndex;
-  let tileWallCol = getWallPlacementCol(tileWallRow, tileColor);
+  const tileWallRow = fromStagingRowIndex;
+  const tileWallCol = getWallPlacementCol(tileWallRow, tileColor);
   return wall.map(
     (wallRow, wallRowIndex) =>
       wallRowIndex == tileWallRow
@@ -398,7 +417,7 @@ export function canPlaceTilesInStagingRow(
   fromFactory: Factory,
   tile: Tile
 ): boolean {
-  let stagingRow = player.board.staging[stagingRowIndex];
+  const stagingRow = player.board.staging[stagingRowIndex];
   if (tile.kind == "first") {
     return false;
   } else if (getStagingRowColor(stagingRow) != null && getStagingRowColor(stagingRow) != tile.color) {
@@ -413,7 +432,7 @@ export function canPlaceTilesInStagingRow(
 }
 
 export function doesWallRowHasTileColor(wall: Wall, rowIndex: number, color: ColorType): boolean {
-  let row = wall[rowIndex];
+  const row = wall[rowIndex];
   return (
     row.find((hasTile, colIndex) => {
       return hasTile && getWallPlacementColor(rowIndex, colIndex) == color;
