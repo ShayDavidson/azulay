@@ -14,7 +14,7 @@ import {
   areAllFactoriesFull,
   putTilesFromFactoryIntoFloor,
   putTilesFromFactoryIntoStagingRow,
-  moveToNextPlayer,
+  moveToNextPlayerPlacement,
   moveToScoringPhase,
   shuffleBoxIntoBag,
   getCurrentPlayer,
@@ -64,7 +64,7 @@ export const ACTIONS = {
   selectTileInFactory: "selectTileInFactory",
   putTilesFromFactoryIntoFloor: "putTilesFromFactoryIntoFloor",
   putTilesFromFactoryIntoStagingRow: "putTilesFromFactoryIntoStagingRow",
-  moveToNextPlayer: "moveToNextPlayer",
+  moveToNextPlayerPlacement: "moveToNextPlayerPlacement",
   moveToScoringPhase: "moveToScoringPhase",
   shuffleBoxIntoBag: "shuffleBoxIntoBag"
 };
@@ -118,8 +118,8 @@ export function reduce(state: State, action: Action): State {
       }
     }
 
-    case ACTIONS.moveToNextPlayer: {
-      return { ...state, game: moveToNextPlayer(game) };
+    case ACTIONS.moveToNextPlayerPlacement: {
+      return { ...state, game: moveToNextPlayerPlacement(game) };
     }
 
     case ACTIONS.moveToScoringPhase: {
@@ -204,7 +204,7 @@ export function validate(state: State, action: Action): ?ValidationError {
       break;
     }
 
-    case ACTIONS.moveToNextPlayer: {
+    case ACTIONS.moveToNextPlayerPlacement: {
       if (game.phase != PHASES.placement) {
         error = new Error("not in right phase");
       } else if (areAllFactoriesEmpty(game)) {
@@ -293,7 +293,7 @@ export function getPutTilesFromFactoryIntoFloorAction(floor: Floor): ActionDispa
       payload: { floor }
     })
       .then(() => play(CLICK))
-      .then(() => followupDispatch(getMoveToNextPlayerAction()));
+      .then(() => followupDispatch(getmoveToNextPlayerPlacementAction()));
   };
 }
 
@@ -306,14 +306,14 @@ export function getPutTilesFromFactoryIntoStagingRowAction(stagingRowIndex: numb
       }
     })
       .then(() => play(CLICK))
-      .then(() => followupDispatch(getMoveToNextPlayerAction()));
+      .then(() => followupDispatch(getmoveToNextPlayerPlacementAction()));
   };
 }
 
-export function getMoveToNextPlayerAction(): ActionDispatcherPromise {
+export function getmoveToNextPlayerPlacementAction(): ActionDispatcherPromise {
   return dispatch => {
     return dispatch({
-      type: ACTIONS.moveToNextPlayer,
+      type: ACTIONS.moveToNextPlayerPlacement,
       payload: {}
     });
   };

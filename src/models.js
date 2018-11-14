@@ -246,7 +246,7 @@ export function putTilesFromFactoryIntoStagingRow(
   };
 }
 
-export function moveToNextPlayer(game: Game): Game {
+export function moveToNextPlayerPlacement(game: Game): Game {
   return {
     ...game,
     currentPlayer: getNextPlayer(game)
