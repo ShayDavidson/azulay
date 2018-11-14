@@ -192,25 +192,17 @@ export function moveToPlacementPhase(game: Game): Game {
 
 export function putTilesFromFactoryIntoFloor(game: Game, selectedFactory: Factory, selectedTile: Tile): Game {
   const currentPlayer = getCurrentPlayer(game);
-  const relevantTiles = selectedFactory
-    .filter(tile => tile.color == selectedTile.color || tile.kind == "first")
-    .sort((a, b) => (a.kind == "first" ? -1 : b.kind == "first" ? 1 : 0));
-
-  const tookFirst = relevantTiles.find(tile => tile.kind == "first") != undefined;
-  const remainingTiles = selectedFactory.filter(tile => tile.color != selectedTile.color && tile.kind != "first");
+  const { relevantTiles, remainingTiles, tookFirst } = takeTilesFromFactory(selectedFactory, selectedTile);
   const roomLeftInFloor = FLOOR_SLOTS.length - currentPlayer.board.floor.length;
-  const floor = currentPlayer.board.floor.concat(relevantTiles.slice(0, roomLeftInFloor));
-  const factories = game.factories.map(factory => (factory == selectedFactory ? [] : factory));
+  const [tilesToPutInFloor, tilesToPutInBox] = slice(relevantTiles, roomLeftInFloor);
+  const floor = currentPlayer.board.floor.concat(tilesToPutInFloor);
+  const factories = immutableArrayUpdate(game.factories, selectedFactory, []);
   const leftovers =
-    game.leftovers == selectedFactory
-      ? remainingTiles
-      : game.leftovers
-          .concat(remainingTiles)
-          .sort((a: Tile, b: Tile) => (a.color != undefined ? a.color : -1) - (b.color != undefined ? b.color : 0));
-  const box = game.box.concat(relevantTiles.slice(roomLeftInFloor, relevantTiles.length));
+    game.leftovers == selectedFactory ? remainingTiles : game.leftovers.concat(remainingTiles).sort(tilesComparator);
+  const box = game.box.concat(tilesToPutInBox);
   const newPlayer = { ...currentPlayer, board: { ...currentPlayer.board, floor } };
-  const players = game.players.map(player => (player == currentPlayer ? newPlayer : player));
-  const newCurrentPlayer = (game.currentPlayer + 1) % game.players.length;
+  const players = immutableArrayUpdate(game.players, currentPlayer, newPlayer);
+  const newCurrentPlayer = getNextPlayer(game);
   return {
     ...game,
     players,
@@ -222,8 +214,37 @@ export function putTilesFromFactoryIntoFloor(game: Game, selectedFactory: Factor
   };
 }
 
-export function putTilesFromFactoryIntoStagingRow(game: Game, stagingRow: number, factory: Factory, tile: Tile): Game {
-  return game;
+export function putTilesFromFactoryIntoStagingRow(
+  game: Game,
+  stagingRowIndex: number,
+  selectedFactory: Factory,
+  selectedTile: Tile
+): Game {
+  const currentPlayer = getCurrentPlayer(game);
+  const { relevantTiles, remainingTiles, tookFirst } = takeTilesFromFactory(selectedFactory, selectedTile, false);
+  const stagingRow = currentPlayer.board.staging[stagingRowIndex];
+  const roomLeftInRow = placementsForStagingRow(stagingRowIndex) - stagingRow.count;
+  const [tilesToPutInRow, tilesToPutInFloor] = slice(relevantTiles, roomLeftInRow);
+  const staging = immutableArrayUpdate(currentPlayer.board.staging, stagingRow, stagingRow);
+  const roomLeftInFloor = FLOOR_SLOTS.length - currentPlayer.board.floor.length;
+  const [tilesToActuallyPutInFloor, tilesToPutInBox] = slice(tilesToPutInFloor, roomLeftInFloor);
+  const floor = currentPlayer.board.floor.concat(tilesToActuallyPutInFloor);
+  const box = game.box.concat(tilesToPutInBox);
+  const factories = immutableArrayUpdate(game.factories, selectedFactory, []);
+  const leftovers =
+    game.leftovers == selectedFactory ? remainingTiles : game.leftovers.concat(remainingTiles).sort(tilesComparator);
+  const newPlayer = { ...currentPlayer, board: { ...currentPlayer.board, floor, staging } };
+  const players = immutableArrayUpdate(game.players, currentPlayer, newPlayer);
+  const newCurrentPlayer = getNextPlayer(game);
+  return {
+    ...game,
+    players,
+    factories,
+    box,
+    currentPlayer: newCurrentPlayer,
+    nextPlayer: tookFirst ? game.currentPlayer : game.nextPlayer,
+    leftovers
+  };
 }
 
 // INTERNAL ACTIONS ////////////////////////////
@@ -297,6 +318,41 @@ export function calculateTilePlacementScore(wall: Wall, placementRow: number, pl
 
 // HELPERS ////////////////////////////
 
+export function getNextPlayer(game: Game): number {
+  return (game.currentPlayer + 1) % game.players.length;
+}
+
+export function immutableArrayUpdate<T>(array: Array<T>, value: T, newValue: T): Array<T> {
+  return array.map(element => (element == value ? newValue : element));
+}
+
+export function tilesComparator(a: Tile, b: Tile): number {
+  if (a.kind == "first") {
+    return -1;
+  } else if (b.kind == "first") {
+    return 1;
+  } else {
+    return (a.color != undefined ? a.color : -1) - (b.color != undefined ? b.color : 0);
+  }
+}
+
+export function slice(array: TilesArray, at: number): [TilesArray, TilesArray] {
+  return [array.slice(0, at), array.slice(at, array.length)];
+}
+
+export function takeTilesFromFactory(selectedFactory: Factory, selectedTile: Tile, includeFirst: boolean = true) {
+  const relevantTiles: TilesArray = selectedFactory
+    .filter(tile => tile.color == selectedTile.color || (includeFirst && tile.kind == "first"))
+    .sort(tilesComparator);
+  const remainingTiles: TilesArray = selectedFactory.filter(
+    tile => tile.color != selectedTile.color && (!includeFirst || tile.kind != "first")
+  );
+
+  const tookFirst = relevantTiles.find(tile => tile.kind == "first") != undefined;
+
+  return { relevantTiles, remainingTiles, tookFirst };
+}
+
 export function getCurrentPlayer(game: Game): Player {
   return game.players[game.currentPlayer];
 }
@@ -328,12 +384,9 @@ export function canPlaceTilesInStagingRow(
   tile: Tile
 ): boolean {
   let stagingRow = player.board.staging[stagingRowIndex];
-  let tileCount = tilesFromFactoryOfColor(fromFactory, tile).length;
   if (tile.kind == "first") {
     return false;
   } else if (stagingRow.color != undefined && stagingRow.color != tile.color) {
-    return false;
-  } else if (placementsForStagingRow(stagingRowIndex) - stagingRow.count + 1 < tileCount) {
     return false;
   } else if (tile.color != undefined && doesWallRowHasTileColor(player.board.wall, stagingRowIndex, tile.color)) {
     return false;
