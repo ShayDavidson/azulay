@@ -15,7 +15,8 @@ export const FACTORY_MAX_TILES = 4;
 export const PHASES = {
   refill: "refill",
   placement: "placement",
-  scoring: "scoring"
+  scoring: "scoring",
+  end: "end"
 };
 export const PLAYER_TYPE = {
   human: "human",
@@ -79,6 +80,7 @@ export type Phase = $Keys<typeof PHASES>;
 export type Scoring = {|
   player: Player,
   forTiles: Array<{|
+    wall: Wall,
     row: number,
     col: number,
     scoringTilesInCol: Array<[number, number]>,
@@ -87,8 +89,12 @@ export type Scoring = {|
     totalScoreAfterCol: number,
     totalScoreAfter: number,
     rowScore: number,
-    colScore: number
+    colScore: number,
+    scoredEntireRow: boolean,
+    scoredEntireCol: boolean,
+    scoredEntireColor: boolean
   |}>,
+  floorScore: number,
   totalScore: number
 |};
 
@@ -199,12 +205,12 @@ export function putTilesFromFactoryIntoFloor(game: Game, selectedFactory: Factor
   const roomLeftInFloor = FLOOR_SLOTS.length - currentPlayer.board.floor.length;
   const [tilesToPutInFloor, tilesToPutInBox] = slice(relevantTiles, roomLeftInFloor);
   const floor = currentPlayer.board.floor.concat(tilesToPutInFloor);
-  const factories = immutableArrayUpdate(game.factories, selectedFactory, []);
+  const factories = immutableCompareUpdate(game.factories, selectedFactory, []);
   const leftovers =
     game.leftovers == selectedFactory ? remainingTiles : game.leftovers.concat(remainingTiles).sort(tilesComparator);
   const box = game.box.concat(tilesToPutInBox);
   const newPlayer = { ...currentPlayer, board: { ...currentPlayer.board, floor } };
-  const players = immutableArrayUpdate(game.players, currentPlayer, newPlayer);
+  const players = immutableCompareUpdate(game.players, currentPlayer, newPlayer);
   return {
     ...game,
     players,
@@ -230,16 +236,16 @@ export function putTilesFromFactoryIntoStagingRow(
   let [tilesToPutInRow, tilesToPutInFloor] = slice(relevantTiles, roomLeftInRow);
   if (firstTile) tilesToPutInFloor = [...tilesToPutInFloor, ((firstTile: any): Tile)];
   const newStagingRow = stagingRow.concat(tilesToPutInRow);
-  const staging = immutableArrayUpdate(currentPlayer.board.staging, stagingRow, newStagingRow);
+  const staging = immutableCompareUpdate(currentPlayer.board.staging, stagingRow, newStagingRow);
   const roomLeftInFloor = FLOOR_SLOTS.length - currentPlayer.board.floor.length;
   const [tilesToActuallyPutInFloor, tilesToPutInBox] = slice(tilesToPutInFloor, roomLeftInFloor);
   const floor = currentPlayer.board.floor.concat(tilesToActuallyPutInFloor.sort(tilesComparator));
   const box = game.box.concat(tilesToPutInBox);
-  const factories = immutableArrayUpdate(game.factories, selectedFactory, []);
+  const factories = immutableCompareUpdate(game.factories, selectedFactory, []);
   const leftovers =
     game.leftovers == selectedFactory ? remainingTiles : game.leftovers.concat(remainingTiles).sort(tilesComparator);
   const newPlayer = { ...currentPlayer, board: { ...currentPlayer.board, floor, staging } };
-  const players = immutableArrayUpdate(game.players, currentPlayer, newPlayer);
+  const players = immutableCompareUpdate(game.players, currentPlayer, newPlayer);
   return {
     ...game,
     players,
@@ -250,7 +256,7 @@ export function putTilesFromFactoryIntoStagingRow(
   };
 }
 
-export function moveToNextPlayerPlacement(game: Game): Game {
+export function moveToNextPlayer(game: Game): Game {
   return {
     ...game,
     currentPlayer: getNextPlayer(game)
@@ -261,6 +267,23 @@ export function moveToScoringPhase(game: Game): Game {
   return { ...game, phase: PHASES.scoring };
 }
 
+export function showScoringAct(game: Game): Game {
+  const players = game.players.map(player => {
+    const staging = immutablePredicateUpdate(player.board.staging, isStagingRowFull, []);
+    return {
+      ...player
+    };
+  });
+  return {
+    ...game,
+    players
+  };
+}
+
+export function moveToRefillPhase(game: Game): Game {
+  return { ...game, phase: PHASES.refill };
+}
+
 export function shuffleBoxIntoBag(game: Game): Game {
   const rng = createRNG(game.randomProps.seed, game.randomProps.counter);
   const shuffledTiles = rng.shuffle(game.box);
@@ -268,7 +291,22 @@ export function shuffleBoxIntoBag(game: Game): Game {
   return { ...game, randomProps, box: [], bag: shuffledTiles };
 }
 
+export function moveToEndPhase(game: Game): Game {
+  return { ...game, phase: PHASES.end };
+}
+
 // HELPERS ////////////////////////////
+
+export function shouldGameBeOver(game: Game): boolean {
+  return !!game.players.find(
+    player => !!player.board.wall.find((_, index) => isWallRowComplete(player.board.wall, index))
+  );
+}
+
+export function isWallRowComplete(wall: Wall, rowIndex: number): boolean {
+  const row = wall[rowIndex];
+  return row.filter(el => el).length == COLORS;
+}
 
 export function getBoardScoring(player: Player): Scoring {
   const board = player.board;
@@ -318,6 +356,7 @@ export function getBoardScoring(player: Player): Scoring {
         }
       }
       forTiles.push({
+        wall,
         row: placementRow,
         col: placementCol,
         scoringTilesInRow,
@@ -326,16 +365,33 @@ export function getBoardScoring(player: Player): Scoring {
         totalScoreAfter: totalScore + rowScore + colScore,
         scoringTilesInCol,
         rowScore,
-        colScore
+        colScore,
+        scoredEntireRow: scoringTilesInRow.length == COLORS,
+        scoredEntireCol: scoringTilesInCol.length == COLORS,
+        scoredEntireColor: countTilesOfColorInWall(wall, placementColor) == COLORS
       });
       totalScore += rowScore + colScore;
     }
   });
+  const floorScore = getFloorScore(board.floor);
+  totalScore += floorScore;
   return {
     player,
     forTiles,
+    floorScore,
     totalScore
   };
+}
+
+function countTilesOfColorInWall(wall: Wall, color: ColorType): number {
+  return wall.reduce(
+    (count, _, rowIndex) => (wall[rowIndex][getWallPlacementCol(rowIndex, color)] ? count + 1 : count),
+    0
+  );
+}
+
+function getFloorScore(floor: Floor): number {
+  return FLOOR_SLOTS.slice(0, floor.length).reduce((sum, a) => sum + a);
 }
 
 function placeTileInWall(wall: Wall, fromStagingRowIndex: number, tileColor: ColorType): Wall {
@@ -353,8 +409,16 @@ export function getNextPlayer(game: Game): number {
   return (game.currentPlayer + 1) % game.players.length;
 }
 
-export function immutableArrayUpdate<T>(array: Array<T>, value: T, newValue: T): Array<T> {
+export function immutableCompareUpdate<T>(array: Array<T>, value: T, newValue: T): Array<T> {
   return array.map(element => (element == value ? newValue : element));
+}
+
+export function immutablePredicateUpdate<T>(
+  array: Array<T>,
+  predicate: (value: T, index: number) => boolean,
+  newValue: T
+): Array<T> {
+  return array.map((element, index) => (predicate(element, index) ? newValue : element));
 }
 
 export function tilesComparator(a: Tile, b: Tile): number {

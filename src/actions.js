@@ -3,7 +3,7 @@
 import Promise from "bluebird";
 
 // types
-import type { Game, Tile, Factory, Floor } from "./models";
+import type { Game, Tile, Factory, Floor, Scoring } from "./models";
 import type { UI } from "./ui_models";
 
 // action handlers
@@ -14,9 +14,12 @@ import {
   areAllFactoriesFull,
   putTilesFromFactoryIntoFloor,
   putTilesFromFactoryIntoStagingRow,
-  moveToNextPlayerPlacement,
+  moveToNextPlayer,
   moveToScoringPhase,
+  moveToRefillPhase,
   shuffleBoxIntoBag,
+  moveToEndPhase,
+  shouldGameBeOver,
   getCurrentPlayer,
   areAllFactoriesEmpty,
   canPlaceTilesInStagingRow
@@ -33,7 +36,8 @@ export type Action = {
     factory?: Factory,
     tile?: Tile,
     floor?: Floor,
-    stagingRowIndex?: number
+    stagingRowIndex?: number,
+    currentScoringAct?: Scoring
   }
 };
 
@@ -68,7 +72,9 @@ export const ACTIONS = {
   moveToScoringPhase: "moveToScoringPhase",
   showScoringAct: "showScoringAct",
   moveToNextPlayerScoring: "moveToNextPlayerScoring",
-  shuffleBoxIntoBag: "shuffleBoxIntoBag"
+  moveToRefillPhase: "moveToRefillPhase",
+  shuffleBoxIntoBag: "shuffleBoxIntoBag",
+  moveToEndPhase: "moveToEndPhase"
 };
 
 /***********************************************************/
@@ -122,7 +128,7 @@ export function reduce(state: State, action: Action): State {
     }
 
     case ACTIONS.moveToNextPlayerPlacement: {
-      return { ...state, game: moveToNextPlayerPlacement(game) };
+      return { ...state, game: moveToNextPlayer(game) };
     }
 
     case ACTIONS.moveToScoringPhase: {
@@ -134,11 +140,19 @@ export function reduce(state: State, action: Action): State {
     }
 
     case ACTIONS.moveToNextPlayerScoring: {
-      return state;
+      return { ...state, game: moveToNextPlayer(game) };
+    }
+
+    case ACTIONS.moveToRefillPhase: {
+      return { ...state, game: moveToRefillPhase(game) };
     }
 
     case ACTIONS.shuffleBoxIntoBag: {
       return { ...state, game: shuffleBoxIntoBag(game) };
+    }
+
+    case ACTIONS.moveToEndPhase: {
+      return { ...state, game: moveToEndPhase(game) };
     }
 
     default:
@@ -233,10 +247,33 @@ export function validate(state: State, action: Action): ?ValidationError {
     }
 
     case ACTIONS.showScoringAct: {
+      const { currentScoringAct } = payload;
+      if (game.phase != PHASES.scoring) {
+        error = new Error("not in right phase");
+      } else if (currentScoringAct == null) {
+        error = new Error("no scoring act provided");
+      }
       break;
     }
 
     case ACTIONS.moveToNextPlayerScoring: {
+      if (game.phase != PHASES.scoring) {
+        error = new Error("not in right phase");
+      } else if (true) {
+        error = new Error("shown scoring for all players");
+        if (shouldGameBeOver(game)) {
+          fallbackAction = getMoveToEndPhaseAction();
+        } else {
+          fallbackAction = getMoveToRefillPhaseAction();
+        }
+      }
+      break;
+    }
+
+    case ACTIONS.moveToRefillPhase: {
+      if (game.phase != PHASES.scoring) {
+        error = new Error("not in right phase");
+      }
       break;
     }
 
@@ -245,6 +282,15 @@ export function validate(state: State, action: Action): ?ValidationError {
         error = new Error("not in right phase");
       } else if (game.bag.length != 0) {
         error = new Error("bag is not emtpy");
+      }
+      break;
+    }
+
+    case ACTIONS.moveToEndPhase: {
+      if (game.phase != PHASES.scoring) {
+        error = new Error("not in right phase");
+      } else if (!shouldGameBeOver(game)) {
+        error = new Error("game should not be over yet");
       }
       break;
     }
@@ -348,18 +394,29 @@ export function getMoveToScoringPhaseAction(): ActionDispatcherPromise {
 }
 
 export function getShowScoringActAction(): ActionDispatcherPromise {
-  return dispatch => {
+  return (dispatch, followupDispatch) => {
     return dispatch({
       type: ACTIONS.showScoringAct,
       payload: {}
-    });
+    })
+      .delay(500)
+      .then(() => followupDispatch(getMoveToNextPlayerScoringAction()));
   };
 }
 
 export function getMoveToNextPlayerScoringAction(): ActionDispatcherPromise {
-  return dispatch => {
+  return (dispatch, followupDispatch) => {
     return dispatch({
       type: ACTIONS.moveToNextPlayerScoring,
+      payload: {}
+    }).then(() => followupDispatch(getShowScoringActAction()));
+  };
+}
+
+export function getMoveToRefillPhaseAction(): ActionDispatcherPromise {
+  return dispatch => {
+    return dispatch({
+      type: ACTIONS.moveToRefillPhase,
       payload: {}
     });
   };
@@ -374,5 +431,14 @@ export function getShuffleBoxIntoBagAction(): ActionDispatcherPromise {
       .then(() => play(SHUFFLE))
       .delay(500)
       .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
+  };
+}
+
+export function getMoveToEndPhaseAction(): ActionDispatcherPromise {
+  return dispatch => {
+    return dispatch({
+      type: ACTIONS.moveToEndPhase,
+      payload: {}
+    });
   };
 }

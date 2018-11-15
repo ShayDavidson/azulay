@@ -2,8 +2,7 @@
 
 ## Actions
 
-* Calculate score.
-* Show scores at end.
+* Game end - show winner.
 
 ## Delight
 
