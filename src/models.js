@@ -79,23 +79,25 @@ export type Phase = $Keys<typeof PHASES>;
 
 export type Scoring = {|
   player: Player,
-  forTiles: Array<{|
-    wall: Wall,
-    row: number,
-    col: number,
-    scoringTilesInCol: Array<[number, number]>,
-    scoringTilesInRow: Array<[number, number]>,
-    totalScoreAfterRow: number,
-    totalScoreAfterCol: number,
-    totalScoreAfter: number,
-    rowScore: number,
-    colScore: number,
-    scoredEntireRow: boolean,
-    scoredEntireCol: boolean,
-    scoredEntireColor: boolean
-  |}>,
+  forTiles: Array<RowScoring>,
   floorScore: number,
   totalScore: number
+|};
+
+export type RowScoring = {|
+  wall: Wall,
+  row: number,
+  col: number,
+  scoringTilesInCol: Array<[number, number]>,
+  scoringTilesInRow: Array<[number, number]>,
+  totalScoreAfterRow: number,
+  totalScoreAfterCol: number,
+  totalScoreAfter: number,
+  rowScore: number,
+  colScore: number,
+  scoredEntireRow: boolean,
+  scoredEntireCol: boolean,
+  scoredEntireColor: boolean
 |};
 
 export type Game = {|
@@ -265,19 +267,6 @@ export function moveToNextPlayer(game: Game): Game {
 
 export function moveToScoringPhase(game: Game): Game {
   return { ...game, phase: PHASES.scoring };
-}
-
-export function showScoringAct(game: Game): Game {
-  const players = game.players.map(player => {
-    const staging = immutablePredicateUpdate(player.board.staging, isStagingRowFull, []);
-    return {
-      ...player
-    };
-  });
-  return {
-    ...game,
-    players
-  };
 }
 
 export function moveToRefillPhase(game: Game): Game {

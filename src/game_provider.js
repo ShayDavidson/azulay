@@ -46,7 +46,7 @@ export default class GameProvider extends React.Component<Props, State> {
   }
 
   dispatch(actionPromiser: ActionDispatcherPromise) {
-    return actionPromiser(this.internalDispatch.bind(this), this.dispatch.bind(this)).catch(
+    return actionPromiser(this.internalDispatch.bind(this), this.dispatch.bind(this), this.state).catch(
       this.handleValidationError.bind(this)
     );
   }

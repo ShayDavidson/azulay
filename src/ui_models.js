@@ -1,10 +1,14 @@
 // @flow
 
-import type { Tile, Factory, Scoring } from "./models";
+import type { Tile, Factory, RowScoring } from "./models";
 
 // TYPES ////////////////////////////
 
-export type UI = {| selectedFactory: ?Factory, selectedTile: ?Tile, currentScoringAct: ?Scoring |};
+export type UI = {|
+  selectedFactory: ?Factory,
+  selectedTile: ?Tile,
+  currentRowScoring: ?RowScoring
+|};
 
 // FACTORIES ////////////////////////////
 
@@ -12,6 +16,6 @@ export function createResetUI() {
   return {
     selectedFactory: undefined,
     selectedTile: undefined,
-    currentScoringAct: undefined
+    currentRowScoring: undefined
   };
 }

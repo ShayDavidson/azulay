@@ -22,7 +22,8 @@ import {
   shouldGameBeOver,
   getCurrentPlayer,
   areAllFactoriesEmpty,
-  canPlaceTilesInStagingRow
+  canPlaceTilesInStagingRow,
+  getBoardScoring
 } from "./models";
 import { createResetUI } from "./ui_models";
 // helpers
@@ -37,7 +38,8 @@ export type Action = {
     tile?: Tile,
     floor?: Floor,
     stagingRowIndex?: number,
-    currentScoringAct?: Scoring
+    scoring?: Scoring,
+    scoringIndex?: number
   }
 };
 
@@ -46,7 +48,8 @@ export type ActionDispatcher = (action: Action) => Promise<any>;
 export type ActionFallbackDispatcher = (actionPromise: ActionDispatcherPromise) => Promise<any>;
 export type ActionDispatcherPromise = (
   dispatch: ActionDispatcher,
-  fallbackDispatch: ActionFallbackDispatcher
+  fallbackDispatch: ActionFallbackDispatcher,
+  state: State
 ) => Promise<any>;
 
 export type ValidationError = Error & {
@@ -70,8 +73,8 @@ export const ACTIONS = {
   putTilesFromFactoryIntoStagingRow: "putTilesFromFactoryIntoStagingRow",
   moveToNextPlayerPlacement: "moveToNextPlayerPlacement",
   moveToScoringPhase: "moveToScoringPhase",
-  showScoringAct: "showScoringAct",
   moveToNextPlayerScoring: "moveToNextPlayerScoring",
+  scoreRow: "scoreRow",
   moveToRefillPhase: "moveToRefillPhase",
   shuffleBoxIntoBag: "shuffleBoxIntoBag",
   moveToEndPhase: "moveToEndPhase"
@@ -81,7 +84,7 @@ export const ACTIONS = {
 
 export function reduce(state: State, action: Action): State {
   const { game, ui } = state;
-  const { selectedFactory, selectedTile } = ui;
+  const { selectedFactory, selectedTile, currentRowScoring } = ui;
 
   switch (action.type) {
     case ACTIONS.drawTileFromBagIntoFactories: {
@@ -135,12 +138,12 @@ export function reduce(state: State, action: Action): State {
       return { ...state, game: moveToScoringPhase(game) };
     }
 
-    case ACTIONS.showScoringAct: {
-      return state;
-    }
-
     case ACTIONS.moveToNextPlayerScoring: {
       return { ...state, game: moveToNextPlayer(game) };
+    }
+
+    case ACTIONS.scoreRow: {
+      return { ...state, ui: { ...state.ui, currentRowScoring } };
     }
 
     case ACTIONS.moveToRefillPhase: {
@@ -246,16 +249,6 @@ export function validate(state: State, action: Action): ?ValidationError {
       break;
     }
 
-    case ACTIONS.showScoringAct: {
-      const { currentScoringAct } = payload;
-      if (game.phase != PHASES.scoring) {
-        error = new Error("not in right phase");
-      } else if (currentScoringAct == null) {
-        error = new Error("no scoring act provided");
-      }
-      break;
-    }
-
     case ACTIONS.moveToNextPlayerScoring: {
       if (game.phase != PHASES.scoring) {
         error = new Error("not in right phase");
@@ -266,6 +259,16 @@ export function validate(state: State, action: Action): ?ValidationError {
         } else {
           fallbackAction = getMoveToRefillPhaseAction();
         }
+      }
+      break;
+    }
+
+    case ACTIONS.scoreRow: {
+      const { scoring } = payload;
+      if (game.phase != PHASES.scoring) {
+        error = new Error("not in right phase");
+      } else if (scoring == null) {
+        error = new Error("no scoring act provided");
       }
       break;
     }
@@ -385,18 +388,9 @@ export function getMoveToNextPlayerPlacementAction(): ActionDispatcherPromise {
 }
 
 export function getMoveToScoringPhaseAction(): ActionDispatcherPromise {
-  return dispatch => {
-    return dispatch({
-      type: ACTIONS.moveToScoringPhase,
-      payload: {}
-    });
-  };
-}
-
-export function getShowScoringActAction(): ActionDispatcherPromise {
   return (dispatch, followupDispatch) => {
     return dispatch({
-      type: ACTIONS.showScoringAct,
+      type: ACTIONS.moveToScoringPhase,
       payload: {}
     })
       .delay(500)
@@ -405,11 +399,25 @@ export function getShowScoringActAction(): ActionDispatcherPromise {
 }
 
 export function getMoveToNextPlayerScoringAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch) => {
+  return (dispatch, followupDispatch, state) => {
     return dispatch({
       type: ACTIONS.moveToNextPlayerScoring,
       payload: {}
-    }).then(() => followupDispatch(getShowScoringActAction()));
+    }).then(() => followupDispatch(getScoreRowAction(getBoardScoring(getCurrentPlayer(state.game)), 0)));
+  };
+}
+
+export function getScoreRowAction(scoring: Scoring, scoringIndex: number): ActionDispatcherPromise {
+  return (dispatch, followupDispatch) => {
+    return dispatch({
+      type: ACTIONS.scoreRow,
+      payload: {
+        scoring,
+        scoringIndex
+      }
+    })
+      .delay(500)
+      .then(() => followupDispatch(getScoreRowAction(scoring, scoringIndex + 1)));
   };
 }
 
@@ -418,7 +426,7 @@ export function getMoveToRefillPhaseAction(): ActionDispatcherPromise {
     return dispatch({
       type: ACTIONS.moveToRefillPhase,
       payload: {}
-    });
+    }).delay(500);
   };
 }
 
