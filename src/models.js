@@ -333,13 +333,13 @@ export function getBoardScoring(player: Player): Scoring {
   const board = player.board;
   let forTiles = [];
   let totalScore = 0;
-  let finalWall = player.board.wall;
+  let currentWall = player.board.wall;
 
   board.staging.forEach((stagingRow, stagingRowIndex) => {
     const placementColor = getStagingRowColor(stagingRow);
     if (isStagingRowFull(stagingRow, stagingRowIndex) && placementColor != undefined) {
       const tile = ((stagingRow[0]: any): Tile);
-      const wall = placeTileInWall(board.wall, stagingRowIndex, tile);
+      currentWall = placeTileInWall(board.wall, stagingRowIndex, tile);
       const placementRow = stagingRowIndex;
       const placementCol = getWallPlacementCol(placementRow, placementColor);
 
@@ -351,7 +351,7 @@ export function getBoardScoring(player: Player): Scoring {
         if (inPlacement) {
           encounteredTileInRow = true;
         }
-        if (inPlacement || wall[placementRow][col]) {
+        if (inPlacement || currentWall[placementRow][col]) {
           rowScore += 1;
           scoringTilesInRow.push([placementRow, col]);
         } else if (encounteredTileInRow) {
@@ -369,7 +369,7 @@ export function getBoardScoring(player: Player): Scoring {
         if (inPlacement) {
           encounteredTileInRow = true;
         }
-        if (inPlacement || wall[row][placementCol]) {
+        if (inPlacement || currentWall[row][placementCol]) {
           colScore += 1;
           scoringTilesInRow.push([row, placementCol]);
         } else if (encounteredTileInCol) {
@@ -381,7 +381,7 @@ export function getBoardScoring(player: Player): Scoring {
 
       let colorScore = 0;
       forTiles.push({
-        wall,
+        wall: currentWall,
         row: placementRow,
         col: placementCol,
         scoringTilesInRow,
@@ -393,10 +393,9 @@ export function getBoardScoring(player: Player): Scoring {
         colScore,
         scoredEntireRow: scoringTilesInRow.length == COLORS,
         scoredEntireCol: scoringTilesInCol.length == COLORS,
-        scoredEntireColor: countTilesOfColorInWall(wall, placementColor) == COLORS
+        scoredEntireColor: countTilesOfColorInWall(currentWall, placementColor) == COLORS
       });
       totalScore += rowScore + colScore;
-      finalWall = wall;
     }
   });
   const floorScore = getFloorScore(board.floor);
@@ -406,7 +405,7 @@ export function getBoardScoring(player: Player): Scoring {
     forTiles,
     floorScore,
     totalScore,
-    finalWall
+    finalWall: currentWall
   };
 }
 
