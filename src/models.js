@@ -273,15 +273,15 @@ export function moveToScoringPhase(game: Game): Game {
 export function scoreBoardForCurrentPlayer(game: Game, scoring: Scoring): Game {
   const currentPlayer = getCurrentPlayer(game);
   let tilesToDiscard = [];
-  currentPlayer.board.staging.map((row, rowIndex) => {
+  const staging = currentPlayer.board.staging.map((row, rowIndex) => {
     if (isStagingRowFull(row, rowIndex)) {
-      tilesToDiscard = tilesToDiscard.concat(slice(row, 1)[1])
-      return []
+      tilesToDiscard = tilesToDiscard.concat(slice(row, 1)[1]);
+      return [];
     } else {
-      return row
+      return row;
     }
-  })
-  const staging = immutablePredicateUpdate(, isStagingRowFull, []);
+  });
+
   const players = immutableCompareUpdate(game.players, currentPlayer, {
     ...currentPlayer,
     score: currentPlayer.score + scoring.totalScore,
