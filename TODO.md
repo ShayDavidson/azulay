@@ -3,6 +3,7 @@
 ## Actions
 
 * Game end - show winner.
+* Check what happens if a player doesn't score.
 
 ## Delight
 

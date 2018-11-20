@@ -21,6 +21,7 @@ import {
   moveToEndPhase,
   shouldGameBeOver,
   getCurrentPlayer,
+  hasPlayersThatNeedsScoring,
   scoreBoardForCurrentPlayer,
   areAllFactoriesEmpty,
   canPlaceTilesInStagingRow,
@@ -256,32 +257,23 @@ export function validate(state: State, action: Action): ?ValidationError {
     }
 
     case ACTIONS.moveToNextPlayerScoring: {
-      // TODO
-      // if (game.phase != PHASES.scoring) {
-      //   error = new Error("not in right phase");
-      // } else if (true) {
-      //   error = new Error("shown scoring for all players");
-      //   if (shouldGameBeOver(game)) {
-      //     fallbackAction = getMoveToEndPhaseAction();
-      //   } else {
-      //     fallbackAction = getMoveToRefillPhaseAction();
-      //   }
-      // }
+      if (game.phase != PHASES.scoring) {
+        error = new Error("not in right phase");
+      } else if (!hasPlayersThatNeedsScoring(game)) {
+        error = new Error("shown scoring for all players");
+        if (shouldGameBeOver(game)) {
+          fallbackAction = getMoveToEndPhaseAction();
+        } else {
+          fallbackAction = getMoveToRefillPhaseAction();
+        }
+      }
       break;
     }
 
     case ACTIONS.scoreBoardForCurrentPlayer: {
-      // TODO
-      // if (game.phase != PHASES.scoring) {
-      //   error = new Error("not in right phase");
-      // } else if (true) {
-      //   error = new Error("shown scoring for all players");
-      //   if (shouldGameBeOver(game)) {
-      //     fallbackAction = getMoveToEndPhaseAction();
-      //   } else {
-      //     fallbackAction = getMoveToRefillPhaseAction();
-      //   }
-      // }
+      if (game.phase != PHASES.scoring) {
+        error = new Error("not in right phase");
+      }
       break;
     }
 
@@ -416,8 +408,8 @@ export function getMoveToNextPlayerScoringAction(): ActionDispatcherPromise {
       type: ACTIONS.moveToNextPlayerScoring,
       payload: {}
     })
-      .then(() => followupDispatch(getScoreBoardForCurrentPlayerAction()))
-      .delay(500);
+      .delay(500)
+      .then(() => followupDispatch(getScoreBoardForCurrentPlayerAction()));
   };
 }
 
@@ -427,17 +419,19 @@ export function getScoreBoardForCurrentPlayerAction(): ActionDispatcherPromise {
       type: ACTIONS.scoreBoardForCurrentPlayer,
       payload: {}
     })
-      .then(() => followupDispatch(getMoveToNextPlayerScoringAction()))
-      .delay(500);
+      .delay(500)
+      .then(() => followupDispatch(getMoveToNextPlayerScoringAction()));
   };
 }
 
 export function getMoveToRefillPhaseAction(): ActionDispatcherPromise {
-  return dispatch => {
+  return (dispatch, followupDispatch) => {
     return dispatch({
       type: ACTIONS.moveToRefillPhase,
       payload: {}
-    }).delay(500);
+    })
+      .delay(500)
+      .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }
 

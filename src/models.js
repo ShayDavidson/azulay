@@ -284,7 +284,7 @@ export function scoreBoardForCurrentPlayer(game: Game, scoring: Scoring): Game {
 
   const players = immutableCompareUpdate(game.players, currentPlayer, {
     ...currentPlayer,
-    score: currentPlayer.score + scoring.totalScore,
+    score: Math.max(0, currentPlayer.score + scoring.totalScore),
     board: {
       wall: scoring.finalWall,
       floor: [],
@@ -321,6 +321,14 @@ export function shouldGameBeOver(game: Game): boolean {
 export function isWallRowComplete(wall: Wall, rowIndex: number): boolean {
   const row = wall[rowIndex];
   return row.filter(el => el).length == COLORS;
+}
+
+export function hasPlayersThatNeedsScoring(game: Game): boolean {
+  return (
+    game.players.find(player => {
+      return player.board.floor.length > 0 || player.board.staging.find(isStagingRowFull) != null;
+    }) != null
+  );
 }
 
 export function getBoardScoring(player: Player): Scoring {
@@ -411,7 +419,7 @@ function countTilesOfColorInWall(wall: Wall, color: ColorType): number {
 }
 
 function getFloorScore(floor: Floor): number {
-  return FLOOR_SLOTS.slice(0, floor.length).reduce((sum, a) => sum + a);
+  return FLOOR_SLOTS.slice(0, floor.length).reduce((sum, a) => sum + a, 0);
 }
 
 function placeTileInWall(wall: Wall, fromStagingRowIndex: number, tileColor: ColorType): Wall {
