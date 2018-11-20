@@ -8,7 +8,7 @@ import type { State, Action, ActionDispatcherPromise, ValidationError } from "./
 // helpers
 import { createGame } from "./models";
 import { createResetUI } from "./ui_models";
-import { reduce, validate, getDrawTileFromBagIntoFactoriesAction } from "./actions";
+import { reduce, validate, getMoveToRefillPhaseAction } from "./actions";
 
 /***********************************************************/
 
@@ -43,7 +43,7 @@ export default class GameProvider extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.dispatch(getDrawTileFromBagIntoFactoriesAction());
+    this.dispatch(getMoveToRefillPhaseAction());
     if (this.props.hasExternalAPI) {
       window.setState = this.setState.bind(this);
       window.getState = () => this.state;

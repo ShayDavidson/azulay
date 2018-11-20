@@ -278,7 +278,7 @@ export function validate(state: State, action: Action): ?ValidationError {
     }
 
     case ACTIONS.moveToRefillPhase: {
-      if (game.phase != PHASES.scoring) {
+      if (game.phase != undefined && game.phase != PHASES.scoring) {
         error = new Error("not in right phase");
       }
       break;
@@ -429,9 +429,7 @@ export function getMoveToRefillPhaseAction(): ActionDispatcherPromise {
     return dispatch({
       type: ACTIONS.moveToRefillPhase,
       payload: {}
-    })
-      .delay(500)
-      .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
+    }).then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }
 

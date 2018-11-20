@@ -108,7 +108,7 @@ export type Game = {|
   turn: number,
   currentPlayer: number,
   nextPlayer: number,
-  phase: Phase,
+  phase: ?Phase,
   randomProps: RandomProps
 |};
 
@@ -121,11 +121,11 @@ export function createGame(players: number, seed: number): Game {
     bag: rng.shuffle(createBag()),
     box: [],
     factories: [...Array(FACTORIES_BY_PLAYERS[players])].map(() => []),
-    leftovers: [createTile("first")],
+    leftovers: [],
     turn: 0,
-    currentPlayer: rng.int(0, players - 1),
-    nextPlayer: 0,
-    phase: PHASES.refill,
+    currentPlayer: 0,
+    nextPlayer: rng.int(0, players - 1),
+    phase: undefined,
     randomProps: { seed, counter: rng.getCounter() }
   };
 }
@@ -294,7 +294,7 @@ export function scoreBoardForCurrentPlayer(game: Game, scoring: Scoring): Game {
 }
 
 export function moveToRefillPhase(game: Game): Game {
-  return { ...game, phase: PHASES.refill };
+  return { ...game, leftovers: [createTile("first")], currentPlayer: game.nextPlayer, phase: PHASES.refill };
 }
 
 export function shuffleBoxIntoBag(game: Game): Game {
