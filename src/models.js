@@ -81,7 +81,8 @@ export type Scoring = {|
   player: Player,
   forTiles: Array<RowScoring>,
   floorScore: number,
-  totalScore: number
+  totalScore: number,
+  finalWall: Wall
 |};
 
 export type RowScoring = {|
@@ -270,7 +271,28 @@ export function moveToScoringPhase(game: Game): Game {
 }
 
 export function scoreBoardForCurrentPlayer(game: Game, scoring: Scoring): Game {
-  return game;
+  const currentPlayer = getCurrentPlayer(game);
+  let tilesToDiscard = [];
+  currentPlayer.board.staging.map((row, rowIndex) => {
+    if (isStagingRowFull(row, rowIndex)) {
+      tilesToDiscard = tilesToDiscard.concat(slice(row, 1)[1])
+      return []
+    } else {
+      return row
+    }
+  })
+  const staging = immutablePredicateUpdate(, isStagingRowFull, []);
+  const players = immutableCompareUpdate(game.players, currentPlayer, {
+    ...currentPlayer,
+    score: currentPlayer.score + scoring.totalScore,
+    board: {
+      wall: scoring.finalWall,
+      floor: [],
+      staging
+    }
+  });
+  const box = game.box.concat(tilesToDiscard);
+  return { ...game, players, box };
 }
 
 export function moveToRefillPhase(game: Game): Game {
@@ -305,6 +327,7 @@ export function getBoardScoring(player: Player): Scoring {
   const board = player.board;
   let forTiles = [];
   let totalScore = 0;
+  let finalWall = player.board.wall;
 
   board.staging.forEach((stagingRow, stagingRowIndex) => {
     const placementColor = getStagingRowColor(stagingRow);
@@ -348,6 +371,8 @@ export function getBoardScoring(player: Player): Scoring {
           colScore = 0;
         }
       }
+
+      let colorScore = 0;
       forTiles.push({
         wall,
         row: placementRow,
@@ -364,6 +389,7 @@ export function getBoardScoring(player: Player): Scoring {
         scoredEntireColor: countTilesOfColorInWall(wall, placementColor) == COLORS
       });
       totalScore += rowScore + colScore;
+      finalWall = wall;
     }
   });
   const floorScore = getFloorScore(board.floor);
@@ -372,7 +398,8 @@ export function getBoardScoring(player: Player): Scoring {
     player,
     forTiles,
     floorScore,
-    totalScore
+    totalScore,
+    finalWall
   };
 }
 
