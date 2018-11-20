@@ -379,7 +379,10 @@ export function getBoardScoring(player: Player): Scoring {
         }
       }
 
-      let colorScore = 0;
+      let scoredEntireRow = scoringTilesInRow.length == COLORS;
+      let scoredEntireCol = scoringTilesInCol.length == COLORS;
+      let scoredEntireColor = countTilesOfColorInWall(currentWall, placementColor) == COLORS;
+
       forTiles.push({
         wall: currentWall,
         row: placementRow,
@@ -391,11 +394,16 @@ export function getBoardScoring(player: Player): Scoring {
         scoringTilesInCol,
         rowScore,
         colScore,
-        scoredEntireRow: scoringTilesInRow.length == COLORS,
-        scoredEntireCol: scoringTilesInCol.length == COLORS,
-        scoredEntireColor: countTilesOfColorInWall(currentWall, placementColor) == COLORS
+        scoredEntireRow,
+        scoredEntireCol,
+        scoredEntireColor
       });
-      totalScore += rowScore + colScore;
+      totalScore +=
+        rowScore +
+        colScore +
+        (scoredEntireRow ? ROW_BONUS : 0) +
+        (scoredEntireCol ? COL_BONUS : 0) +
+        (scoredEntireColor ? COLOR_BONUS : 0);
     }
   });
   const floorScore = getFloorScore(board.floor);

@@ -4,6 +4,7 @@
 
 * Game end - show winner.
 * Check what happens if a player doesn't score.
+* Check all tiles from staging rows are put into box.
 
 ## Delight
 
