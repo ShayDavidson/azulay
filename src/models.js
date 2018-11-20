@@ -339,7 +339,7 @@ export function getBoardScoring(player: Player): Scoring {
     const placementColor = getStagingRowColor(stagingRow);
     if (isStagingRowFull(stagingRow, stagingRowIndex) && placementColor != undefined) {
       const tile = ((stagingRow[0]: any): Tile);
-      currentWall = placeTileInWall(board.wall, stagingRowIndex, tile);
+      currentWall = placeTileInWall(currentWall, stagingRowIndex, tile);
       const placementRow = stagingRowIndex;
       const placementCol = getWallPlacementCol(placementRow, placementColor);
 
