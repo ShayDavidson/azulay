@@ -559,14 +559,6 @@ export function getWallPlacementColor(row: number, col: number): ColorType {
   return mod(col - row, COLORS);
 }
 
-//     0 1 2 3 4
-//   -----------
-// 0 | 0 1 2 3 4
-// 1 | 4 0 1 2 3
-// 2 | 3 4 0 1 2
-// 3 | 2 3 4 0 1
-// 4 | 1 2 3 4 0
-
 export function getTilesColorCounter(tiles: TilesArray): TilesColorCounter {
   return tiles.reduce(
     (counter, tile) => {
