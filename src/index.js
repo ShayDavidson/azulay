@@ -57,7 +57,12 @@ class Azul extends React.Component<Props, State> {
     return (
       <div>
         <div className={$titleStyle}>Azulay - The Online Azul AI</div>
-        <GameProvider players={players ? parseInt(players) : 4} seed={seed ? parseInt(seed) : 1000} log={true}>
+        <GameProvider
+          players={players ? parseInt(players) : 4}
+          seed={seed ? parseInt(seed) : 1000}
+          log={true}
+          hasExternalAPI={true}
+        >
           <GameContext.Consumer>
             {({ gameState }) => {
               if (gameState == undefined) return null;

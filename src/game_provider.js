@@ -25,6 +25,7 @@ type Props = {
   players: number,
   seed: number,
   log?: boolean,
+  hasExternalAPI?: boolean,
   children?: Node
 };
 
@@ -43,6 +44,15 @@ export default class GameProvider extends React.Component<Props, State> {
 
   componentDidMount() {
     this.dispatch(getDrawTileFromBagIntoFactoriesAction());
+    if (this.props.hasExternalAPI) {
+      window.setState = this.setState.bind(this);
+      window.getState = () => this.state;
+      window.saveState = () => localStorage.setItem("state", JSON.stringify(this.state));
+      window.loadState = () => {
+        const json = localStorage.getItem("state");
+        if (json != null) this.setState(JSON.parse(json));
+      };
+    }
   }
 
   dispatch(actionPromiser: ActionDispatcherPromise) {

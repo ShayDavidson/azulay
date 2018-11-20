@@ -419,9 +419,7 @@ function placeTileInWall(wall: Wall, fromStagingRowIndex: number, tileColor: Col
   const tileWallCol = getWallPlacementCol(tileWallRow, tileColor);
   return wall.map(
     (wallRow, wallRowIndex) =>
-      wallRowIndex == tileWallRow
-        ? wallRow.slice.map((_, wallColIndex) => wallColIndex == tileWallCol)
-        : wallRow.slice()
+      wallRowIndex == tileWallRow ? wallRow.map((_, wallColIndex) => wallColIndex == tileWallCol) : wallRow
   );
 }
 
