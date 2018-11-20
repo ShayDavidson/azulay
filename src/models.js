@@ -552,12 +552,20 @@ export function doesWallRowHasTileColor(wall: Wall, rowIndex: number, color: Col
 }
 
 export function getWallPlacementCol(row: number, color: ColorType): number {
-  return (row + color) % COLORS;
+  return mod(row + color, COLORS);
 }
 
 export function getWallPlacementColor(row: number, col: number): ColorType {
-  return (col + row) % COLORS;
+  return mod(col - row, COLORS);
 }
+
+//     0 1 2 3 4
+//   -----------
+// 0 | 0 1 2 3 4
+// 1 | 4 0 1 2 3
+// 2 | 3 4 0 1 2
+// 3 | 2 3 4 0 1
+// 4 | 1 2 3 4 0
 
 export function getTilesColorCounter(tiles: TilesArray): TilesColorCounter {
   return tiles.reduce(
@@ -573,4 +581,8 @@ export function getTilesColorCounter(tiles: TilesArray): TilesColorCounter {
 
 export function getStagingRowColor(row: StagingRow): ?ColorType {
   return row[0] ? row[0].color : undefined;
+}
+
+export function mod(num: number, n: number) {
+  return (num % n + n) % n;
 }
