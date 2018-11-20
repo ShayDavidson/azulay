@@ -20,6 +20,7 @@
     "flow": "flow check ./src/",
     "flow:install": "flow-typed install --ignoreDeps dev bundle peer",
     "format": "eslint . --ext .js --fix",
+    "check": "npm run lint && npm run flow",
     "postinstall": "npm run flow:install",
     "precommit": "npm run format && npm run flow"
   },

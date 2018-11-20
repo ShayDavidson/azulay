@@ -269,6 +269,10 @@ export function moveToScoringPhase(game: Game): Game {
   return { ...game, phase: PHASES.scoring };
 }
 
+export function scoreBoardForCurrentPlayer(game: Game, scoring: Scoring): Game {
+  return game;
+}
+
 export function moveToRefillPhase(game: Game): Game {
   return { ...game, phase: PHASES.refill };
 }

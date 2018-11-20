@@ -21,6 +21,7 @@ import {
   moveToEndPhase,
   shouldGameBeOver,
   getCurrentPlayer,
+  scoreBoardForCurrentPlayer,
   areAllFactoriesEmpty,
   canPlaceTilesInStagingRow,
   getBoardScoring
@@ -74,7 +75,7 @@ export const ACTIONS = {
   moveToNextPlayerPlacement: "moveToNextPlayerPlacement",
   moveToScoringPhase: "moveToScoringPhase",
   moveToNextPlayerScoring: "moveToNextPlayerScoring",
-  scoreRow: "scoreRow",
+  scoreBoardForCurrentPlayer: "scoreBoardForCurrentPlayer",
   moveToRefillPhase: "moveToRefillPhase",
   shuffleBoxIntoBag: "shuffleBoxIntoBag",
   moveToEndPhase: "moveToEndPhase"
@@ -84,7 +85,7 @@ export const ACTIONS = {
 
 export function reduce(state: State, action: Action): State {
   const { game, ui } = state;
-  const { selectedFactory, selectedTile, currentRowScoring } = ui;
+  const { selectedFactory, selectedTile } = ui;
 
   switch (action.type) {
     case ACTIONS.drawTileFromBagIntoFactories: {
@@ -142,8 +143,13 @@ export function reduce(state: State, action: Action): State {
       return { ...state, game: moveToNextPlayer(game) };
     }
 
-    case ACTIONS.scoreRow: {
-      return { ...state, ui: { ...state.ui, currentRowScoring } };
+    case ACTIONS.scoreBoardForCurrentPlayer: {
+      const scoring = getBoardScoring(getCurrentPlayer(game));
+      return {
+        ...state,
+        game: scoreBoardForCurrentPlayer(game, scoring),
+        ui: { ...state.ui, currentScoring: scoring }
+      };
     }
 
     case ACTIONS.moveToRefillPhase: {
@@ -250,26 +256,32 @@ export function validate(state: State, action: Action): ?ValidationError {
     }
 
     case ACTIONS.moveToNextPlayerScoring: {
-      if (game.phase != PHASES.scoring) {
-        error = new Error("not in right phase");
-      } else if (true) {
-        error = new Error("shown scoring for all players");
-        if (shouldGameBeOver(game)) {
-          fallbackAction = getMoveToEndPhaseAction();
-        } else {
-          fallbackAction = getMoveToRefillPhaseAction();
-        }
-      }
+      // TODO
+      // if (game.phase != PHASES.scoring) {
+      //   error = new Error("not in right phase");
+      // } else if (true) {
+      //   error = new Error("shown scoring for all players");
+      //   if (shouldGameBeOver(game)) {
+      //     fallbackAction = getMoveToEndPhaseAction();
+      //   } else {
+      //     fallbackAction = getMoveToRefillPhaseAction();
+      //   }
+      // }
       break;
     }
 
-    case ACTIONS.scoreRow: {
-      const { scoring } = payload;
-      if (game.phase != PHASES.scoring) {
-        error = new Error("not in right phase");
-      } else if (scoring == null) {
-        error = new Error("no scoring act provided");
-      }
+    case ACTIONS.scoreBoardForCurrentPlayer: {
+      // TODO
+      // if (game.phase != PHASES.scoring) {
+      //   error = new Error("not in right phase");
+      // } else if (true) {
+      //   error = new Error("shown scoring for all players");
+      //   if (shouldGameBeOver(game)) {
+      //     fallbackAction = getMoveToEndPhaseAction();
+      //   } else {
+      //     fallbackAction = getMoveToRefillPhaseAction();
+      //   }
+      // }
       break;
     }
 
@@ -399,25 +411,24 @@ export function getMoveToScoringPhaseAction(): ActionDispatcherPromise {
 }
 
 export function getMoveToNextPlayerScoringAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, state) => {
+  return (dispatch, followupDispatch) => {
     return dispatch({
       type: ACTIONS.moveToNextPlayerScoring,
       payload: {}
-    }).then(() => followupDispatch(getScoreRowAction(getBoardScoring(getCurrentPlayer(state.game)), 0)));
+    })
+      .then(() => followupDispatch(getScoreBoardForCurrentPlayerAction()))
+      .delay(500);
   };
 }
 
-export function getScoreRowAction(scoring: Scoring, scoringIndex: number): ActionDispatcherPromise {
+export function getScoreBoardForCurrentPlayerAction(): ActionDispatcherPromise {
   return (dispatch, followupDispatch) => {
     return dispatch({
-      type: ACTIONS.scoreRow,
-      payload: {
-        scoring,
-        scoringIndex
-      }
+      type: ACTIONS.scoreBoardForCurrentPlayer,
+      payload: {}
     })
-      .delay(500)
-      .then(() => followupDispatch(getScoreRowAction(scoring, scoringIndex + 1)));
+      .then(() => followupDispatch(getMoveToNextPlayerScoringAction()))
+      .delay(500);
   };
 }
 
