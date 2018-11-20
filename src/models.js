@@ -32,9 +32,7 @@ export type RandomProps = {|
 
 export type ColorType = number;
 
-export type WallPlacement = boolean;
-
-export type Wall = Array<Array<WallPlacement>>;
+export type Wall = Array<Array<?Tile>>;
 
 export type Staging = Array<StagingRow>;
 
@@ -44,10 +42,10 @@ export type PlayerType = $Keys<typeof PLAYER_TYPE>;
 
 export type TileKind = "first" | "colored";
 
-export type Tile = {
+export type Tile = {|
   kind: TileKind,
   color: ?ColorType
-};
+|};
 
 export type Board = {|
   wall: Wall,
@@ -166,7 +164,7 @@ export function createWall(): Wall {
   for (let row = 0; row < COLORS; row++) {
     wall[row] = new Array(COLORS);
     for (let col = 0; col < COLORS; col++) {
-      wall[row][col] = false;
+      wall[row][col] = undefined;
     }
   }
   return wall;
@@ -340,7 +338,8 @@ export function getBoardScoring(player: Player): Scoring {
   board.staging.forEach((stagingRow, stagingRowIndex) => {
     const placementColor = getStagingRowColor(stagingRow);
     if (isStagingRowFull(stagingRow, stagingRowIndex) && placementColor != undefined) {
-      const wall = placeTileInWall(board.wall, stagingRowIndex, placementColor);
+      const tile = ((stagingRow[0]: any): Tile);
+      const wall = placeTileInWall(board.wall, stagingRowIndex, tile);
       const placementRow = stagingRowIndex;
       const placementCol = getWallPlacementCol(placementRow, placementColor);
 
@@ -422,13 +421,19 @@ function getFloorScore(floor: Floor): number {
   return FLOOR_SLOTS.slice(0, floor.length).reduce((sum, a) => sum + a, 0);
 }
 
-function placeTileInWall(wall: Wall, fromStagingRowIndex: number, tileColor: ColorType): Wall {
-  const tileWallRow = fromStagingRowIndex;
-  const tileWallCol = getWallPlacementCol(tileWallRow, tileColor);
-  return wall.map(
-    (wallRow, wallRowIndex) =>
-      wallRowIndex == tileWallRow ? wallRow.map((_, wallColIndex) => wallColIndex == tileWallCol) : wallRow
-  );
+function placeTileInWall(wall: Wall, fromStagingRowIndex: number, tile: Tile): Wall {
+  if (tile.color != null) {
+    const tileWallRow = fromStagingRowIndex;
+    const tileWallCol = getWallPlacementCol(tileWallRow, tile.color);
+    return wall.map(
+      (wallRow, wallRowIndex) =>
+        wallRowIndex == tileWallRow
+          ? immutablePredicateUpdate(wallRow, (_, wallColIndex) => wallColIndex == tileWallCol, tile)
+          : wallRow
+    );
+  } else {
+    return wall;
+  }
 }
 
 export function getNextPlayer(game: Game): number {

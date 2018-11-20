@@ -10,6 +10,18 @@ export const TILES = [
   require("./assets/tile7.wav"),
   require("./assets/tile8.wav")
 ];
+export const SCORE = [
+  require("./assets/score0.wav"),
+  require("./assets/score1.wav"),
+  require("./assets/score2.wav"),
+  require("./assets/score3.wav"),
+  require("./assets/score4.wav"),
+  require("./assets/score5.wav"),
+  require("./assets/score6.wav"),
+  require("./assets/score7.wav"),
+  require("./assets/score8.wav"),
+  require("./assets/score9.wav")
+];
 export const SHUFFLE = require("./assets/shuffle.wav");
 export const CLICK = require("./assets/click.mp3");
 

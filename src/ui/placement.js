@@ -18,7 +18,7 @@ const BORDER_RADIUS = "0.1em";
 
 type Props = {
   color?: ColorType,
-  tile?: TileType,
+  tile?: ?TileType,
   label?: string,
   highlighted?: boolean
 };
@@ -76,8 +76,8 @@ export default class Placement extends React.Component<Props, State> {
 
     return (
       <div className={$dynamicBaseStyle} style={$dynamicStyle}>
-        {this.props.tile != undefined ? <Tile animated={true} surpressLabel={true} tile={this.props.tile} /> : null}
-        {this.props.label != undefined ? (
+        {this.props.tile != null ? <Tile animated={true} surpressLabel={true} tile={this.props.tile} /> : null}
+        {this.props.label != null ? (
           <div className={$labelStyle} style={$dynamicLabelStyle}>
             {this.props.label}
           </div>
