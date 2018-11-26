@@ -3,7 +3,7 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { Player } from "../models";
+import type { Player, Scoring } from "../models";
 // components
 import Wall from "./wall";
 import Staging from "./staging";
@@ -18,17 +18,18 @@ import {
   WHITE_COLOR,
   $bevelStyle
 } from "../styles";
-import { PLAYER_TYPE } from "../models";
+import { PLAYER_TYPE, createPlayer } from "../models";
 
 /***********************************************************/
 
 type Props = {
   player: Player,
-  current: boolean
+  current: boolean,
+  scoring: ?Scoring
 };
 
 type State = {
-  /* ... */
+  player: Player
 };
 
 // /***********************************************************/
@@ -65,8 +66,17 @@ const $spanStyle = css({
 /***********************************************************/
 
 export default class PlayerBoard extends React.Component<Props, State> {
+  state = { player: createPlayer("", "cpu") };
+
+  static getDerivedStateFromProps(nextProps: Props, currentState: State) {
+    if (nextProps.scoring) {
+      debugger;
+    }
+    return { player: nextProps.player };
+  }
+
   render() {
-    const { board: { wall, staging, floor }, score, name, type } = this.props.player;
+    const { board: { wall, staging, floor }, score, name, type } = this.state.player;
     return (
       <div
         className={$baseStyle}
