@@ -12,15 +12,6 @@ export type ScoringPhase = {|
 export type UI = {|
   selectedFactory: ?Factory,
   selectedTile: ?Tile,
-  currentScoring: ?Scoring
+  currentScoring: ?Scoring,
+  animationSpeed: number
 |};
-
-// FACTORIES ////////////////////////////
-
-export function createResetUI() {
-  return {
-    selectedFactory: undefined,
-    selectedTile: undefined,
-    currentScoring: undefined
-  };
-}

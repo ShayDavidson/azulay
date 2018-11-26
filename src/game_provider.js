@@ -7,7 +7,6 @@ import type { Node } from "react";
 import type { State, Action, ActionDispatcherPromise, ValidationError } from "./actions";
 // helpers
 import { createGame } from "./models";
-import { createResetUI } from "./ui_models";
 import { reduce, validate, getMoveToRefillPhaseAction } from "./actions";
 
 /***********************************************************/
@@ -24,6 +23,7 @@ type ActionResult = {|
 type Props = {
   players: number,
   seed: number,
+  animationSpeed: number,
   log?: boolean,
   hasExternalAPI?: boolean,
   children?: Node
@@ -32,13 +32,13 @@ type Props = {
 /***********************************************************/
 
 export default class GameProvider extends React.Component<Props, State> {
-  state = GameProvider.getDerivedStateFromProps({ players: 0, seed: 0 });
+  state = GameProvider.getDerivedStateFromProps({ players: 0, seed: 0, animationSpeed: 1 });
 
   static getDerivedStateFromProps(nextProps: Props) {
-    const { players, seed } = nextProps;
+    const { players, seed, animationSpeed } = nextProps;
     return {
       game: createGame(players, seed),
-      ui: createResetUI()
+      ui: { selectedFactory: undefined, selectedTile: undefined, currentScoring: undefined, animationSpeed }
     };
   }
 

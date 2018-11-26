@@ -27,7 +27,6 @@ import {
   canPlaceTilesInStagingRow,
   getBoardScoring
 } from "./models";
-import { createResetUI } from "./ui_models";
 // helpers
 import { play, playRandom, TILES, CLICK, SHUFFLE } from "./sfx";
 
@@ -113,7 +112,7 @@ export function reduce(state: State, action: Action): State {
         return {
           ...state,
           game: putTilesFromFactoryIntoFloor(game, selectedFactory, selectedTile),
-          ui: createResetUI()
+          ui: { ...state.ui, selectedFactory: undefined, selectedTile: undefined, currentScoring: undefined }
         };
       } else {
         return state;
@@ -125,7 +124,7 @@ export function reduce(state: State, action: Action): State {
         return {
           ...state,
           game: putTilesFromFactoryIntoStagingRow(game, action.payload.stagingRowIndex, selectedFactory, selectedTile),
-          ui: createResetUI()
+          ui: { ...state.ui, selectedFactory: undefined, selectedTile: undefined, currentScoring: undefined }
         };
       } else {
         return state;
@@ -326,13 +325,13 @@ export function isDeselect(action: Action, ui: UI): boolean {
 /***********************************************************/
 
 export function getDrawTileFromBagIntoFactoriesAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch) => {
+  return (dispatch, followupDispatch, state) => {
     return dispatch({
       type: ACTIONS.drawTileFromBagIntoFactories,
       payload: {}
     })
       .then(() => playRandom(TILES))
-      .delay(75)
+      .delay(75 * state.ui.animationSpeed)
       .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }
@@ -364,7 +363,7 @@ export function getPutTilesFromFactoryIntoFloorAction(floor: Floor): ActionDispa
       type: ACTIONS.putTilesFromFactoryIntoFloor,
       payload: { floor }
     })
-      .then(() => play(CLICK))
+      .then(() => playRandom(TILES))
       .then(() => followupDispatch(getMoveToNextPlayerPlacementAction()));
   };
 }
@@ -377,7 +376,7 @@ export function getPutTilesFromFactoryIntoStagingRowAction(stagingRowIndex: numb
         stagingRowIndex
       }
     })
-      .then(() => play(CLICK))
+      .then(() => playRandom(TILES))
       .then(() => followupDispatch(getMoveToNextPlayerPlacementAction()));
   };
 }
@@ -392,34 +391,34 @@ export function getMoveToNextPlayerPlacementAction(): ActionDispatcherPromise {
 }
 
 export function getMoveToScoringPhaseAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch) => {
+  return (dispatch, followupDispatch, state) => {
     return dispatch({
       type: ACTIONS.moveToScoringPhase,
       payload: {}
     })
-      .delay(500)
+      .delay(500 * state.ui.animationSpeed)
       .then(() => followupDispatch(getMoveToNextPlayerScoringAction()));
   };
 }
 
 export function getMoveToNextPlayerScoringAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch) => {
+  return (dispatch, followupDispatch, state) => {
     return dispatch({
       type: ACTIONS.moveToNextPlayerScoring,
       payload: {}
     })
-      .delay(500)
+      .delay(500 * state.ui.animationSpeed)
       .then(() => followupDispatch(getScoreBoardForCurrentPlayerAction()));
   };
 }
 
 export function getScoreBoardForCurrentPlayerAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch) => {
+  return (dispatch, followupDispatch, state) => {
     return dispatch({
       type: ACTIONS.scoreBoardForCurrentPlayer,
       payload: {}
     })
-      .delay(500)
+      .delay(500 * state.ui.animationSpeed)
       .then(() => followupDispatch(getMoveToNextPlayerScoringAction()));
   };
 }
@@ -434,13 +433,13 @@ export function getMoveToRefillPhaseAction(): ActionDispatcherPromise {
 }
 
 export function getShuffleBoxIntoBagAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch) => {
+  return (dispatch, followupDispatch, state) => {
     return dispatch({
       type: ACTIONS.shuffleBoxIntoBag,
       payload: {}
     })
       .then(() => play(SHUFFLE))
-      .delay(500)
+      .delay(500 * state.ui.animationSpeed)
       .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }

@@ -53,6 +53,7 @@ class Azul extends React.Component<Props, State> {
     const params = new URL(window.location).searchParams;
     const seed = params.get("seed");
     const players = params.get("players");
+    const animationSpeed = params.get("animationSpeed");
 
     return (
       <div>
@@ -60,6 +61,7 @@ class Azul extends React.Component<Props, State> {
         <GameProvider
           players={players ? parseInt(players) : 4}
           seed={seed ? parseInt(seed) : 1000}
+          animationSpeed={animationSpeed != null ? parseInt(animationSpeed) : 1}
           log={true}
           hasExternalAPI={true}
         >
