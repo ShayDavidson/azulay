@@ -15,7 +15,7 @@ import { createPlayer } from "../models";
 type Props = {
   player: Player,
   scoring: ?Scoring,
-  resolver: Resolver,
+  resolver: ?Resolver,
   children: (player: Player) => Element<typeof PlayerBoard>
 };
 
@@ -29,10 +29,18 @@ export default class PlayerBoardAnimator extends React.Component<Props, State> {
   state = { player: createPlayer("", "cpu") };
 
   static getDerivedStateFromProps(nextProps: Props) {
-    if (nextProps.scoring) {
-      debugger;
-    }
+    // if (nextProps.scoring) {
+    // }
     return { player: nextProps.player };
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { resolver } = this.props;
+    if (resolver != null && resolver != prevProps.resolver) {
+      setTimeout(() => {
+        resolver();
+      }, 2500);
+    }
   }
 
   render() {

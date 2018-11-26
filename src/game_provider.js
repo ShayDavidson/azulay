@@ -71,7 +71,8 @@ export default class GameProvider extends React.Component<Props, State> {
           reject(validationError);
           return;
         }
-        return { ...reduce(prevState, action), resolver: action.manualResolve ? resolver : undefined };
+        const state = reduce(prevState, action);
+        return action.manualResolve ? { ...state, resolver } : { ...state, resolver: undefined };
       }, action.manualResolve ? undefined : resolver);
     }).then(this.logActionResult.bind(this));
   }
