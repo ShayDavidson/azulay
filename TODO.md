@@ -25,6 +25,7 @@
 * Generic game provider.
 * Manual resolve - right API?
 * Organizer actions, models, index, provider etc.
+* Player Board animator children flowtype.
 
 ## Next Phase
 

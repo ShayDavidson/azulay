@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 import { css } from "glamor";
 // components
 import GameProvider, { GameContext } from "./game_provider";
+import PlayerBoardAnimator from "./ui/player_board_animator";
 import PlayerBoard from "./ui/player_board";
 import FactoryZone from "./ui/factory_zone";
 import Separator from "./ui/separator";
@@ -77,12 +78,13 @@ class Azul extends React.Component<Props, State> {
                       {gameState.players.map((player, index) => {
                         const currentPlayer = gameState.currentPlayer == index;
                         return (
-                          <PlayerBoard
-                            player={player}
-                            current={currentPlayer}
-                            scoring={currentPlayer ? uiState.currentScoring : undefined}
+                          <PlayerBoardAnimator
                             key={index}
-                          />
+                            player={player}
+                            scoring={currentPlayer ? uiState.currentScoring : undefined}
+                          >
+                            {player => <PlayerBoard player={player} current={currentPlayer} />}
+                          </PlayerBoardAnimator>
                         );
                       })}
                     </div>
