@@ -34,6 +34,7 @@ import { play, playRandom, TILES, CLICK, SHUFFLE } from "./sfx";
 
 export type Action = {
   type: ActionName,
+  manualResolve?: boolean,
   payload: {
     factory?: Factory,
     tile?: Tile,
@@ -61,7 +62,8 @@ export type ValidationError = Error & {
 
 export type State = {
   game: Game,
-  ui: UI
+  ui: UI,
+  resolver?: (thenableOrResult?: any) => void
 };
 
 /***********************************************************/
@@ -416,6 +418,7 @@ export function getScoreBoardForCurrentPlayerAction(): ActionDispatcherPromise {
   return (dispatch, followupDispatch, state) => {
     return dispatch({
       type: ACTIONS.scoreBoardForCurrentPlayer,
+      manualResolve: true,
       payload: {}
     })
       .delay(500 * state.ui.animationSpeed)

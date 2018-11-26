@@ -23,6 +23,7 @@
 * More Immutable helpers.
 * Flow type checking better for context.
 * Generic game provider.
+* Manual resolve - right API?
 * Organizer actions, models, index, provider etc.
 
 ## Next Phase
