@@ -38,7 +38,8 @@ export default class GameProvider extends React.Component<Props, State> {
     const { players, seed, animationSpeed } = nextProps;
     return {
       game: createGame(players, seed),
-      ui: { selectedFactory: undefined, selectedTile: undefined, currentScoring: undefined, animationSpeed }
+      ui: { selectedFactory: undefined, selectedTile: undefined, currentScoring: undefined, animationSpeed },
+      resolver: undefined
     };
   }
 
@@ -63,14 +64,15 @@ export default class GameProvider extends React.Component<Props, State> {
 
   internalDispatch(action: Action) {
     return new Promise((resolve, reject) => {
+      const resolver = () => resolve({ action, state: this.state });
       this.setState(prevState => {
         let validationError = validate(prevState, action);
         if (validationError) {
           reject(validationError);
           return;
         }
-        return { ...reduce(prevState, action), resolver: action.manualResolve ? resolve : undefined };
-      }, action.manualResolve ? undefined : () => resolve({ action, state: this.state }));
+        return { ...reduce(prevState, action), resolver: action.manualResolve ? resolver : undefined };
+      }, action.manualResolve ? undefined : resolver);
     }).then(this.logActionResult.bind(this));
   }
 
@@ -90,11 +92,13 @@ export default class GameProvider extends React.Component<Props, State> {
   }
 
   render() {
+    const { game, ui, resolver } = this.state;
     return (
       <GameContext.Provider
         value={{
-          gameState: this.state.game,
-          uiState: this.state.ui,
+          gameState: game,
+          uiState: ui,
+          resolver: resolver,
           dispatch: this.dispatch.bind(this)
         }}
       >

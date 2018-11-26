@@ -4,6 +4,7 @@ import React, { Fragment } from "react";
 // types
 import type { Element } from "react";
 import type { Player, Scoring } from "../models";
+import type { Resolver } from "../actions";
 // components
 import PlayerBoard from "./player_board";
 // helpers
@@ -14,6 +15,7 @@ import { createPlayer } from "../models";
 type Props = {
   player: Player,
   scoring: ?Scoring,
+  resolver: Resolver,
   children: (player: Player) => Element<typeof PlayerBoard>
 };
 

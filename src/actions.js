@@ -60,11 +60,13 @@ export type ValidationError = Error & {
   fallbackAction?: ActionDispatcherPromise
 };
 
-export type State = {
+export type Resolver = (thenableOrResult?: any) => void;
+
+export type State = {|
   game: Game,
   ui: UI,
-  resolver?: (thenableOrResult?: any) => void
-};
+  resolver?: Resolver
+|};
 
 /***********************************************************/
 

@@ -67,7 +67,7 @@ class Azul extends React.Component<Props, State> {
           hasExternalAPI={true}
         >
           <GameContext.Consumer>
-            {({ gameState, uiState }) => {
+            {({ gameState, uiState, resolver }) => {
               if (gameState == undefined) return null;
               const numberOfPlayers = gameState.players.length;
               const $boardsGridStyle = { gridTemplateColumns: `repeat(${numberOfPlayers > 2 ? 2 : 1}, 1fr)` };
@@ -82,6 +82,7 @@ class Azul extends React.Component<Props, State> {
                             key={index}
                             player={player}
                             scoring={currentPlayer ? uiState.currentScoring : undefined}
+                            resolver={resolver}
                           >
                             {player => <PlayerBoard player={player} current={currentPlayer} />}
                           </PlayerBoardAnimator>
