@@ -26,7 +26,7 @@ type State = {
 /***********************************************************/
 
 export default class PlayerBoardAnimator extends React.Component<Props, State> {
-  state = { player: createPlayer("", "cpu") };
+  state = { player: createPlayer("", "cpuRandom") };
 
   static getDerivedStateFromProps(nextProps: Props) {
     // if (nextProps.scoring) {

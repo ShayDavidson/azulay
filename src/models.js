@@ -20,7 +20,8 @@ export const PHASES = {
 };
 export const PLAYER_TYPE = {
   human: "human",
-  cpu: "cpu"
+  cpuRandom: "cpuRandom",
+  cpuSmart: "cpuSmart"
 };
 
 // TYPES ////////////////////////////
@@ -77,26 +78,23 @@ export type Phase = $Keys<typeof PHASES>;
 
 export type Scoring = {|
   player: Player,
-  forTiles: Array<RowScoring>,
+  forTiles: Array<{|
+    wall: Wall,
+    row: number,
+    col: number,
+    scoringTilesInCol: Array<[number, number]>,
+    scoringTilesInRow: Array<[number, number]>,
+    totalScoreAfter: number,
+    rowScore: number,
+    colScore: number,
+    scoredSingleTile: boolean,
+    scoredEntireRow: boolean,
+    scoredEntireCol: boolean,
+    scoredEntireColor: boolean
+  |}>,
   floorScore: number,
   totalScore: number,
   finalWall: Wall
-|};
-
-export type RowScoring = {|
-  wall: Wall,
-  row: number,
-  col: number,
-  scoringTilesInCol: Array<[number, number]>,
-  scoringTilesInRow: Array<[number, number]>,
-  totalScoreAfterRow: number,
-  totalScoreAfterCol: number,
-  totalScoreAfter: number,
-  rowScore: number,
-  colScore: number,
-  scoredEntireRow: boolean,
-  scoredEntireCol: boolean,
-  scoredEntireColor: boolean
 |};
 
 export type Game = {|
@@ -117,7 +115,9 @@ export type Game = {|
 export function createGame(players: number, seed: number): Game {
   const rng = createRNG(seed);
   return {
-    players: [...Array(players)].map((_, index) => createPlayer(`Player ${index}`, "human")),
+    players: [...Array(players)].map(
+      (_, index) => (index == 0 ? createPlayer(`Human`, "human") : createPlayer(`CPU ${index}`, "cpuRandom"))
+    ),
     bag: rng.shuffle(createBag()),
     box: [],
     factories: [...Array(FACTORIES_BY_PLAYERS[players])].map(() => []),
@@ -334,7 +334,6 @@ export function getBoardScoring(player: Player): Scoring {
   let forTiles = [];
   let totalScore = 0;
   let currentWall = player.board.wall;
-
   board.staging.forEach((stagingRow, stagingRowIndex) => {
     const placementColor = getStagingRowColor(stagingRow);
     if (isStagingRowFull(stagingRow, stagingRowIndex) && placementColor != undefined) {
@@ -342,72 +341,82 @@ export function getBoardScoring(player: Player): Scoring {
       currentWall = placeTileInWall(currentWall, stagingRowIndex, tile);
       const placementRow = stagingRowIndex;
       const placementCol = getWallPlacementCol(placementRow, placementColor);
-
-      let rowScore = 0;
-      let encounteredTileInRow = false;
-      let scoringTilesInRow = [];
-      for (let col = 0; col < COLORS; col++) {
-        let inPlacement = col == placementCol;
-        if (inPlacement) {
-          encounteredTileInRow = true;
-        }
-        if (inPlacement || currentWall[placementRow][col]) {
-          rowScore += 1;
-          scoringTilesInRow.push([placementRow, col]);
-        } else if (encounteredTileInRow) {
-          break;
-        } else {
-          rowScore = 0;
-        }
-      }
-
+      let scoredSingleTile = false;
       let colScore = 0;
       let encounteredTileInCol = false;
       let scoringTilesInCol = [];
-      for (let row = 0; row < COLORS; row++) {
-        let inPlacement = row == placementRow;
-        if (inPlacement) {
-          encounteredTileInRow = true;
-        }
-        if (inPlacement || currentWall[row][placementCol]) {
-          colScore += 1;
-          scoringTilesInRow.push([row, placementCol]);
-        } else if (encounteredTileInCol) {
-          break;
-        } else {
-          colScore = 0;
-        }
-      }
+      let rowScore = 0;
+      let encounteredTileInRow = false;
+      let scoringTilesInRow = [];
+      let scoredEntireRow = false;
+      let scoredEntireCol = false;
+      let scoredEntireColor = false;
 
-      let scoredEntireRow = scoringTilesInRow.length == COLORS;
-      let scoredEntireCol = scoringTilesInCol.length == COLORS;
-      let scoredEntireColor = countTilesOfColorInWall(currentWall, placementColor) == COLORS;
+      if (numberOfTilesInRow(currentWall, placementRow) == 1 && numberOfTilesInCol(currentWall, placementCol) == 1) {
+        scoredSingleTile = true;
+        totalScore += 1;
+      } else {
+        for (let col = 0; col < COLORS; col++) {
+          let inPlacement = col == placementCol;
+          if (inPlacement) {
+            encounteredTileInRow = true;
+          }
+          if (inPlacement || currentWall[placementRow][col]) {
+            rowScore += 1;
+            scoringTilesInRow.push([placementRow, col]);
+          } else if (encounteredTileInRow) {
+            break;
+          } else {
+            rowScore = 0;
+          }
+        }
+
+        for (let row = 0; row < COLORS; row++) {
+          let inPlacement = row == placementRow;
+          if (inPlacement) {
+            encounteredTileInRow = true;
+          }
+          if (inPlacement || currentWall[row][placementCol]) {
+            colScore += 1;
+            scoringTilesInRow.push([row, placementCol]);
+          } else if (encounteredTileInCol) {
+            break;
+          } else {
+            colScore = 0;
+          }
+        }
+
+        scoredEntireRow = scoringTilesInRow.length == COLORS;
+        scoredEntireCol = scoringTilesInCol.length == COLORS;
+        scoredEntireColor = countTilesOfColorInWall(currentWall, placementColor) == COLORS;
+
+        totalScore +=
+          rowScore +
+          colScore +
+          (scoredEntireRow ? ROW_BONUS : 0) +
+          (scoredEntireCol ? COL_BONUS : 0) +
+          (scoredEntireColor ? COLOR_BONUS : 0);
+      }
 
       forTiles.push({
         wall: currentWall,
         row: placementRow,
         col: placementCol,
         scoringTilesInRow,
-        totalScoreAfterRow: totalScore + rowScore,
-        totalScoreAfterCol: totalScore + colScore,
-        totalScoreAfter: totalScore + rowScore + colScore,
+        totalScoreAfter: totalScore,
         scoringTilesInCol,
         rowScore,
         colScore,
+        scoredSingleTile,
         scoredEntireRow,
         scoredEntireCol,
         scoredEntireColor
       });
-      totalScore +=
-        rowScore +
-        colScore +
-        (scoredEntireRow ? ROW_BONUS : 0) +
-        (scoredEntireCol ? COL_BONUS : 0) +
-        (scoredEntireColor ? COLOR_BONUS : 0);
     }
   });
   const floorScore = getFloorScore(board.floor);
   totalScore += floorScore;
+
   return {
     player,
     forTiles,
@@ -422,6 +431,43 @@ function countTilesOfColorInWall(wall: Wall, color: ColorType): number {
     (count, _, rowIndex) => (wall[rowIndex][getWallPlacementCol(rowIndex, color)] ? count + 1 : count),
     0
   );
+}
+
+function splitArrayBy(array: Array<any>, splitter: any): Array<any> {
+  return array
+    .reduce(
+      (array, value) => {
+        const lastChunk = array[array.length - 1];
+        if (value == splitter) {
+          if (lastChunk.length == 0) {
+            return array;
+          } else {
+            return [...array, []];
+          }
+        } else {
+          lastChunk.push(value);
+          return array;
+        }
+      },
+      [[]]
+    )
+    .filter(array => array.length > 0);
+}
+
+function numberOfTilesInRow(wall: Wall, row: number): number {
+  return wall[row].filter(placement => placement != null).length;
+}
+
+function numberOfTilesInCol(wall: Wall, col: number): number {
+  return getColArray(wall, col).filter(placement => placement != null).length;
+}
+
+function getColArray(wall: Wall, col: number): Array<?Tile> {
+  const colTiles: Array<?Tile> = [];
+  for (let row = 0; row < COLORS; row++) {
+    colTiles.push(wall[row][col]);
+  }
+  return colTiles;
 }
 
 function getFloorScore(floor: Floor): number {
