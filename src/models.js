@@ -82,8 +82,8 @@ export type Scoring = {|
     wall: Wall,
     row: number,
     col: number,
-    scoringTilesInCol: Array<[number, number]>,
-    scoringTilesInRow: Array<[number, number]>,
+    scoringTilesInCol: TilesArray,
+    scoringTilesInRow: TilesArray,
     totalScoreAfter: number,
     rowScore: number,
     colScore: number,
@@ -343,60 +343,33 @@ export function getBoardScoring(player: Player): Scoring {
       const placementCol = getWallPlacementCol(placementRow, placementColor);
       let scoredSingleTile = false;
       let colScore = 0;
-      let encounteredTileInCol = false;
-      let scoringTilesInCol = [];
       let rowScore = 0;
-      let encounteredTileInRow = false;
-      let scoringTilesInRow = [];
-      let scoredEntireRow = false;
-      let scoredEntireCol = false;
-      let scoredEntireColor = false;
 
-      if (numberOfTilesInRow(currentWall, placementRow) == 1 && numberOfTilesInCol(currentWall, placementCol) == 1) {
+      let scoringRow = splitArrayBy(currentWall[placementRow], undefined);
+      let scoringCol = splitArrayBy(getColArray(currentWall, placementCol), undefined);
+      let scoringTilesInRow = scoringRow.find(chunk => chunk.includes(tile));
+      let scoringTilesInCol = scoringCol.find(chunk => chunk.includes(tile));
+      scoringTilesInRow = ((scoringTilesInRow: any): TilesArray);
+      scoringTilesInCol = ((scoringTilesInCol: any): TilesArray);
+
+      if (scoringTilesInCol.length == 1 && scoringTilesInRow.length == 1) {
         scoredSingleTile = true;
-        totalScore += 1;
       } else {
-        for (let col = 0; col < COLORS; col++) {
-          let inPlacement = col == placementCol;
-          if (inPlacement) {
-            encounteredTileInRow = true;
-          }
-          if (inPlacement || currentWall[placementRow][col]) {
-            rowScore += 1;
-            scoringTilesInRow.push([placementRow, col]);
-          } else if (encounteredTileInRow) {
-            break;
-          } else {
-            rowScore = 0;
-          }
-        }
-
-        for (let row = 0; row < COLORS; row++) {
-          let inPlacement = row == placementRow;
-          if (inPlacement) {
-            encounteredTileInRow = true;
-          }
-          if (inPlacement || currentWall[row][placementCol]) {
-            colScore += 1;
-            scoringTilesInRow.push([row, placementCol]);
-          } else if (encounteredTileInCol) {
-            break;
-          } else {
-            colScore = 0;
-          }
-        }
-
-        scoredEntireRow = scoringTilesInRow.length == COLORS;
-        scoredEntireCol = scoringTilesInCol.length == COLORS;
-        scoredEntireColor = countTilesOfColorInWall(currentWall, placementColor) == COLORS;
-
-        totalScore +=
-          rowScore +
-          colScore +
-          (scoredEntireRow ? ROW_BONUS : 0) +
-          (scoredEntireCol ? COL_BONUS : 0) +
-          (scoredEntireColor ? COLOR_BONUS : 0);
+        rowScore = scoringTilesInRow.length > 1 ? scoringTilesInRow.length : 0;
+        colScore = scoringTilesInCol.length > 1 ? scoringTilesInCol.length : 0;
       }
+
+      const scoredEntireRow = scoringTilesInRow.length == COLORS;
+      const scoredEntireCol = scoringTilesInCol.length == COLORS;
+      const scoredEntireColor = countTilesOfColorInWall(currentWall, placementColor) == COLORS;
+
+      totalScore +=
+        rowScore +
+        colScore +
+        (scoredSingleTile ? 1 : 0) +
+        (scoredEntireRow ? ROW_BONUS : 0) +
+        (scoredEntireCol ? COL_BONUS : 0) +
+        (scoredEntireColor ? COLOR_BONUS : 0);
 
       forTiles.push({
         wall: currentWall,
@@ -452,14 +425,6 @@ function splitArrayBy(array: Array<any>, splitter: any): Array<any> {
       [[]]
     )
     .filter(array => array.length > 0);
-}
-
-function numberOfTilesInRow(wall: Wall, row: number): number {
-  return wall[row].filter(placement => placement != null).length;
-}
-
-function numberOfTilesInCol(wall: Wall, col: number): number {
-  return getColArray(wall, col).filter(placement => placement != null).length;
 }
 
 function getColArray(wall: Wall, col: number): Array<?Tile> {

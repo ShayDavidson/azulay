@@ -2,13 +2,13 @@
 
 import React from "react";
 import { css } from "glamor";
-import Color from "color";
+
 // types
 import type { ColorType, Tile as TileType } from "../models";
 // components
 import Tile from "./tile";
 // helpers
-import { TILE_COLORS, LABEL_COLORS, BLACK_COLOR, HIGHLIGHT_WIDTH, $bevelStyle } from "../styles";
+import { PLACEMENT_COLORS, LABEL_COLORS, BLACK_COLOR, HIGHLIGHT_WIDTH, $bevelStyle } from "../styles";
 
 /***********************************************************/
 
@@ -53,9 +53,7 @@ export default class Placement extends React.Component<Props, State> {
     const $dynamicStyle =
       this.props.color != undefined
         ? {
-            backgroundColor: Color(TILE_COLORS[this.props.color])
-              .desaturate(0.5)
-              .toString()
+            backgroundColor: PLACEMENT_COLORS[this.props.color]
           }
         : {
             backgroundColor: "rgba(0, 0, 0, 0.25)"

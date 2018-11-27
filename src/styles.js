@@ -1,14 +1,28 @@
 // @flow
 
 import { css } from "glamor";
+import Color from "color";
+
+function placementColor(color: string): string {
+  return Color(color)
+    .desaturate(0.5)
+    .toString();
+}
 
 /***********************************************************/
 
 export const WHITE_COLOR = "hsl(30, 20%, 95%)";
 export const BOARD_COLOR = "rgb(211, 182, 152)";
-export const BLACK_COLOR = "#201718";
+export const BLACK_COLOR = "hsl(360, 18%, 11%)";
 export const BLUE_COLOR = "#2d7dbc";
 export const TILE_COLORS = [BLUE_COLOR, "#f8c548", "#ee3231", BLACK_COLOR, "#71cbd4"];
+export const PLACEMENT_COLORS = [
+  placementColor(BLUE_COLOR),
+  placementColor("#f8c548"),
+  placementColor("#ee3231"),
+  "#303030",
+  placementColor("#71cbd4")
+];
 export const LABEL_COLORS = [BLACK_COLOR, BLACK_COLOR, BLACK_COLOR, WHITE_COLOR, BLACK_COLOR];
 export const BOARD_TILE_SIZE = 44;
 export const PLACEMENT_GAP = 0.08;
