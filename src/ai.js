@@ -1,31 +1,53 @@
 // @flow
 
-// import type { Tile, Factory, Game } from "./models";
-// import { getCurrentPlayer } from "./models";
+import type { Tile, Factory, Game } from "./models";
+import { getCurrentPlayer, tilesComparator } from "./models";
 
-// // TYPES ////////////////////////////
+// TYPES ////////////////////////////
 
-// export type FactorySelection = {|
-//   selectedFactory: Factory,
-//   selectedTile: Tile
-// |};
+export type FactorySelection = {|
+  selectedFactory: Factory,
+  selectedTile: Tile
+|};
 
-// export type Move = FactorySelection & {|
-//   selectedTarget: number | "floor"
-// |};
+export type Move = FactorySelection & {|
+  selectedTarget: number | "floor"
+|};
 
-// // FUNCTIONS ////////////////////////////
+// FUNCTIONS ////////////////////////////
 
-// export function getAllMoves(game: Game): Array<Move> {
-//   const player = getCurrentPlayer(game);
-//   let factorySelections = [];
-//   game.leftovers.forEach(tile => {
-//     moves.push({
-//       selectedFactory
-//     });
-//   });
+export function getAllMoves(game: Game): Array<Move> {
+  // const player = getCurrentPlayer(game);
+  const leftoverSelections: Array<FactorySelection> = reduceFactorySelections(game.leftovers);
+  const factorySelections: Array<FactorySelection> = game.factories.reduce((results, factory) => {
+    return results.concat(reduceFactorySelections(factory));
+  }, []);
 
-//   return moves;
-// }
+  const allSelections = leftoverSelections.concat(factorySelections);
+  return allSelections.reduce;
 
-// // AI ////////////////////////////
+  // return moves;
+}
+
+export function reduceFactorySelections(factory: Factory): Array<FactorySelection> {
+  return uniqueFactorySelectionsByTile(
+    factory.reduce((results, tile) => {
+      results.push({
+        selectedFactory: factory,
+        selectedTile: tile
+      });
+      return results;
+    }, [])
+  );
+}
+
+export function uniqueFactorySelectionsByTile(factorySelections: Array<FactorySelection>): Array<FactorySelection> {
+  return factorySelections.reduce((result, selection) => {
+    if (!result.find(addedSelection => tilesComparator(addedSelection.selectedTile, selection.selectedTile) == 0)) {
+      result.push(selection);
+    }
+    return result;
+  }, []);
+}
+
+// AI ////////////////////////////
