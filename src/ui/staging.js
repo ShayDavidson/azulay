@@ -55,7 +55,6 @@ export default class Staging extends React.Component<Props, State> {
                   canPlaceTilesInStagingRow(
                     gameState.players[gameState.currentPlayer],
                     stagingRowIndex,
-                    uiState.selectedFactory,
                     uiState.selectedTile
                   );
                 return (

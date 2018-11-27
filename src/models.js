@@ -533,12 +533,7 @@ export function placementsForStagingRow(index: number): number {
   return index + 1;
 }
 
-export function canPlaceTilesInStagingRow(
-  player: Player,
-  stagingRowIndex: number,
-  fromFactory: Factory,
-  tile: Tile
-): boolean {
+export function canPlaceTilesInStagingRow(player: Player, stagingRowIndex: number, tile: Tile): boolean {
   const stagingRow = player.board.staging[stagingRowIndex];
   if (tile.kind == "first") {
     return false;

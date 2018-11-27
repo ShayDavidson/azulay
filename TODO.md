@@ -19,7 +19,7 @@
 * Flowtype for actions hard-typed
 * Can't be wrong in floor placement - always for current player.
 * Followup dispatch is weird. Get rid of it?
-* Error fallback flow type crap.
+* Error fallback flow type crap (Because of & misuse)
 * More Immutable helpers.
 * Flow type checking better for context.
 * Generic game provider.

@@ -236,7 +236,7 @@ export function validate(state: State, action: Action): ?ValidationError {
         error = new Error("can't put tile in board in this phase");
       } else if (selectedTile.kind == "first") {
         error = new Error("can't put first tile in staging");
-      } else if (!canPlaceTilesInStagingRow(getCurrentPlayer(game), stagingRowIndex, selectedFactory, selectedTile)) {
+      } else if (!canPlaceTilesInStagingRow(getCurrentPlayer(game), stagingRowIndex, selectedTile)) {
         error = new Error("staging area cannot contain tile");
       }
       break;
