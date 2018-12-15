@@ -5,6 +5,7 @@ import Promise from "bluebird";
 // types
 import type { Game, Tile, Factory, Floor, Scoring } from "./models";
 import type { UI } from "./ui_models";
+import type { AI } from "./ai";
 
 // action handlers
 import {
@@ -29,6 +30,7 @@ import {
 } from "./models";
 // helpers
 import { play, playRandom, TILES, CLICK, SHUFFLE } from "./sfx";
+import { isAIPlayer } from "./ai";
 
 /***********************************************************/
 
@@ -51,7 +53,7 @@ export type ActionFallbackDispatcher = (actionPromise: ActionDispatcherPromise) 
 export type ActionDispatcherPromise = (
   dispatch: ActionDispatcher,
   fallbackDispatch: ActionFallbackDispatcher,
-  state: State
+  state: () => State
 ) => Promise<any>;
 
 export type ValidationError = Error & {
@@ -65,6 +67,7 @@ export type Resolver = (thenableOrResult?: any) => void;
 export type State = {|
   game: Game,
   ui: UI,
+  ai: ?AI,
   resolver?: Resolver
 |};
 
@@ -77,6 +80,7 @@ export const ACTIONS = {
   putTilesFromFactoryIntoFloor: "putTilesFromFactoryIntoFloor",
   putTilesFromFactoryIntoStagingRow: "putTilesFromFactoryIntoStagingRow",
   moveToNextPlayerPlacement: "moveToNextPlayerPlacement",
+  requestAIMove: "requestAIMove",
   moveToScoringPhase: "moveToScoringPhase",
   moveToNextPlayerScoring: "moveToNextPlayerScoring",
   scoreBoardForCurrentPlayer: "scoreBoardForCurrentPlayer",
@@ -137,6 +141,10 @@ export function reduce(state: State, action: Action): State {
 
     case ACTIONS.moveToNextPlayerPlacement: {
       return { ...state, game: moveToNextPlayer(game) };
+    }
+
+    case ACTIONS.requestAIMove: {
+      return state;
     }
 
     case ACTIONS.moveToScoringPhase: {
@@ -252,6 +260,11 @@ export function validate(state: State, action: Action): ?ValidationError {
       break;
     }
 
+    case ACTIONS.requestAIMove: {
+      // TODO
+      break;
+    }
+
     case ACTIONS.moveToScoringPhase: {
       if (game.phase != PHASES.placement) {
         error = new Error("not in right phase");
@@ -329,13 +342,13 @@ export function isDeselect(action: Action, ui: UI): boolean {
 /***********************************************************/
 
 export function getDrawTileFromBagIntoFactoriesAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, state) => {
+  return (dispatch, followupDispatch, getState) => {
     return dispatch({
       type: ACTIONS.drawTileFromBagIntoFactories,
       payload: {}
     })
       .then(() => playRandom(TILES))
-      .delay(75 * state.ui.animationSpeed)
+      .delay(75 * getState().ui.animationSpeed)
       .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }
@@ -386,44 +399,61 @@ export function getPutTilesFromFactoryIntoStagingRowAction(stagingRowIndex: numb
 }
 
 export function getMoveToNextPlayerPlacementAction(): ActionDispatcherPromise {
-  return dispatch => {
+  return (dispatch, followupDispatch, getState) => {
     return dispatch({
       type: ACTIONS.moveToNextPlayerPlacement,
       payload: {}
+    }).then(() => {
+      const currentPlayer = getCurrentPlayer(getState().game);
+      if (isAIPlayer(currentPlayer)) {
+        return followupDispatch(getRequestAIMoveAction());
+      }
+    });
+  };
+}
+
+export function getRequestAIMoveAction(): ActionDispatcherPromise {
+  return (dispatch, followupDispatch, getState) => {
+    return dispatch({
+      type: ACTIONS.requestAIMove,
+      manualResolve: true,
+      payload: {}
+    }).then(() => {
+      // TODO
     });
   };
 }
 
 export function getMoveToScoringPhaseAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, state) => {
+  return (dispatch, followupDispatch, getState) => {
     return dispatch({
       type: ACTIONS.moveToScoringPhase,
       payload: {}
     })
-      .delay(500 * state.ui.animationSpeed)
+      .delay(500 * getState().ui.animationSpeed)
       .then(() => followupDispatch(getMoveToNextPlayerScoringAction()));
   };
 }
 
 export function getMoveToNextPlayerScoringAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, state) => {
+  return (dispatch, followupDispatch, getState) => {
     return dispatch({
       type: ACTIONS.moveToNextPlayerScoring,
       payload: {}
     })
-      .delay(500 * state.ui.animationSpeed)
+      .delay(500 * getState().ui.animationSpeed)
       .then(() => followupDispatch(getScoreBoardForCurrentPlayerAction()));
   };
 }
 
 export function getScoreBoardForCurrentPlayerAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, state) => {
+  return (dispatch, followupDispatch, getState) => {
     return dispatch({
       type: ACTIONS.scoreBoardForCurrentPlayer,
       manualResolve: true,
       payload: {}
     })
-      .delay(500 * state.ui.animationSpeed)
+      .delay(500 * getState().ui.animationSpeed)
       .then(() => followupDispatch(getMoveToNextPlayerScoringAction()));
   };
 }
@@ -438,13 +468,13 @@ export function getMoveToRefillPhaseAction(): ActionDispatcherPromise {
 }
 
 export function getShuffleBoxIntoBagAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, state) => {
+  return (dispatch, followupDispatch, getState) => {
     return dispatch({
       type: ACTIONS.shuffleBoxIntoBag,
       payload: {}
     })
       .then(() => play(SHUFFLE))
-      .delay(500 * state.ui.animationSpeed)
+      .delay(500 * getState().ui.animationSpeed)
       .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }

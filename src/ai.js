@@ -1,9 +1,14 @@
 // @flow
 
-import type { Tile, Factory, Game } from "./models";
-import { getCurrentPlayer, tilesComparator, canPlaceTilesInStagingRow } from "./models";
+import type { Tile, Factory, Game, Player } from "./models";
+import { PLAYER_TYPE, getCurrentPlayer, tilesComparator, canPlaceTilesInStagingRow } from "./models";
 
 // TYPES ////////////////////////////
+
+export type AI = {|
+  pending: boolean,
+  chosenMove?: ?Move
+|};
 
 export type FactorySelection = {|
   selectedFactory: Factory,
@@ -16,7 +21,7 @@ export type Move = {|
   selectedTarget: number | "floor"
 |};
 
-// FUNCTIONS ////////////////////////////
+// API ////////////////////////////
 
 export function getAllMoves(game: Game): Array<Move> {
   const player = getCurrentPlayer(game);
@@ -41,7 +46,13 @@ export function getAllMoves(game: Game): Array<Move> {
   }, []);
 }
 
-export function reduceFactorySelections(factory: Factory): Array<FactorySelection> {
+export function isAIPlayer(player: Player): boolean {
+  return player.type == PLAYER_TYPE.aiRandom || player.type == PLAYER_TYPE.aiSmart;
+}
+
+// HELPERS ////////////////////////////
+
+function reduceFactorySelections(factory: Factory): Array<FactorySelection> {
   return uniqueFactorySelectionsByTile(
     factory.reduce((results, tile) => {
       results.push({
@@ -53,7 +64,7 @@ export function reduceFactorySelections(factory: Factory): Array<FactorySelectio
   );
 }
 
-export function uniqueFactorySelectionsByTile(factorySelections: Array<FactorySelection>): Array<FactorySelection> {
+function uniqueFactorySelectionsByTile(factorySelections: Array<FactorySelection>): Array<FactorySelection> {
   return factorySelections.reduce((result, selection) => {
     if (!result.find(addedSelection => tilesComparator(addedSelection.selectedTile, selection.selectedTile) == 0)) {
       result.push(selection);
@@ -63,3 +74,11 @@ export function uniqueFactorySelectionsByTile(factorySelections: Array<FactorySe
 }
 
 // AI ////////////////////////////
+
+function getAIMove(game: Game): Promise<Move> {
+  const moves = getAllMoves(game);
+  return new Promise(resolve => {
+    const randomIndex = Math.floor(Math.random() * moves.length);
+    resolve(moves[randomIndex]);
+  });
+}

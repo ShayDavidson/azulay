@@ -20,8 +20,8 @@ export const PHASES = {
 };
 export const PLAYER_TYPE = {
   human: "human",
-  cpuRandom: "cpuRandom",
-  cpuSmart: "cpuSmart"
+  aiRandom: "aiRandom",
+  aiSmart: "aiSmart"
 };
 
 // TYPES ////////////////////////////
@@ -116,7 +116,7 @@ export function createGame(players: number, seed: number): Game {
   const rng = createRNG(seed);
   return {
     players: [...Array(players)].map(
-      (_, index) => (index == 0 ? createPlayer(`Human`, "human") : createPlayer(`CPU ${index}`, "cpuRandom"))
+      (_, index) => (index == 0 ? createPlayer(`Human`, "human") : createPlayer(`AI ${index}`, "aiRandom"))
     ),
     bag: rng.shuffle(createBag()),
     box: [],

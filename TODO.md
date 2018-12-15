@@ -16,6 +16,8 @@
 
 ## Refactors
 
+* Separate game provider from dispatcher.
+* Have a config sub-state.
 * Flowtype for actions hard-typed
 * Can't be wrong in floor placement - always for current player.
 * Followup dispatch is weird. Get rid of it?

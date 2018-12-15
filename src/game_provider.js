@@ -39,6 +39,7 @@ export default class GameProvider extends React.Component<Props, State> {
     return {
       game: createGame(players, seed),
       ui: { selectedFactory: undefined, selectedTile: undefined, currentScoring: undefined, animationSpeed },
+      ai: undefined,
       resolver: undefined
     };
   }
@@ -56,8 +57,12 @@ export default class GameProvider extends React.Component<Props, State> {
     }
   }
 
+  getState() {
+    return this.state;
+  }
+
   dispatch(actionPromiser: ActionDispatcherPromise) {
-    return actionPromiser(this.internalDispatch.bind(this), this.dispatch.bind(this), this.state).catch(
+    return actionPromiser(this.internalDispatch.bind(this), this.dispatch.bind(this), this.getState.bind(this)).catch(
       this.handleValidationError.bind(this)
     );
   }
