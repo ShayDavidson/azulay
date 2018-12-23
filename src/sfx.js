@@ -11,20 +11,20 @@ export const TILES = [
   require("./assets/tile8.wav")
 ];
 export const SCORE = [
-  require("./assets/score0.wav"),
-  require("./assets/score1.wav"),
-  require("./assets/score2.wav"),
-  require("./assets/score3.wav"),
-  require("./assets/score4.wav"),
-  require("./assets/score5.wav"),
-  require("./assets/score6.wav"),
-  require("./assets/score7.wav"),
-  require("./assets/score8.wav"),
-  require("./assets/score9.wav")
+  require("./assets/score0.mp3"),
+  require("./assets/score1.mp3"),
+  require("./assets/score2.mp3"),
+  require("./assets/score3.mp3"),
+  require("./assets/score4.mp3"),
+  require("./assets/score5.mp3"),
+  require("./assets/score6.mp3"),
+  require("./assets/score7.mp3"),
+  require("./assets/score8.mp3"),
+  require("./assets/score9.mp3")
 ];
 export const SHUFFLE = require("./assets/shuffle.wav");
 export const CLICK = require("./assets/click.mp3");
-export const TURN = require("./assets/turn.mp3");
+export const TURN = require("./assets/turn.wav");
 
 // functions
 export function playRandom(sfxArray) {

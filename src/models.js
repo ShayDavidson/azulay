@@ -389,6 +389,8 @@ export function getBoardScoring(player: Player): Scoring {
         scoredEntireCol,
         scoredEntireColor
       });
+    } else {
+      forTiles.push(undefined);
     }
   });
   const floorScore = getFloorScore(board.floor);

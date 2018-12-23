@@ -39,7 +39,7 @@ export default class PlayerBoardAnimator extends React.Component<Props, State> {
     if (resolver != null && resolver != prevProps.resolver) {
       setTimeout(() => {
         resolver();
-      }, 2500);
+      }, 1000);
     }
   }
 

@@ -450,7 +450,7 @@ export function getMoveToNextPlayerScoringAction(): ActionDispatcherPromise {
       type: ACTIONS.moveToNextPlayerScoring,
       payload: {}
     })
-      .delay(250 * getState().ui.animationSpeed)
+      .delay(500 * getState().ui.animationSpeed)
       .then(() => followupDispatch(getScoreBoardForCurrentPlayerAction()));
   };
 }
