@@ -91,7 +91,7 @@ class Azul extends React.Component<Props, State> {
                     </div>
                     <FactoryZone factories={gameState.factories} leftovers={gameState.leftovers} />
                   </div>
-                  <InfoZone box={gameState.box} bag={gameState.bag} />
+                  <InfoZone box={gameState.box} bag={gameState.bag} turn={gameState.turn} />
                 </div>
               );
             }}

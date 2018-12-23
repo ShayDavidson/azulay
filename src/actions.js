@@ -20,6 +20,7 @@ import {
   moveToRefillPhase,
   shuffleBoxIntoBag,
   moveToEndPhase,
+  endTurn,
   shouldGameBeOver,
   getCurrentPlayer,
   hasPlayersThatNeedsScoring,
@@ -29,7 +30,7 @@ import {
   getBoardScoring
 } from "./models";
 // helpers
-import { play, playRandom, TILES, CLICK, SHUFFLE } from "./sfx";
+import { play, playRandom, TILES, CLICK, SHUFFLE, TURN } from "./sfx";
 import { isAIPlayer } from "./ai";
 
 /***********************************************************/
@@ -84,6 +85,7 @@ export const ACTIONS = {
   moveToScoringPhase: "moveToScoringPhase",
   moveToNextPlayerScoring: "moveToNextPlayerScoring",
   scoreBoardForCurrentPlayer: "scoreBoardForCurrentPlayer",
+  endTurn: "endTurn",
   moveToRefillPhase: "moveToRefillPhase",
   shuffleBoxIntoBag: "shuffleBoxIntoBag",
   moveToEndPhase: "moveToEndPhase"
@@ -164,6 +166,10 @@ export function reduce(state: State, action: Action): State {
       };
     }
 
+    case ACTIONS.endTurn: {
+      return { ...state, game: endTurn(game) };
+    }
+
     case ACTIONS.moveToRefillPhase: {
       return { ...state, game: moveToRefillPhase(game) };
     }
@@ -194,8 +200,6 @@ export function validate(state: State, action: Action): ?ValidationError {
       if (areAllFactoriesFull(game)) {
         error = new Error("factories are full");
         fallbackAction = getMoveToPlacementPhaseAction();
-      } else if (game.phase != PHASES.refill) {
-        error = new Error("can't refill factory in this phase");
       } else if (game.bag.length == 0) {
         error = new Error("bag is empty");
         if (game.box.length == 0) {
@@ -280,7 +284,7 @@ export function validate(state: State, action: Action): ?ValidationError {
         if (shouldGameBeOver(game)) {
           fallbackAction = getMoveToEndPhaseAction();
         } else {
-          fallbackAction = getMoveToRefillPhaseAction();
+          fallbackAction = getEndTurnAction();
         }
       }
       break;
@@ -290,6 +294,11 @@ export function validate(state: State, action: Action): ?ValidationError {
       if (game.phase != PHASES.scoring) {
         error = new Error("not in right phase");
       }
+      break;
+    }
+
+    case ACTIONS.endTurn: {
+      // TODO
       break;
     }
 
@@ -413,7 +422,7 @@ export function getMoveToNextPlayerPlacementAction(): ActionDispatcherPromise {
 }
 
 export function getRequestAIMoveAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, getState) => {
+  return (dispatch, followupDispatch) => {
     return dispatch({
       type: ACTIONS.requestAIMove,
       manualResolve: true,
@@ -441,7 +450,7 @@ export function getMoveToNextPlayerScoringAction(): ActionDispatcherPromise {
       type: ACTIONS.moveToNextPlayerScoring,
       payload: {}
     })
-      .delay(500 * getState().ui.animationSpeed)
+      .delay(250 * getState().ui.animationSpeed)
       .then(() => followupDispatch(getScoreBoardForCurrentPlayerAction()));
   };
 }
@@ -455,6 +464,18 @@ export function getScoreBoardForCurrentPlayerAction(): ActionDispatcherPromise {
     })
       .delay(500 * getState().ui.animationSpeed)
       .then(() => followupDispatch(getMoveToNextPlayerScoringAction()));
+  };
+}
+
+export function getEndTurnAction(): ActionDispatcherPromise {
+  return (dispatch, followupDispatch, getState) => {
+    return dispatch({
+      type: ACTIONS.endTurn,
+      payload: {}
+    })
+      .then(() => play(TURN))
+      .delay(100 * getState().ui.animationSpeed)
+      .then(() => followupDispatch(getMoveToRefillPhaseAction()));
   };
 }
 

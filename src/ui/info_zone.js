@@ -12,7 +12,8 @@ import { GLOBAL_PADDING, TILE_COLORS } from "../styles";
 
 type Props = {
   bag: TilesArray,
-  box: TilesArray
+  box: TilesArray,
+  turn: number
 };
 
 type State = {
@@ -46,6 +47,11 @@ export default class InfoZone extends React.Component<Props, State> {
       <div className={$baseStyle}>
         <table>
           <tbody>
+            <tr>
+              <td>
+                <strong>Turn {this.props.turn + 1}</strong>
+              </td>
+            </tr>
             <tr>
               <td>
                 <strong>Tiles in the bag:</strong>

@@ -8,6 +8,7 @@
 
 ## Delight
 
+* When turn passes highlight the turn info.
 * Organize tiles in factories and groups.
 * Highlight/animate tile counters when they change.
 * Tile transition from places in the window.

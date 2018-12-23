@@ -268,6 +268,10 @@ export function moveToScoringPhase(game: Game): Game {
   return { ...game, phase: PHASES.scoring };
 }
 
+export function endTurn(game: Game): Game {
+  return { ...game, turn: game.turn + 1 };
+}
+
 export function scoreBoardForCurrentPlayer(game: Game, scoring: Scoring): Game {
   const currentPlayer = getCurrentPlayer(game);
   let tilesToDiscard = [];
