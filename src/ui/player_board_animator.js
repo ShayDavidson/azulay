@@ -42,7 +42,7 @@ export default class PlayerBoardAnimator extends React.Component<Props, State> {
   }
 
   componentDidUpdate(/*_, prevState*/) {
-    this.props.resolver();
+    if (this.props.resolver) this.props.resolver();
     // const { currentScoringPhase } = this.state;
     // const { scoring } = this.props;
     // if (currentScoringPhase == "prepare") {
