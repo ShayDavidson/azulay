@@ -18,6 +18,7 @@
 
 ## Refactors
 
+* Check silly re-renders when selecting tile/placement.
 * Separate game provider from dispatcher.
 * Have a config sub-state.
 * Flowtype for actions hard-typed
