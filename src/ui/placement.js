@@ -43,6 +43,7 @@ const $labelStyle = css({
 });
 
 const $highlightedStyle = css({
+  cursor: "pointer",
   border: `calc(2 * ${HIGHLIGHT_WIDTH}) solid ${BLACK_COLOR}`
 });
 

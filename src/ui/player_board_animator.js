@@ -12,6 +12,10 @@ import { createPlayer } from "../models";
 
 /***********************************************************/
 
+const ANIMATOR_DELAY = 500;
+
+/***********************************************************/
+
 type Props = {
   player: Player,
   scoring: ?Scoring,
@@ -20,7 +24,8 @@ type Props = {
 };
 
 type State = {
-  player: Player
+  player: Player,
+  currentScoringPhase: "prepare" | number | "leftovers" | "done"
 };
 
 /***********************************************************/
@@ -29,18 +34,36 @@ export default class PlayerBoardAnimator extends React.Component<Props, State> {
   state = { player: createPlayer("", "aiRandom") };
 
   static getDerivedStateFromProps(nextProps: Props) {
-    // if (nextProps.scoring) {
-    // }
-    return { player: nextProps.player };
+    if (nextProps.scoring != null) {
+      return { currentScoringPhase: "prepare" };
+    } else {
+      return { player: nextProps.player, currentScoringPhase: undefined };
+    }
   }
 
-  componentDidUpdate(prevProps: Props) {
-    const { resolver } = this.props;
-    if (resolver != null && resolver != prevProps.resolver) {
-      setTimeout(() => {
-        resolver();
-      }, 1000);
-    }
+  componentDidUpdate(/*_, prevState*/) {
+    this.props.resolver();
+    // const { currentScoringPhase } = this.state;
+    // const { scoring } = this.props;
+    // if (currentScoringPhase == "prepare") {
+    //   this.setStateInDelay({ currentScoringPhase: 0 });
+    // } else if (Number.isInteger(currentScoringPhase)) {
+    //   if (currentScoringPhase >= scoring.forTile.length) {
+    //     this.setStateInDelay({ currentScoringPhase: "leftovers" });
+    //   } else {
+    //     this.setStateInDelay({ currentScoringPhase: prevState.currentScoringPhase + 1 });
+    //   }
+    // } else if (currentScoringPhase == "leftovers") {
+    //   // todo
+    // } else if (currentScoringPhase == "done") {
+    //   if (this.props.resolver != null) {
+    //     this.props.resolver();
+    //   }
+    // }
+  }
+
+  setStateInDelay(state) {
+    setTimeout(() => this.setState(state), ANIMATOR_DELAY);
   }
 
   render() {

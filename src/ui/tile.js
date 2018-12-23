@@ -72,7 +72,8 @@ export default class Tile extends React.Component<Props, State> {
     let isColoredTile = kind == "colored";
 
     const $dynamicStyle = {
-      backgroundColor: isColoredTile && color != undefined ? TILE_COLORS[color] : WHITE_COLOR
+      backgroundColor: isColoredTile && color != undefined ? TILE_COLORS[color] : WHITE_COLOR,
+      cursor: this.props.onClick != null ? "pointer" : "default"
     };
 
     let $staticStyle = $baseStyle;

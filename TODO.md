@@ -14,6 +14,7 @@
 * Tile transition from places in the window.
 * Random rotations for tiles.
 * Highlight more board when it's a player's turn (scale? flash?).
+* Cursor pointer on whole stagingrow/floor rather than placements.
 
 ## Refactors
 
