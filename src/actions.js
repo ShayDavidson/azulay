@@ -167,7 +167,7 @@ export function reduce(state: State, action: Action): State {
     }
 
     case ACTIONS.endTurn: {
-      return { ...state, game: endTurn(game) };
+      return { ...state, game: endTurn(game), ui: { ...state.ui, currentScoring: undefined } };
     }
 
     case ACTIONS.moveToRefillPhase: {
@@ -179,7 +179,7 @@ export function reduce(state: State, action: Action): State {
     }
 
     case ACTIONS.moveToEndPhase: {
-      return { ...state, game: moveToEndPhase(game) };
+      return { ...state, game: moveToEndPhase(game), ui: { ...state.ui, currentScoring: undefined } };
     }
 
     default:
@@ -422,7 +422,7 @@ export function getMoveToNextPlayerPlacementAction(): ActionDispatcherPromise {
 }
 
 export function getRequestAIMoveAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch) => {
+  return dispatch => {
     return dispatch({
       type: ACTIONS.requestAIMove,
       manualResolve: true,

@@ -25,35 +25,42 @@ type Props = {
 
 type State = {
   player: Player,
-  currentScoringPhase: "none" | "prepare" | number | "leftovers" | "done"
+  currentScoringPhase: {
+    phase: "none" | "prepare" | "row" | "leftovers" | "done",
+    row?: number
+  }
 };
 
 /***********************************************************/
 
 export default class PlayerBoardAnimator extends React.Component<Props, State> {
-  state = { player: createPlayer("", "aiRandom") };
+  state = { player: createPlayer("", "aiRandom"), currentScoringPhase: { phase: "none" } };
 
-  static getDerivedStateFromProps(nextProps: Props) {
+  static getDerivedStateFromProps(nextProps: Props, state: State): State {
     if (nextProps.scoring != null) {
-      return { currentScoringPhase: "prepare" };
+      return { ...state, currentScoringPhase: { phase: "prepare" } };
     } else {
-      return { player: nextProps.player, currentScoringPhase: "none" };
+      return { ...state, player: nextProps.player, currentScoringPhase: { phase: "none" } };
     }
   }
 
-  componentDidUpdate(_, { player }) {
+  componentDidUpdate({ player: finalPlayer }: Props, { player }: State) {
     const { currentScoringPhase } = this.state;
-    if (this.props.scoring != null && currentScoringPhase != null) {
+    console.log(player.name, currentScoringPhase, this.props.scoring);
+    if (this.props.scoring != null && currentScoringPhase.phase != "none") {
       const { scoring } = this.props;
-      if (currentScoringPhase == "prepare") {
-        this.setStateInDelay({ currentScoringPhase: 0 });
-      } else if (Number.isInteger(currentScoringPhase)) {
-        if (currentScoringPhase >= scoring.forTiles.length) {
-          this.setStateInDelay({ currentScoringPhase: "leftovers" });
+      if (currentScoringPhase.phase == "prepare") {
+        this.setStateInDelay({ currentScoringPhase: { phase: "row", row: 0 }, player });
+      } else if (currentScoringPhase.row != null) {
+        if (currentScoringPhase.row >= scoring.forTiles.length) {
+          this.setStateInDelay({ currentScoringPhase: { phase: "leftovers" }, player: finalPlayer });
         } else {
-          const scoringForTile = scoring.forTiles[currentScoringPhase];
+          const scoringForTile = scoring.forTiles[currentScoringPhase.row];
           this.setStateInDelay({
-            currentScoringPhase: currentScoringPhase + 1,
+            currentScoringPhase: {
+              phase: "row",
+              row: currentScoringPhase.row + 1
+            },
             player: {
               ...player,
               score: scoringForTile.totalScoreAfter,
@@ -65,25 +72,28 @@ export default class PlayerBoardAnimator extends React.Component<Props, State> {
             }
           });
         }
-      } else if (currentScoringPhase == "leftovers") {
+      } else if (currentScoringPhase.phase == "leftovers") {
         this.setStateInDelay({
-          currentScoringPhase: "done",
-          player: this.props.player
+          currentScoringPhase: { phase: "done" },
+          player: finalPlayer
         });
-      } else if (currentScoringPhase == "done") {
-        if (this.props.resolver != null) {
-          this.setState(
-            ({ player }) => {
-              "none", player;
-            },
-            () => setTimeout(() => this.props.resolver(), ANIMATOR_DELAY)
-          );
-        }
+      } else if (currentScoringPhase.phase == "done") {
+        this.setState(
+          ({ player }) => {
+            return { currentScoringPhase: { phase: "none" }, player };
+          },
+          () =>
+            setTimeout(() => {
+              if (this.props.resolver != null) {
+                this.props.resolver();
+              }
+            }, ANIMATOR_DELAY)
+        );
       }
     }
   }
 
-  setStateInDelay(state) {
+  setStateInDelay(state: State) {
     setTimeout(() => this.setState(state), ANIMATOR_DELAY);
   }
 

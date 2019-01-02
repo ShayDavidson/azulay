@@ -49,7 +49,7 @@ const $highlightedStyle = css({
 
 /***********************************************************/
 
-export default class Placement extends React.Component<Props, State> {
+export default class Placement extends React.PureComponent<Props, State> {
   render() {
     const $dynamicStyle =
       this.props.color != undefined

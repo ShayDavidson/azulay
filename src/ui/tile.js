@@ -57,7 +57,7 @@ const $labelStyle = css({
 });
 
 const $animatedStyle = css({
-  animation: `${placeAnimation} 0.15s ease-out both`
+  animation: `${placeAnimation} 0.25s ease-out both`
 });
 
 const $highlightedStyle = css({
@@ -66,7 +66,7 @@ const $highlightedStyle = css({
 
 /***********************************************************/
 
-export default class Tile extends React.Component<Props, State> {
+export default class Tile extends React.PureComponent<Props, State> {
   render() {
     let { color, kind } = this.props.tile;
     let isColoredTile = kind == "colored";

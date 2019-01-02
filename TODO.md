@@ -8,6 +8,8 @@
 
 ## Delight
 
+* Z-index for tiles while animating.
+* Better noise reduction on sounds.
 * When turn passes highlight the turn info.
 * Organize tiles in factories and groups.
 * Highlight/animate tile counters when they change.
@@ -18,6 +20,7 @@
 
 ## Refactors
 
+* Add `immer`.
 * Check silly re-renders when selecting tile/placement.
 * Separate game provider from dispatcher.
 * Have a config sub-state.
