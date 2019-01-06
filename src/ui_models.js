@@ -13,8 +13,8 @@ export type UI = {|
 
 export type Highlights = {|
   type: "row" | "floor" | "prepare",
-  row: number,
-  col: number,
+  row?: ?number,
+  col?: ?number,
   bonus: boolean,
-  tiles?: TilesArray
+  tiles?: ?TilesArray
 |};

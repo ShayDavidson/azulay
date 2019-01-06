@@ -82,13 +82,19 @@ export default class PlayerBoard extends React.Component<Props, State> {
         }
       >
         <div className={$rowContainerStyle} style={{ width: "max-content" }}>
-          <Staging selectionEnabled={this.props.current} staging={staging} />
+          <Staging selectionEnabled={this.props.current} staging={staging} highlights={this.props.highlights} />
           <Separator type="vertical" />
-          <Wall wall={wall} />
+          <Wall wall={wall} highlights={this.props.highlights} />
         </div>
         <Separator type="horizontal" />
         <div className={$rowContainerStyle} style={{ width: "100%" }}>
-          <Floor selectionEnabled={this.props.current} floor={floor} />
+          <Floor
+            selectionEnabled={this.props.current}
+            floor={floor}
+            highlights={
+              this.props.highlights && this.props.highlights.type == "floor" ? this.props.highlights : undefined
+            }
+          />
           <div className={$scoreZoneStyle}>
             <ScoreZone score={score} label={`${name} - ${type == PLAYER_TYPE.human ? "Human" : "AI"}`} />
           </div>

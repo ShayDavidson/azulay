@@ -44,7 +44,7 @@ type ScoringAct = {
   step?: number
 };
 
-const DEFAULT_DELAY = 300;
+const DEFAULT_DELAY = 400;
 
 function playScoreSfx(step) {
   play(SCORE[Math.min(step, 9)]);
@@ -52,20 +52,16 @@ function playScoreSfx(step) {
 
 function deriveHighlightsFromScoringAct(scoringAct: ScoringAct): ?Highlights {
   if (scoringAct.kind == "row" || scoringAct.kind == "floor") {
-    if (scoringAct.rowIndex != null && scoringAct.colIndex != null) {
-      return {
-        type: scoringAct.kind,
-        row: scoringAct.rowIndex,
-        col: scoringAct.colIndex,
-        bonus:
-          scoringAct.phase == "scoreRowBonus" ||
-          scoringAct.phase == "scoreColBonus" ||
-          scoringAct.phase == "scoreColorBonus",
-        tiles: scoringAct.scoringTiles
-      };
-    } else {
-      return undefined;
-    }
+    return {
+      type: scoringAct.kind,
+      row: scoringAct.rowIndex,
+      col: scoringAct.colIndex,
+      bonus:
+        scoringAct.phase == "scoreRowBonus" ||
+        scoringAct.phase == "scoreColBonus" ||
+        scoringAct.phase == "scoreColorBonus",
+      tiles: scoringAct.scoringTiles
+    };
   } else {
     return undefined;
   }
@@ -230,7 +226,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
       delay: DEFAULT_DELAY,
       player: {
         ...finalPlayer,
-        board: { ...finalPlayer.board, wall: scoring.finalWall },
+        board: { ...finalPlayer.board, wall: scoring.finalWall, floor: originalPlayer.board.floor },
         score: scoring.totalScore - scoring.floorScore
       }
     });
@@ -263,7 +259,7 @@ export default class PlayerBoardAnimator extends React.Component<Props, State> {
         scoringActsStep: 0
       };
     } else {
-      return { player: nextProps.player, scoringActs: undefined, scoringActsStep: undefined };
+      return { player: nextProps.player, scoringActs: undefined, scoringActsStep: undefined, highlights: undefined };
     }
   }
 
@@ -288,7 +284,7 @@ export default class PlayerBoardAnimator extends React.Component<Props, State> {
       } else if (this.props.resolver != null) {
         this.props.resolver();
         this.setState(state => {
-          return { player: state.player, scoringActs: undefined, scoringActsStep: undefined };
+          return { player: state.player, scoringActs: undefined, scoringActsStep: undefined, highlights: undefined };
         });
       }
     }

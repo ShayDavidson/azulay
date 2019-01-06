@@ -4,6 +4,7 @@ import React from "react";
 import { css } from "glamor";
 // types
 import type { Floor as FloorType } from "../models";
+import type { Highlights } from "../ui_models";
 // components
 import Placement from "./placement";
 import { GameContext } from "../game_provider";
@@ -17,7 +18,8 @@ import { play, CLICK } from "../sfx";
 
 type Props = {
   floor: FloorType,
-  selectionEnabled?: boolean
+  selectionEnabled?: boolean,
+  highlights?: ?Highlights
 };
 
 type State = {
@@ -52,7 +54,7 @@ export default class Floor extends React.Component<Props, State> {
                 <Placement
                   tile={this.props.floor[index]}
                   label={score.toString()}
-                  highlighted={canPlaceInFloor}
+                  highlighted={canPlaceInFloor || !!this.props.highlights}
                   key={index}
                 />
               ))}
