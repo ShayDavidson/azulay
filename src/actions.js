@@ -154,7 +154,7 @@ export function reduce(state: State, action: Action): State {
     }
 
     case ACTIONS.moveToNextPlayerScoring: {
-      return { ...state, game: moveToNextPlayer(game) };
+      return { ...state, game: moveToNextPlayer(game), ui: { ...state.ui, currentScoring: undefined } };
     }
 
     case ACTIONS.scoreBoardForCurrentPlayer: {
