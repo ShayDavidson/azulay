@@ -2,8 +2,9 @@
 
 ## Prioritized
 
-* Highlight tiles in play.
+* Debug and fix scoring issues.
 * Game end.
+* Tiles out of placement / factory animation.
 * Floating number when socring tiles.
 * Organize tiles in factories and groups.
 * Cursor pointer on whole stagingrow/floor rather than placements.
@@ -13,6 +14,7 @@
 
 ## Delight
 
+* Cascading floor scoring.
 * Better noise reduction on sounds.
 * Tile transition from places in the window.
 

@@ -44,7 +44,7 @@ type ScoringAct = {
   step?: number
 };
 
-const DEFAULT_DELAY = 500;
+const DEFAULT_DELAY = 600;
 
 function playScoreSfx(step) {
   play(SCORE[Math.min(step, 9)]);

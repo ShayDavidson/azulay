@@ -33,7 +33,7 @@ type State = {
 const $baseStyle = css($bevelStyle, {
   borderRadius: BORDER_RADIUS,
   position: "relative",
-  transition: "filter 0.25s ease-out"
+  transition: "transform 0.3s ease-out"
 });
 
 const $labelStyle = css({
@@ -51,9 +51,9 @@ const $highlightedStyle = css({
 
 const $highlightedTypes = {
   selection: css({}),
-  scoring: css({ border: "none", filter: "saturate(2)" }),
-  bonus: css({ border: "none", filter: "saturate(4)" }),
-  minus: css({ border: "none", filter: "saturate(0.25)" })
+  scoring: css({ transform: "scale(1.1)" }),
+  bonus: css({ transform: "scale(1.2)" }),
+  minus: css({})
 };
 
 /***********************************************************/

@@ -75,7 +75,9 @@ export default class Staging extends React.Component<Props, State> {
                         key={col}
                         highlighted={
                           canPlaceInStagingRow ||
-                          (this.props.highlights != null && stagingRowIndex == this.props.highlights.row)
+                          (this.props.highlights != null &&
+                            stagingRowIndex == this.props.highlights.row &&
+                            this.props.highlights.tiles == undefined)
                         }
                         highlightType={this.props.highlights ? "scoring" : "selection"}
                       />
