@@ -48,7 +48,7 @@ export const $bevelStyle = css({
 export const placeAnimation = css.keyframes({
   "0%": { transform: "scale(2.0) rotate(10deg)" },
   "90%": { transform: "scale(0.95)" },
-  "100%": { transform: "scale(1)" }
+  "100%": { transform: "scale(1)", zIndex: 0 }
 });
 
 export const popAnimation = css.keyframes({

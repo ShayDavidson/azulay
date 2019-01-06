@@ -30,7 +30,7 @@ type State = {
 
 type ScoringAct = {
   kind: "row" | "floor",
-  phase?: "prepare" | "place" | "scoreSingle" | "scoreRow" | "scoreCol" | "scoreRowBonus" | "scoreColBonus" | "scoreColorBonus", // prettier-ignore
+  phase?: "prepare" | "place" | "score" | "scoreRow" | "scoreCol" | "scoreRowBonus" | "scoreColBonus" | "scoreColorBonus", // prettier-ignore
   sideEffect?: Function,
   delay: number,
   rowIndex?: number,
@@ -42,7 +42,7 @@ type ScoringAct = {
   step?: number
 };
 
-const DEFAULT_DELAY = 500;
+const DEFAULT_DELAY = 300;
 
 function playScoreSfx(step) {
   play(SCORE[Math.min(step, 9)]);
@@ -98,7 +98,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
     if (element.scoredSingleTile) {
       acts.push({
         kind: "row",
-        phase: "scoreSingle",
+        phase: "score",
         delay: DEFAULT_DELAY,
         sideEffect: () => playScoreSfx(step),
         rowIndex: element.row,
@@ -203,6 +203,18 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
   if (scoring.floorScore != 0) {
     acts.push({
       kind: "floor",
+      phase: "prepare",
+      delay: DEFAULT_DELAY,
+      player: {
+        ...finalPlayer,
+        board: { ...finalPlayer.board, wall: scoring.finalWall },
+        score: scoring.totalScore - scoring.floorScore
+      }
+    });
+
+    acts.push({
+      kind: "floor",
+      phase: "score",
       delay: DEFAULT_DELAY,
       sideEffect: () => play(SCORE_BAD),
       deltaScore: scoring.floorScore,

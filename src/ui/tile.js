@@ -32,15 +32,22 @@ type State = {
 
 /***********************************************************/
 
+const $fillStyle = css({
+  width: "100%",
+  height: "100%",
+  position: "relative"
+});
+
 const $baseStyle = css({
   width: "100%",
   height: "100%",
   boxShadow: `${SHADOW_DISTANCE} ${SHADOW_DISTANCE} rgba(0, 0, 0, ${SHADOW_ALPHA})`,
   borderRadius: BORDER_RADIUS,
-  position: "flex",
   alignItems: "center",
   justifyContent: "center",
   overflow: "hidden",
+  position: "absolute",
+  zIndex: 10000,
   borderTop: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
   borderLeft: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
   borderBottom: `${HIGHLIGHT_WIDTH} solid rgba(127, 127, 127, ${DARK_BORDER_ALPHA})`,
@@ -81,12 +88,14 @@ export default class Tile extends React.PureComponent<Props, State> {
     if (this.props.highlighted) $staticStyle = css($staticStyle, $highlightedStyle);
 
     return (
-      <div
-        className={$staticStyle}
-        style={$dynamicStyle}
-        onClick={() => this.props.onClick && this.props.onClick(this.props.tile)}
-      >
-        {isColoredTile || this.props.surpressLabel ? null : <div className={$labelStyle}>1</div>}
+      <div className={$fillStyle}>
+        <div
+          className={$staticStyle}
+          style={$dynamicStyle}
+          onClick={() => this.props.onClick && this.props.onClick(this.props.tile)}
+        >
+          {isColoredTile || this.props.surpressLabel ? null : <div className={$labelStyle}>1</div>}
+        </div>
       </div>
     );
   }
