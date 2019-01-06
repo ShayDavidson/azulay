@@ -1,9 +1,13 @@
 # TODO
 
-## Prioritized
+## Must
 
+* Fix animation timings and highlights issues (not highlight on participating tiles in saved state + weird timings)
 * Debug and fix scoring issues.
 * Game end.
+
+## Prioritized
+
 * Tiles out of placement / factory animation.
 * Floating number when socring tiles.
 * Organize tiles in factories and groups.
