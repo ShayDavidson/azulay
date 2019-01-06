@@ -6,7 +6,7 @@ import { css } from "glamor";
 import type { TilesArray } from "../models";
 // helpers
 import { getTilesColorCounter } from "../models";
-import { GLOBAL_PADDING, TILE_COLORS } from "../styles";
+import { GLOBAL_PADDING, TILE_COLORS, popAnimation } from "../styles";
 
 /***********************************************************/
 
@@ -37,6 +37,12 @@ const $tileStyle = css({
   textShadow: "1px 1px black"
 });
 
+const $animatedStyle = css({
+  animation: `${popAnimation} 0.4s ease-out both`,
+  transformOrigin: "0% 50%",
+  fontWeight: "bold"
+});
+
 /***********************************************************/
 
 export default class InfoZone extends React.Component<Props, State> {
@@ -49,7 +55,9 @@ export default class InfoZone extends React.Component<Props, State> {
           <tbody>
             <tr>
               <td>
-                <strong>Turn {this.props.turn + 1}</strong>
+                <div key={this.props.turn} className={$animatedStyle}>
+                  Turn {this.props.turn + 1}
+                </div>
               </td>
             </tr>
             <tr>

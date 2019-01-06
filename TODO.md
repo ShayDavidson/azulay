@@ -10,9 +10,7 @@
 
 * Z-index for tiles while animating.
 * Better noise reduction on sounds.
-* When turn passes highlight the turn info.
 * Organize tiles in factories and groups.
-* Highlight/animate tile counters when they change.
 * Tile transition from places in the window.
 * Random rotations for tiles.
 * Highlight more board when it's a player's turn (scale? flash?).
