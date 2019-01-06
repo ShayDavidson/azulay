@@ -44,7 +44,7 @@ type ScoringAct = {
   step?: number
 };
 
-const DEFAULT_DELAY = 400;
+const DEFAULT_DELAY = 500;
 
 function playScoreSfx(step) {
   play(SCORE[Math.min(step, 9)]);
@@ -223,7 +223,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
     acts.push({
       kind: "floor",
       phase: "prepare",
-      delay: DEFAULT_DELAY,
+      delay: DEFAULT_DELAY * 2,
       player: {
         ...finalPlayer,
         board: { ...finalPlayer.board, wall: scoring.finalWall, floor: originalPlayer.board.floor },

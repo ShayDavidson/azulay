@@ -20,7 +20,8 @@ type Props = {
   color?: ColorType,
   tile?: ?TileType,
   label?: string,
-  highlighted?: boolean
+  highlighted?: boolean,
+  highlightType?: "selection" | "scoring" | "bonus" | "minus"
 };
 
 type State = {
@@ -31,7 +32,8 @@ type State = {
 
 const $baseStyle = css($bevelStyle, {
   borderRadius: BORDER_RADIUS,
-  position: "relative"
+  position: "relative",
+  transition: "filter 0.25s ease-out"
 });
 
 const $labelStyle = css({
@@ -46,6 +48,13 @@ const $highlightedStyle = css({
   cursor: "pointer",
   border: `calc(2 * ${HIGHLIGHT_WIDTH}) solid ${BLACK_COLOR}`
 });
+
+const $highlightedTypes = {
+  selection: css({}),
+  scoring: css({ border: "none", filter: "saturate(2)" }),
+  bonus: css({ border: "none", filter: "saturate(4)" }),
+  minus: css({ border: "none", filter: "saturate(0.25)" })
+};
 
 /***********************************************************/
 
@@ -63,7 +72,11 @@ export default class Placement extends React.PureComponent<Props, State> {
     let $dynamicBaseStyle = $baseStyle;
 
     if (this.props.highlighted) {
-      $dynamicBaseStyle = css($dynamicBaseStyle, $highlightedStyle);
+      $dynamicBaseStyle = css(
+        $dynamicBaseStyle,
+        $highlightedStyle,
+        this.props.highlightType ? $highlightedTypes[this.props.highlightType] : $highlightedTypes.selection
+      );
     }
 
     const $dynamicLabelStyle =

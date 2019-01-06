@@ -4,6 +4,7 @@ import React from "react";
 import { css } from "glamor";
 // types
 import type { Staging as StagingType } from "../models";
+import type { Highlights } from "../ui_models";
 // components
 import Placement from "./placement";
 import { GameContext } from "../game_provider";
@@ -16,7 +17,8 @@ import { getPutTilesFromFactoryIntoStagingRowAction } from "../actions";
 
 type Props = {
   staging: StagingType,
-  selectionEnabled?: boolean
+  selectionEnabled?: boolean,
+  highlights?: ?Highlights
 };
 
 type State = {
@@ -68,7 +70,15 @@ export default class Staging extends React.Component<Props, State> {
                     }}
                   >
                     {[...Array(placementsForStagingRow(stagingRowIndex))].map((_, col) => (
-                      <Placement tile={stagingRow[col]} key={col} highlighted={canPlaceInStagingRow} />
+                      <Placement
+                        tile={stagingRow[col]}
+                        key={col}
+                        highlighted={
+                          canPlaceInStagingRow ||
+                          (this.props.highlights != null && stagingRowIndex == this.props.highlights.row)
+                        }
+                        highlightType={this.props.highlights ? "scoring" : "selection"}
+                      />
                     ))}
                   </div>
                 );

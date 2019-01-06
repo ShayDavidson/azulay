@@ -55,6 +55,7 @@ export default class Floor extends React.Component<Props, State> {
                   tile={this.props.floor[index]}
                   label={score.toString()}
                   highlighted={canPlaceInFloor || !!this.props.highlights}
+                  highlightType={this.props.highlights ? "minus" : "selection"}
                   key={index}
                 />
               ))}
