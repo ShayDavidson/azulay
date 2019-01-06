@@ -82,8 +82,11 @@ export type Scoring = {|
     wall: Wall,
     row: number,
     col: number,
+    placedTile: Tile,
     scoringTilesInCol: TilesArray,
     scoringTilesInRow: TilesArray,
+    scoringTilesOfColor: TilesArray,
+    totalScoreBefore: number,
     totalScoreAfter: number,
     rowScore: number,
     colScore: number,
@@ -337,6 +340,7 @@ export function getBoardScoring(player: Player): Scoring {
   const board = player.board;
   let forTiles = [];
   let totalScore = 0;
+  let baseScore = player.score;
   let currentWall = player.board.wall;
   board.staging.forEach((stagingRow, stagingRowIndex) => {
     const placementColor = getStagingRowColor(stagingRow);
@@ -367,6 +371,12 @@ export function getBoardScoring(player: Player): Scoring {
       const scoredEntireCol = scoringTilesInCol.length == COLORS;
       const scoredEntireColor = countTilesOfColorInWall(currentWall, placementColor) == COLORS;
 
+      let scoringTilesOfColor = scoredEntireColor
+        ? currentWall.reduce((tiles, row, rowIndex) => {
+            return [...tiles, row[getWallPlacementCol(rowIndex, tile.color)]];
+          }, [])
+        : [];
+
       totalScore +=
         rowScore +
         colScore +
@@ -379,9 +389,12 @@ export function getBoardScoring(player: Player): Scoring {
         wall: currentWall,
         row: placementRow,
         col: placementCol,
+        placedTile: tile,
         scoringTilesInRow,
         totalScoreAfter: totalScore,
+        totalScoreBefore: baseScore,
         scoringTilesInCol,
+        scoringTilesOfColor,
         rowScore,
         colScore,
         scoredSingleTile,
@@ -389,6 +402,8 @@ export function getBoardScoring(player: Player): Scoring {
         scoredEntireCol,
         scoredEntireColor
       });
+
+      baseScore = totalScore;
     }
   });
   const floorScore = getFloorScore(board.floor);
