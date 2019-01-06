@@ -51,6 +51,12 @@ export const placeAnimation = css.keyframes({
   "100%": { transform: "scale(1)" }
 });
 
+export const popAnimation = css.keyframes({
+  "0%": { transform: "scale(1.0)" },
+  "50%": { transform: "scale(1.75)" },
+  "100%": { transform: "scale(1.0)" }
+});
+
 /***********************************************************/
 
 export function applyGlobalStyles() {

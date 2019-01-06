@@ -9,6 +9,7 @@ import Wall from "./wall";
 import Staging from "./staging";
 import Floor from "./floor";
 import Separator from "./separator";
+import ScoreZone from "./score_zone";
 // helpers
 import {
   BOARD_BORDER_WIDTH,
@@ -56,12 +57,6 @@ const $scoreZoneStyle = css($bevelStyle, {
   alignItems: "center"
 });
 
-const $spanStyle = css({
-  textAlign: "center",
-  fontSize: "0.3em",
-  color: "white"
-});
-
 /***********************************************************/
 
 export default class PlayerBoard extends React.Component<Props, State> {
@@ -88,11 +83,7 @@ export default class PlayerBoard extends React.Component<Props, State> {
         <div className={$rowContainerStyle} style={{ width: "100%" }}>
           <Floor selectionEnabled={this.props.current} floor={floor} />
           <div className={$scoreZoneStyle}>
-            <span className={$spanStyle}>
-              {`${name} - ${type == PLAYER_TYPE.human ? "Human" : "AI"}`}
-              <br />
-              <strong>{`Score: ${score}`}</strong>
-            </span>
+            <ScoreZone score={score} label={`${name} - ${type == PLAYER_TYPE.human ? "Human" : "AI"}`} />
           </div>
         </div>
       </div>
