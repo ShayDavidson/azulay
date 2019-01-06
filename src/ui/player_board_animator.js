@@ -3,16 +3,13 @@
 import React, { Fragment } from "react";
 // types
 import type { Element } from "react";
-import type { Player, Scoring } from "../models";
+import type { Player, Scoring, TilesArray } from "../models";
 import type { Resolver } from "../actions";
 // components
 import PlayerBoard from "./player_board";
 // helpers
 import { createPlayer, immutablePredicateUpdate } from "../models";
-
-/***********************************************************/
-
-const ANIMATOR_DELAY = 1000;
+import { SCORE, TILES, play, playRandom } from "../sfx";
 
 /***********************************************************/
 
@@ -24,77 +21,90 @@ type Props = {
 };
 
 type State = {
+  scoringActs?: [ScoringAct],
+  scoringActsStep?: number,
+  player: Player
+};
+
+type ScoringAct = {
+  kind: "row" | "leftovers",
+  phase?: "prepare" | "place" | "scoreRow" | "scoreCol" | "scoreRowBonus" | "scoreColBonus" | "scoreColorBonus",
+  sideEffect?: Function,
+  duration: number,
+  rowIndex?: number,
+  colIndex?: number,
+  leftoverIndex?: number,
+  step?: number,
   player: Player,
-  currentScoringPhase: {
-    phase: "none" | "prepare" | "row" | "leftovers" | "done",
-    row?: number
-  }
+  scoringTiles?: TilesArray,
+  deltaScore?: number
 };
 
 /***********************************************************/
 
+function deriveScoringAct(scoring: Scoring, originalPlayer: Player): [ScoringAct] {
+  let scoringForStagingRows = scoring.forTiles.reduce((act, element) => {
+    let lastStep = act[act.length - 1] ? act[act.length - 1].step : 0;
+
+    act.push({
+      kind: "row",
+      phase: "prepare",
+      duration: 100,
+      rowIndex: element.row,
+      player: originalPlayer
+    });
+
+    const newPlayerBoardAfterPlacement = {
+      ...originalPlayer.board,
+      wall: element.wall,
+      staging: immutablePredicateUpdate(originalPlayer.board.staging, (_, index) => index <= element.row, [])
+    };
+
+    act.push({
+      kind: "row",
+      phase: "place",
+      duration: 250,
+      sideEffect: () => playRandom(TILES),
+      rowIndex: element.row,
+      colIndex: element.col,
+      player: { ...originalPlayer, board: newPlayerBoardAfterPlacement }
+    });
+
+    return act;
+  }, []);
+  return scoringForStagingRows;
+}
+
+/***********************************************************/
+
 export default class PlayerBoardAnimator extends React.Component<Props, State> {
-  state = { player: createPlayer("", "aiRandom"), currentScoringPhase: { phase: "none" } };
+  state = { player: createPlayer("", "aiRandom"), currentScoring: { phase: "none", count: 0 } };
 
   static getDerivedStateFromProps(nextProps: Props, state: State): State {
     if (nextProps.scoring != null) {
-      return { ...state, currentScoringPhase: { phase: "prepare" } };
+      const prevPlayer = state.player;
+      return { player: prevPlayer, scoringAct: deriveScoringAct(nextProps.scoring, prevPlayer), scoringActStep: 0 };
     } else {
-      return { ...state, player: nextProps.player, currentScoringPhase: { phase: "none" } };
+      return { player: nextProps.player };
     }
   }
 
-  componentDidUpdate({ player: finalPlayer }: Props, { player }: State) {
-    const { currentScoringPhase } = this.state;
-    console.log(player.name, currentScoringPhase, this.props.scoring);
-    if (this.props.scoring != null && currentScoringPhase.phase != "none") {
-      const { scoring } = this.props;
-      if (currentScoringPhase.phase == "prepare") {
-        this.setStateInDelay({ currentScoringPhase: { phase: "row", row: 0 }, player });
-      } else if (currentScoringPhase.row != null) {
-        if (currentScoringPhase.row >= scoring.forTiles.length) {
-          this.setStateInDelay({ currentScoringPhase: { phase: "leftovers" }, player: finalPlayer });
-        } else {
-          const scoringForTile = scoring.forTiles[currentScoringPhase.row];
-          this.setStateInDelay({
-            currentScoringPhase: {
-              phase: "row",
-              row: currentScoringPhase.row + 1
-            },
-            player: {
-              ...player,
-              score: scoringForTile.totalScoreAfter,
-              board: {
-                ...player.board,
-                wall: scoringForTile.wall,
-                staging: immutablePredicateUpdate(player.board.staging, (_, index) => index <= scoringForTile.row, [])
-              }
-            }
-          });
+  componentDidUpdate(_: Props, { scoringActs, scoringActsStep }: State) {
+    if (scoringActs != null && scoringActsStep != null) {
+      if (scoringActsStep < scoringActs.length) {
+        const actStep = scoringActs[scoringActsStep];
+        if (actStep.sideEffect) {
+          actStep.sideEffect();
         }
-      } else if (currentScoringPhase.phase == "leftovers") {
-        this.setStateInDelay({
-          currentScoringPhase: { phase: "done" },
-          player: finalPlayer
-        });
-      } else if (currentScoringPhase.phase == "done") {
-        this.setState(
-          ({ player }) => {
-            return { currentScoringPhase: { phase: "none" }, player };
-          },
-          () =>
-            setTimeout(() => {
-              if (this.props.resolver != null) {
-                this.props.resolver();
-              }
-            }, ANIMATOR_DELAY)
-        );
+        setTimeout(() => {
+          this.setState(state => {
+            return { ...state, scoringActsStep: state.scoringActsStep + 1 };
+          });
+        }, actStep.duration);
+      } else if (this.props.resolver != null) {
+        this.props.resolver();
       }
     }
-  }
-
-  setStateInDelay(state: State) {
-    setTimeout(() => this.setState(state), ANIMATOR_DELAY);
   }
 
   render() {

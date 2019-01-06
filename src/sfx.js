@@ -22,9 +22,9 @@ export const SCORE = [
   require("./assets/score8.mp3"),
   require("./assets/score9.mp3")
 ];
+export const SCORE_BAD = require("./assets/score_bad.wav");
 export const SHUFFLE = require("./assets/shuffle.wav");
 export const CLICK = require("./assets/click.mp3");
-export const TURN = require("./assets/turn.wav");
 
 // functions
 export function playRandom(sfxArray) {

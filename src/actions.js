@@ -30,7 +30,7 @@ import {
   getBoardScoring
 } from "./models";
 // helpers
-import { play, playRandom, TILES, CLICK, SHUFFLE, TURN } from "./sfx";
+import { play, playRandom, TILES, CLICK, SHUFFLE } from "./sfx";
 import { isAIPlayer } from "./ai";
 
 /***********************************************************/
@@ -473,7 +473,6 @@ export function getEndTurnAction(): ActionDispatcherPromise {
       type: ACTIONS.endTurn,
       payload: {}
     })
-      .then(() => play(TURN))
       .delay(100 * getState().ui.animationSpeed)
       .then(() => followupDispatch(getMoveToRefillPhaseAction()));
   };
