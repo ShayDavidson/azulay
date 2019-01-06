@@ -30,7 +30,7 @@ type State = {
 
 type ScoringAct = {
   kind: "row" | "floor",
-  phase?: "place" | "scoreSingle" | "scoreRow" | "scoreCol" | "scoreRowBonus" | "scoreColBonus" | "scoreColorBonus", // prettier-ignore
+  phase?: "prepare" | "place" | "scoreSingle" | "scoreRow" | "scoreCol" | "scoreRowBonus" | "scoreColBonus" | "scoreColorBonus", // prettier-ignore
   sideEffect?: Function,
   delay: number,
   rowIndex?: number,
@@ -62,6 +62,28 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
         []
       )
     };
+
+    acts.push({
+      kind: "row",
+      phase: "prepare",
+      delay: DEFAULT_DELAY,
+      rowIndex: element.row,
+      colIndex: element.col,
+      player: {
+        ...originalPlayer,
+        board: {
+          ...originalPlayer.board,
+          wall: element.wallBefore,
+          staging: immutablePredicateUpdate(
+            originalPlayer.board.staging,
+            (stagingRow, stagingRowIndex) =>
+              isStagingRowFull(stagingRow, stagingRowIndex) && stagingRowIndex < element.row,
+            []
+          )
+        },
+        score: element.totalScoreBefore
+      }
+    });
 
     acts.push({
       kind: "row",

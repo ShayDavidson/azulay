@@ -79,6 +79,7 @@ export type Phase = $Keys<typeof PHASES>;
 export type Scoring = {|
   player: Player,
   forTiles: Array<{|
+    wallBefore: Wall,
     wall: Wall,
     row: number,
     col: number,
@@ -346,6 +347,7 @@ export function getBoardScoring(player: Player): Scoring {
     const placementColor = getStagingRowColor(stagingRow);
     if (isStagingRowFull(stagingRow, stagingRowIndex) && placementColor != undefined) {
       const tile = ((stagingRow[0]: any): Tile);
+      const wallBefore = currentWall;
       currentWall = placeTileInWall(currentWall, stagingRowIndex, tile);
       const placementRow = stagingRowIndex;
       const placementCol = getWallPlacementCol(placementRow, placementColor);
@@ -386,6 +388,7 @@ export function getBoardScoring(player: Player): Scoring {
         (scoredEntireColor ? COLOR_BONUS : 0);
 
       forTiles.push({
+        wallBefore,
         wall: currentWall,
         row: placementRow,
         col: placementCol,
