@@ -33,5 +33,5 @@ export function playRandom(sfxArray) {
 }
 
 export function play(sfx) {
-  new Audio(sfx).play();
+  new Audio(sfx).play().catch(function() {});
 }

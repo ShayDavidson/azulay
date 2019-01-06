@@ -267,6 +267,6 @@ export default class PlayerBoardAnimator extends React.Component<Props, State> {
   }
 
   render() {
-    return <Fragment>{this.props.children(this.state.player)}</Fragment>;
+    return <Fragment>{this.props.children({ player: this.state.player, highlights: undefined })}</Fragment>;
   }
 }
