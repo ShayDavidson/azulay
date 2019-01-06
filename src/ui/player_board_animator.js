@@ -30,18 +30,19 @@ type State = {
 
 type ScoringAct = {
   kind: "row" | "floor",
-  phase?: "prepare" | "place" | "scoreSingle" | "scoreRow" | "scoreCol" | "scoreRowBonus" | "scoreColBonus" | "scoreColorBonus", // prettier-ignore
+  phase?: "place" | "scoreSingle" | "scoreRow" | "scoreCol" | "scoreRowBonus" | "scoreColBonus" | "scoreColorBonus", // prettier-ignore
   sideEffect?: Function,
   duration: number,
   rowIndex?: number,
   colIndex?: number,
   scoringTiles?: TilesArray,
+  totalScore?: number,
   deltaScore?: number,
   player: Player,
   step?: number
 };
 
-const DEFAULT_DELAY = 500;
+const DEFAULT_DELAY = 250;
 
 function playScoreSfx(step) {
   play(SCORE[Math.min(step, 9)]);
@@ -50,14 +51,6 @@ function playScoreSfx(step) {
 function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer: Player): [ScoringAct] {
   const acts = scoring.forTiles.reduce((acts, element) => {
     let step = acts[acts.length - 1] ? (acts[acts.length - 1]: ScoringAct).step + 1 : 0;
-
-    acts.push({
-      kind: "row",
-      phase: "prepare",
-      duration: DEFAULT_DELAY,
-      rowIndex: element.row,
-      player: originalPlayer
-    });
 
     const newPlayerBoardAfterPlacement = {
       ...originalPlayer.board,
@@ -72,7 +65,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
       sideEffect: () => playRandom(TILES),
       rowIndex: element.row,
       colIndex: element.col,
-      player: { ...originalPlayer, board: newPlayerBoardAfterPlacement }
+      player: { ...originalPlayer, board: newPlayerBoardAfterPlacement, score: element.totalScoreBefore }
     });
 
     if (element.scoredSingleTile) {
@@ -85,6 +78,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
         colIndex: element.col,
         scoringTiles: [element.placedTile],
         deltaScore: 1,
+        totalScore: element.totalScoreAfter,
         player: { ...originalPlayer, board: newPlayerBoardAfterPlacement, score: element.totalScoreAfter },
         step: step++
       });
@@ -101,6 +95,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
           colIndex: element.col,
           scoringTiles: element.scoringTilesInRow,
           deltaScore: element.rowScore,
+          totalScore: accumulatingScore,
           player: { ...originalPlayer, board: newPlayerBoardAfterPlacement, score: accumulatingScore },
           step: step++
         });
@@ -117,6 +112,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
           colIndex: element.col,
           scoringTiles: element.scoringTilesInCol,
           deltaScore: element.colScore,
+          totalScore: accumulatingScore,
           player: { ...originalPlayer, board: newPlayerBoardAfterPlacement, score: accumulatingScore },
           step: step++
         });
@@ -133,6 +129,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
           colIndex: element.col,
           scoringTiles: element.scoringTilesInRow,
           deltaScore: ROW_BONUS,
+          totalScore: accumulatingScore,
           player: { ...originalPlayer, board: newPlayerBoardAfterPlacement, score: accumulatingScore },
           step: step++
         });
@@ -149,6 +146,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
           colIndex: element.col,
           scoringTiles: element.scoringTilesInCol,
           deltaScore: COL_BONUS,
+          totalScore: accumulatingScore,
           player: { ...originalPlayer, board: newPlayerBoardAfterPlacement, score: accumulatingScore },
           step: step++
         });
@@ -165,6 +163,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
           colIndex: element.col,
           scoringTiles: element.scoringTilesOfColor,
           deltaScore: COLOR_BONUS,
+          totalScore: accumulatingScore,
           player: { ...originalPlayer, board: newPlayerBoardAfterPlacement, score: accumulatingScore },
           step: step++
         });
@@ -177,8 +176,10 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
   if (scoring.floorScore != 0) {
     acts.push({
       kind: "floor",
+      duration: DEFAULT_DELAY,
       sideEffect: () => play(SCORE_BAD),
       deltaScore: scoring.floorScore,
+      totalScore: scoring.totalScore,
       player: finalPlayer
     });
   }
@@ -189,34 +190,38 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
 /***********************************************************/
 
 export default class PlayerBoardAnimator extends React.Component<Props, State> {
-  state = { player: createPlayer("", "aiRandom"), currentScoring: { phase: "none", count: 0 } };
+  state = { player: createPlayer("", "aiRandom") };
 
   static getDerivedStateFromProps(nextProps: Props, state: State): State {
     if (nextProps.scoring != null) {
       const prevPlayer = state.player;
       return {
         player: prevPlayer,
-        scoringAct: deriveScoringAct(nextProps.scoring, prevPlayer, nextProps.player),
-        scoringActStep: 0
+        scoringActs: deriveScoringAct(nextProps.scoring, prevPlayer, nextProps.player),
+        scoringActsStep: 0
       };
     } else {
       return { player: nextProps.player };
     }
   }
 
-  componentDidUpdate(_: Props, { scoringActs, scoringActsStep }: State) {
+  componentDidUpdate() {
+    const { scoringActs, scoringActsStep } = this.state;
     if (scoringActs != null && scoringActsStep != null) {
       if (scoringActsStep < scoringActs.length) {
         const actStep = scoringActs[scoringActsStep];
-        if (actStep.sideEffect) {
-          actStep.sideEffect();
-        }
         setTimeout(() => {
+          if (actStep.sideEffect) {
+            actStep.sideEffect();
+          }
           this.setState(state => {
-            return { ...state, scoringActsStep: state.scoringActsStep + 1 };
+            return { player: actStep.player, scoringActs: scoringActs, scoringActsStep: state.scoringActsStep + 1 };
           });
         }, actStep.duration);
       } else if (this.props.resolver != null) {
+        this.setState(state => {
+          return { player: state.player, scoringActs: undefined, scoringActsStep: undefined };
+        });
         this.props.resolver();
       }
     }
