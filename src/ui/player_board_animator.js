@@ -5,6 +5,7 @@ import React, { Fragment } from "react";
 import type { Element } from "react";
 import type { Player, Scoring, TilesArray } from "../models";
 import type { Resolver } from "../actions";
+import type { Highlights } from "../ui_models";
 // components
 import PlayerBoard from "./player_board";
 // helpers
@@ -17,19 +18,20 @@ type Props = {
   player: Player,
   scoring: ?Scoring,
   resolver: ?Resolver,
-  children: (player: Player) => Element<typeof PlayerBoard>
+  children: (player: Player, highlights: ?Highlights) => Element<typeof PlayerBoard>
 };
 
 type State = {
   scoringActs?: [ScoringAct],
   scoringActsStep?: number,
+  highlights?: ?Highlights,
   player: Player
 };
 
 /***********************************************************/
 
 type ScoringAct = {
-  kind: "row" | "floor",
+  kind: "prepare" | "row" | "floor",
   phase?: "prepare" | "place" | "score" | "scoreRow" | "scoreCol" | "scoreRowBonus" | "scoreColBonus" | "scoreColorBonus", // prettier-ignore
   sideEffect?: Function,
   delay: number,
@@ -46,6 +48,27 @@ const DEFAULT_DELAY = 300;
 
 function playScoreSfx(step) {
   play(SCORE[Math.min(step, 9)]);
+}
+
+function deriveHighlightsFromScoringAct(scoringAct: ScoringAct): ?Highlights {
+  if (scoringAct.kind == "row" || scoringAct.kind == "floor") {
+    if (scoringAct.rowIndex != null && scoringAct.colIndex != null) {
+      return {
+        type: scoringAct.kind,
+        row: scoringAct.rowIndex,
+        col: scoringAct.colIndex,
+        bonus:
+          scoringAct.phase == "scoreRowBonus" ||
+          scoringAct.phase == "scoreColBonus" ||
+          scoringAct.phase == "scoreColorBonus",
+        tiles: scoringAct.scoringTiles
+      };
+    } else {
+      return undefined;
+    }
+  } else {
+    return undefined;
+  }
 }
 
 function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer: Player): [ScoringAct] {
@@ -223,7 +246,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
     });
   }
 
-  return acts;
+  return [{ kind: "prepare", delay: 100, player: originalPlayer }, ...acts];
 }
 
 /***********************************************************/
@@ -245,7 +268,7 @@ export default class PlayerBoardAnimator extends React.Component<Props, State> {
   }
 
   componentDidUpdate() {
-    const { scoringActs, scoringActsStep } = this.state;
+    const { scoringActs, scoringActsStep } = (this.state: State);
     if (scoringActs != null && scoringActsStep != null) {
       if (scoringActsStep < scoringActs.length) {
         const actStep = scoringActs[scoringActsStep];
@@ -254,19 +277,24 @@ export default class PlayerBoardAnimator extends React.Component<Props, State> {
             actStep.sideEffect();
           }
           this.setState(state => {
-            return { player: actStep.player, scoringActs: scoringActs, scoringActsStep: state.scoringActsStep + 1 };
+            return {
+              player: actStep.player,
+              scoringActs: scoringActs,
+              scoringActsStep: state.scoringActsStep + 1,
+              highlights: deriveHighlightsFromScoringAct(actStep)
+            };
           });
         }, actStep.delay);
       } else if (this.props.resolver != null) {
+        this.props.resolver();
         this.setState(state => {
           return { player: state.player, scoringActs: undefined, scoringActsStep: undefined };
         });
-        this.props.resolver();
       }
     }
   }
 
   render() {
-    return <Fragment>{this.props.children({ player: this.state.player, highlights: undefined })}</Fragment>;
+    return <Fragment>{this.props.children(this.state.player, this.state.highlights)}</Fragment>;
   }
 }

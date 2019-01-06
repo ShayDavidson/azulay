@@ -84,7 +84,9 @@ class Azul extends React.Component<Props, State> {
                             scoring={currentPlayer ? uiState.currentScoring : undefined}
                             resolver={currentPlayer ? resolver : undefined}
                           >
-                            {({ player, highlights }) => <PlayerBoard player={player} current={currentPlayer} />}
+                            {(player, highlights) => (
+                              <PlayerBoard player={player} highlights={highlights} current={currentPlayer} />
+                            )}
                           </PlayerBoardAnimator>
                         );
                       })}

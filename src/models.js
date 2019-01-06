@@ -375,7 +375,16 @@ export function getBoardScoring(player: Player): Scoring {
 
       let scoringTilesOfColor = scoredEntireColor
         ? currentWall.reduce((tiles, row, rowIndex) => {
-            return [...tiles, row[getWallPlacementCol(rowIndex, tile.color)]];
+            if (tile.color != null) {
+              const matchingTile = row[getWallPlacementCol(rowIndex, tile.color)];
+              if (matchingTile != null) {
+                return [...tiles, matchingTile];
+              } else {
+                return tiles;
+              }
+            } else {
+              return tiles;
+            }
           }, [])
         : [];
 

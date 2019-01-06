@@ -3,7 +3,8 @@
 import React from "react";
 import { css } from "glamor";
 // types
-import type { Player, TilesArray } from "../models";
+import type { Player } from "../models";
+import type { Highlights } from "../ui_models";
 // components
 import Wall from "./wall";
 import Staging from "./staging";
@@ -27,12 +28,7 @@ import { PLAYER_TYPE } from "../models";
 type Props = {
   player: Player,
   current: boolean,
-  highlights?: {
-    type: "row" | "leftovers",
-    row: number,
-    col: number,
-    tiles: TilesArray
-  }
+  highlights?: ?Highlights
 };
 
 type State = {
