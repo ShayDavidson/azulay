@@ -8,7 +8,6 @@
 
 ## Prioritized
 
-* Highlight more board when it's a player's turn (scale? flash?).
 * Floating number when socring tiles.
 * Highlight tiles in play.
 * Game end.

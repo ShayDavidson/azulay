@@ -57,6 +57,12 @@ export const popAnimation = css.keyframes({
   "100%": { transform: "scale(1.0)" }
 });
 
+export const subtlePopAnimation = css.keyframes({
+  "0%": { transform: "scale(1.0)" },
+  "50%": { transform: "scale(1.03)" },
+  "100%": { transform: "scale(1.0)" }
+});
+
 /***********************************************************/
 
 export function applyGlobalStyles() {

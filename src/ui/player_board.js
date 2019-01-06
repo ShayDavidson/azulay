@@ -17,7 +17,8 @@ import {
   BOARD_PADDING,
   BOARD_COLOR,
   WHITE_COLOR,
-  $bevelStyle
+  $bevelStyle,
+  subtlePopAnimation
 } from "../styles";
 import { PLAYER_TYPE } from "../models";
 
@@ -57,6 +58,10 @@ const $scoreZoneStyle = css($bevelStyle, {
   alignItems: "center"
 });
 
+const $animatedStyle = css({
+  animation: `${subtlePopAnimation} 0.4s ease-out both`
+});
+
 /***********************************************************/
 
 export default class PlayerBoard extends React.Component<Props, State> {
@@ -64,7 +69,7 @@ export default class PlayerBoard extends React.Component<Props, State> {
     const { board: { wall, staging, floor }, score, name, type } = this.props.player;
     return (
       <div
-        className={$baseStyle}
+        className={this.props.current ? css($animatedStyle, $baseStyle) : $baseStyle}
         style={
           this.props.current
             ? {
