@@ -22,7 +22,7 @@
     "flow:install": "flow-typed install --ignoreDeps dev bundle peer",
     "format": "eslint . --ext .js --fix",
     "check": "npm run lint && npm run flow",
-    "postinstall": "npm run flow:install",
+    "postinstall": "npm run flow:install && npm run start",
     "precommit": "npm run format && npm run flow"
   },
   "husky": {
