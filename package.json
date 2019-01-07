@@ -11,7 +11,6 @@
     "npm": ">=6.1.0"
   },
   "scripts": {
-    "start": "npm run build && node index.js",
     "dev": "npm run build && npm run open && npm run watch",
     "open": "open ./public/index.html",
     "build": "webpack",
@@ -22,7 +21,7 @@
     "flow:install": "flow-typed install --ignoreDeps dev bundle peer",
     "format": "eslint . --ext .js --fix",
     "check": "npm run lint && npm run flow",
-    "postinstall": "npm run flow:install && npm run start",
+    "postinstall": "npm run flow:install && npm run build",
     "precommit": "npm run format && npm run flow"
   },
   "husky": {
