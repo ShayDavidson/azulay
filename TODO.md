@@ -3,7 +3,8 @@
 ## Must
 
 * Fix animation timings and highlights issues (not highlight on participating tiles in saved state + weird timings)
-* Debug and fix scoring issues.
+* Fix color scoring.
+* Fix row scoring if broken?
 * Game end.
 
 ## Prioritized
