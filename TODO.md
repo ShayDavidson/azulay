@@ -18,6 +18,7 @@
 
 ## Delight
 
+* Animation speed for scoring as well.
 * Cascading floor scoring.
 * Better noise reduction on sounds.
 * Tile transition from places in the window.
@@ -34,6 +35,7 @@
 * Generic game provider.
 * Organizer actions, models, index, provider etc.
 * Player Board animator children flowtype.
+* Log action if it's valid, but before it's committed.
 
 ## Next Phase
 

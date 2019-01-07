@@ -97,6 +97,7 @@ export type Scoring = {|
     scoredEntireColor: boolean
   |}>,
   floorScore: number,
+  playerScore: number,
   totalScore: number,
   finalWall: Wall
 |};
@@ -290,7 +291,7 @@ export function scoreBoardForCurrentPlayer(game: Game, scoring: Scoring): Game {
 
   const players = immutableCompareUpdate(game.players, currentPlayer, {
     ...currentPlayer,
-    score: Math.max(0, currentPlayer.score + scoring.totalScore),
+    score: Math.max(0, scoring.playerScore),
     board: {
       wall: scoring.finalWall,
       floor: [],
@@ -340,9 +341,9 @@ export function hasPlayersThatNeedsScoring(game: Game): boolean {
 export function getBoardScoring(player: Player): Scoring {
   const board = player.board;
   let forTiles = [];
-  let totalScore = 0;
   let baseScore = player.score;
   let currentWall = player.board.wall;
+  let totalScore = 0;
   board.staging.forEach((stagingRow, stagingRowIndex) => {
     const placementColor = getStagingRowColor(stagingRow);
     if (isStagingRowFull(stagingRow, stagingRowIndex) && placementColor != undefined) {
@@ -388,13 +389,16 @@ export function getBoardScoring(player: Player): Scoring {
           }, [])
         : [];
 
-      totalScore +=
+      const deltaScore =
         rowScore +
         colScore +
         (scoredSingleTile ? 1 : 0) +
         (scoredEntireRow ? ROW_BONUS : 0) +
         (scoredEntireCol ? COL_BONUS : 0) +
         (scoredEntireColor ? COLOR_BONUS : 0);
+
+      const totalScoreAfter = baseScore + deltaScore;
+      totalScore += deltaScore;
 
       forTiles.push({
         wallBefore,
@@ -403,7 +407,7 @@ export function getBoardScoring(player: Player): Scoring {
         col: placementCol,
         placedTile: tile,
         scoringTilesInRow,
-        totalScoreAfter: totalScore,
+        totalScoreAfter,
         totalScoreBefore: baseScore,
         scoringTilesInCol,
         scoringTilesOfColor,
@@ -415,7 +419,7 @@ export function getBoardScoring(player: Player): Scoring {
         scoredEntireColor
       });
 
-      baseScore = totalScore;
+      baseScore = totalScoreAfter;
     }
   });
   const floorScore = getFloorScore(board.floor);
@@ -426,6 +430,7 @@ export function getBoardScoring(player: Player): Scoring {
     forTiles,
     floorScore,
     totalScore,
+    playerScore: player.score + totalScore,
     finalWall: currentWall
   };
 }

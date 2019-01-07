@@ -227,7 +227,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
       player: {
         ...finalPlayer,
         board: { ...finalPlayer.board, wall: scoring.finalWall, floor: originalPlayer.board.floor },
-        score: scoring.totalScore - scoring.floorScore
+        score: scoring.playerScore - scoring.floorScore
       }
     });
 
@@ -237,7 +237,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
       delay: DEFAULT_DELAY,
       sideEffect: () => play(SCORE_BAD),
       deltaScore: scoring.floorScore,
-      totalScore: scoring.totalScore,
+      totalScore: scoring.playerScore,
       player: finalPlayer
     });
   }
