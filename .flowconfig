@@ -2,7 +2,7 @@
 .*/node_modules/.*/node_modules/fbjs/.*
 .*/node_modules/.*
 .*/webpack.config.js
-.*/dist
+.*/public
 
 [include]
 

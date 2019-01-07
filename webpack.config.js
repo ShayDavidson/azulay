@@ -8,7 +8,7 @@ module.exports = function(env) {
     entry: "./src/index.js",
     output: {
       filename: "[name].bundle.js",
-      path: path.resolve(__dirname, "dist")
+      path: path.resolve(__dirname, "public")
     },
     module: {
       rules: [
@@ -37,7 +37,7 @@ module.exports = function(env) {
     plugins: [
       new HtmlWebpackPlugin({
         title: "Azulay",
-        favicon: path.resolve(__dirname, "public") + "/favicon.png"
+        favicon: path.resolve(__dirname, "aux") + "/favicon.png"
       }),
       new StatefulReactContainerPlugin({ noState: true })
     ]

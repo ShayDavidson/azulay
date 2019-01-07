@@ -1,4 +1,4 @@
-dist
+public
 webpack.config.js
 node_modules
 flow-typed
