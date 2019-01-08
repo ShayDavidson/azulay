@@ -2,27 +2,29 @@
 
 ## Must
 
+* Solve performance issue (z-index thing?)
 * Fix animation timings and highlights issues (not highlight on participating tiles in saved state + weird timings)
-* Fix color scoring.
+* Fix column scoring of player 0 in load state.
 * Fix row scoring if broken?
 * Game end.
 
 ## Prioritized
 
-* Tiles out of placement / factory animation.
 * Floating number when socring tiles.
 * Organize tiles in factories and groups.
 * Cursor pointer on whole stagingrow/floor rather than placements.
 * Extra validations and TODOs.
 * Manual resolve - right API? probably need to have a promise that says "waiting for" and provides a thing.
 * Followup dispatch is weird. Get rid of it?
+* Tiles out of placement / factory animation.
+* Ornament for first tile.
 
 ## Delight
 
+* Better bonus scoring effect.
 * Animation speed for scoring as well.
 * Cascading floor scoring.
 * Better noise reduction on sounds.
-* Tile transition from places in the window.
 
 ## Refactors
 
@@ -44,3 +46,4 @@
 * UI for picking seed / players.
 * Responsive design - mobile.
 * AI.
+* Tile transition from places in the window.

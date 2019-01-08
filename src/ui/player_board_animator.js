@@ -114,6 +114,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
       player: { ...originalPlayer, board: newPlayerBoardAfterPlacement, score: element.totalScoreBefore }
     });
 
+    let accumulatingScore = element.totalScoreBefore;
     if (element.scoredSingleTile) {
       acts.push({
         kind: "row",
@@ -129,7 +130,6 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
         step: step++
       });
     } else {
-      let accumulatingScore = element.totalScoreBefore;
       if (element.rowScore > 0) {
         accumulatingScore += element.rowScore;
         acts.push({
@@ -197,23 +197,22 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
           step: step++
         });
       }
-
-      if (element.scoredEntireColor) {
-        accumulatingScore += COLOR_BONUS;
-        acts.push({
-          kind: "row",
-          phase: "scoreColorBonus",
-          delay: DEFAULT_DELAY,
-          sideEffect: () => playScoreSfx(step),
-          rowIndex: element.row,
-          colIndex: element.col,
-          scoringTiles: element.scoringTilesOfColor,
-          deltaScore: COLOR_BONUS,
-          totalScore: accumulatingScore,
-          player: { ...originalPlayer, board: newPlayerBoardAfterPlacement, score: accumulatingScore },
-          step: step++
-        });
-      }
+    }
+    if (element.scoredEntireColor) {
+      accumulatingScore += COLOR_BONUS;
+      acts.push({
+        kind: "row",
+        phase: "scoreColorBonus",
+        delay: DEFAULT_DELAY,
+        sideEffect: () => playScoreSfx(step),
+        rowIndex: element.row,
+        colIndex: element.col,
+        scoringTiles: element.scoringTilesOfColor,
+        deltaScore: COLOR_BONUS,
+        totalScore: accumulatingScore,
+        player: { ...originalPlayer, board: newPlayerBoardAfterPlacement, score: accumulatingScore },
+        step: step++
+      });
     }
 
     return acts;
@@ -242,7 +241,11 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
     });
   }
 
-  return [{ kind: "prepare", delay: 100, player: originalPlayer }, ...acts];
+  return [
+    { kind: "prepare", delay: 100, player: originalPlayer },
+    ...acts,
+    { kind: "prepare", delay: 500, player: finalPlayer }
+  ];
 }
 
 /***********************************************************/

@@ -5,7 +5,7 @@ import Color from "color";
 
 function placementColor(color: string): string {
   return Color(color)
-    .desaturate(0.5)
+    .desaturate(0.55)
     .toString();
 }
 
@@ -15,12 +15,12 @@ export const WHITE_COLOR = "hsl(30, 20%, 95%)";
 export const BOARD_COLOR = "rgb(211, 182, 152)";
 export const BLACK_COLOR = "hsl(360, 18%, 11%)";
 export const BLUE_COLOR = "#2d7dbc";
-export const TILE_COLORS = [BLUE_COLOR, "#f8c548", "#ee3231", BLACK_COLOR, "#71cbd4"];
+export const TILE_COLORS = [BLUE_COLOR, "#f8c548", "#ee3231", BLACK_COLOR, "#4abbbc"];
 export const PLACEMENT_COLORS = [
   placementColor(BLUE_COLOR),
   placementColor("#f8c548"),
   placementColor("#ee3231"),
-  "#303030",
+  "rgba(80, 80, 80, 1)",
   placementColor("#71cbd4")
 ];
 export const LABEL_COLORS = [BLACK_COLOR, BLACK_COLOR, BLACK_COLOR, WHITE_COLOR, BLACK_COLOR];
@@ -62,6 +62,16 @@ export const subtlePopAnimation = css.keyframes({
   "50%": { transform: "scale(1.03)" },
   "100%": { transform: "scale(1.0)" }
 });
+
+/***********************************************************/
+
+export const ornaments = [
+  undefined,
+  require("./assets/ornament_yellow.png"),
+  undefined,
+  require("./assets/ornament_black.png"),
+  require("./assets/ornament_teal.png")
+];
 
 /***********************************************************/
 

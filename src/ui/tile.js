@@ -5,7 +5,7 @@ import { css } from "glamor";
 // types
 import type { Tile as TileType } from "../models";
 // helpers
-import { TILE_COLORS, WHITE_COLOR, BLACK_COLOR, BLUE_COLOR, placeAnimation } from "../styles";
+import { TILE_COLORS, WHITE_COLOR, BLACK_COLOR, BLUE_COLOR, placeAnimation, ornaments } from "../styles";
 
 /***********************************************************/
 
@@ -80,6 +80,10 @@ export default class Tile extends React.PureComponent<Props, State> {
 
     const $dynamicStyle = {
       backgroundColor: isColoredTile && color != undefined ? TILE_COLORS[color] : WHITE_COLOR,
+      backgroundImage: ornaments[color] ? `url(${ornaments[color]})` : "none",
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center",
       cursor: this.props.onClick != null ? "pointer" : "default"
     };
 
