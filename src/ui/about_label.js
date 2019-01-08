@@ -31,7 +31,7 @@ export default class AboutLabel extends React.Component<Props, State> {
           @ShayHDavidson
         </a>).
         <br />
-        Azul was creaetd by Michael Kiesling and published by Plan B Games.
+        Azul was created by Michael Kiesling and published by Plan B Games.
       </div>
     );
   }

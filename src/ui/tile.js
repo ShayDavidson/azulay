@@ -83,7 +83,7 @@ export default class Tile extends React.PureComponent<Props, State> {
 
     const $dynamicStyle = {
       backgroundColor: isColoredTile && color != undefined ? TILE_COLORS[color] : WHITE_COLOR,
-      backgroundImage: ornaments[color] ? `${$tileGradient}, url(${ornaments[color]})` : $tileGradient,
+      backgroundImage: color != null && ornaments[color] ? `${$tileGradient}, url(${ornaments[color]})` : $tileGradient,
       backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
       backgroundPosition: "center",

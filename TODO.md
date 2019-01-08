@@ -1,26 +1,21 @@
 # TODO
 
-## Must
-
-* Solve performance issue (z-index thing?)
-* Fix animation timings and highlights issues (not highlight on participating tiles in saved state + weird timings)
-* Fix column scoring of player 0 in load state.
-* Fix row scoring if broken?
-* Game end.
-
 ## Prioritized
 
 * Floating number when socring tiles.
+* Game end.
+* Solve performance issue (z-index thing?).
 * Organize tiles in factories and groups.
 * Cursor pointer on whole stagingrow/floor rather than placements.
 * Extra validations and TODOs.
 * Manual resolve - right API? probably need to have a promise that says "waiting for" and provides a thing.
+* Start game / end / restart UI.
 * Followup dispatch is weird. Get rid of it?
-* Tiles out of placement / factory animation.
 * Ornament for first tile.
 
 ## Delight
 
+* Tiles out of placement / factory animation.
 * Better bonus scoring effect.
 * Animation speed for scoring as well.
 * Cascading floor scoring.

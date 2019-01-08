@@ -22,7 +22,7 @@ type Props = {
 };
 
 type State = {
-  scoringActs?: [ScoringAct],
+  scoringActs?: Array<ScoringAct>,
   scoringActsStep?: number,
   highlights?: ?Highlights,
   player: Player
@@ -56,6 +56,7 @@ function deriveHighlightsFromScoringAct(scoringAct: ScoringAct): ?Highlights {
       type: scoringAct.kind,
       row: scoringAct.rowIndex,
       col: scoringAct.colIndex,
+      floater: scoringAct.deltaScore != undefined ? scoringAct.deltaScore.toString() : undefined,
       bonus:
         scoringAct.phase == "scoreRowBonus" ||
         scoringAct.phase == "scoreColBonus" ||
@@ -67,7 +68,7 @@ function deriveHighlightsFromScoringAct(scoringAct: ScoringAct): ?Highlights {
   }
 }
 
-function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer: Player): [ScoringAct] {
+function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer: Player): Array<ScoringAct> {
   const acts = scoring.forTiles.reduce((acts, element) => {
     let step = acts[acts.length - 1] ? (acts[acts.length - 1]: ScoringAct).step + 1 : 0;
 

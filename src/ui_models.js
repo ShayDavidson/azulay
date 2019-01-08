@@ -16,5 +16,6 @@ export type Highlights = {|
   row?: ?number,
   col?: ?number,
   bonus: boolean,
+  floater?: ?string,
   tiles?: ?TilesArray
 |};
