@@ -13,13 +13,14 @@ function placementColor(color: string): string {
 
 export const WHITE_COLOR = "hsl(30, 20%, 95%)";
 export const BOARD_COLOR = "rgb(211, 182, 152)";
+export const RED_COLOR = "#fe5447";
 export const BLACK_COLOR = "hsl(360, 18%, 11%)";
-export const BLUE_COLOR = "#2d7dbc";
-export const TILE_COLORS = [BLUE_COLOR, "#f8c548", "#ee3231", BLACK_COLOR, "#4abbbc"];
+export const BLUE_COLOR = "#4e97ca";
+export const TILE_COLORS = [BLUE_COLOR, "#f8c548", RED_COLOR, BLACK_COLOR, "#4abbbc"];
 export const PLACEMENT_COLORS = [
   placementColor(BLUE_COLOR),
   placementColor("#f8c548"),
-  placementColor("#ee3231"),
+  placementColor(RED_COLOR),
   "rgba(80, 80, 80, 1)",
   placementColor("#71cbd4")
 ];

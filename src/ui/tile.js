@@ -71,6 +71,9 @@ const $highlightedStyle = css({
   boxShadow: `0px 0px 0px 3px ${BLACK_COLOR}`
 });
 
+const $tileGradient =
+  "radial-gradient(circle at top left, rgba(255, 255, 255, 0.45) 5%, rgba(255, 255, 255, 0.35) 20%, rgba(255, 255, 255, 0.0) 80%, rgba(255, 255, 255, 0.0) 100%)";
+
 /***********************************************************/
 
 export default class Tile extends React.PureComponent<Props, State> {
@@ -80,7 +83,7 @@ export default class Tile extends React.PureComponent<Props, State> {
 
     const $dynamicStyle = {
       backgroundColor: isColoredTile && color != undefined ? TILE_COLORS[color] : WHITE_COLOR,
-      backgroundImage: ornaments[color] ? `url(${ornaments[color]})` : "none",
+      backgroundImage: ornaments[color] ? `${$tileGradient}, url(${ornaments[color]})` : $tileGradient,
       backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
       backgroundPosition: "center",
