@@ -11,7 +11,7 @@ import { TILE_COLORS, WHITE_COLOR, BLACK_COLOR, BLUE_COLOR, placeAnimation, orna
 
 const BORDER_RADIUS = "0.1em";
 const SHADOW_DISTANCE = "0.04em";
-const HIGHLIGHT_WIDTH = "0.05em";
+const HIGHLIGHT_WIDTH = "0.09em";
 const SHADOW_ALPHA = 0.7;
 const LIGHT_BORDER_ALPHA = 0.55;
 const DARK_BORDER_ALPHA = 0.35;
@@ -48,9 +48,9 @@ const $baseStyle = css({
   overflow: "hidden",
   position: "absolute",
   zIndex: 10000,
-  borderTop: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
+  borderTop: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA + 0.1})`,
   borderLeft: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
-  borderBottom: `${HIGHLIGHT_WIDTH} solid rgba(127, 127, 127, ${DARK_BORDER_ALPHA})`,
+  borderBottom: `${HIGHLIGHT_WIDTH} solid rgba(80, 80, 80, ${DARK_BORDER_ALPHA})`,
   borderRight: `${HIGHLIGHT_WIDTH} solid rgba(127, 127, 127, ${DARK_BORDER_ALPHA})`
 });
 
@@ -72,7 +72,7 @@ const $highlightedStyle = css({
 });
 
 const $tileGradient =
-  "radial-gradient(circle at top left, rgba(255, 255, 255, 0.45) 5%, rgba(255, 255, 255, 0.35) 20%, rgba(255, 255, 255, 0.0) 80%, rgba(255, 255, 255, 0.0) 100%)";
+  "radial-gradient(circle at top left, rgba(255, 255, 255, 0.40) 5%, rgba(255, 255, 255, 0.25) 20%, rgba(255, 255, 255, 0.0) 80%, rgba(255, 255, 255, 0.0) 100%)";
 
 /***********************************************************/
 
