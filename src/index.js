@@ -3,6 +3,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { css } from "glamor";
+import galite from "ga-lite";
 // components
 import GameProvider, { GameContext } from "./game_provider";
 import PlayerBoardAnimator from "./ui/player_board_animator";
@@ -114,3 +115,6 @@ const container: ?HTMLElement = document.getElementById("container");
 if (container != null) {
   ReactDOM.render(<Azul />, container);
 }
+
+galite("create", "UA-57428971-3", "auto");
+galite("send", "pageview", "index");

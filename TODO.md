@@ -2,6 +2,8 @@
 
 ## Prioritized
 
+* Mixtiles.
+* Cascading step in sound
 * Audio delay in mobile?
 * Game end.
 * Solve performance issue (z-index thing?).

@@ -11,7 +11,7 @@
     "npm": ">=6.1.0"
   },
   "scripts": {
-    "start": "node index.js",
+    "start": "node server.js",
     "dev": "npm run build && npm run open && code . && npm run watch",
     "open": "open ./public/index.html",
     "build": "webpack",
@@ -22,7 +22,7 @@
     "flow:install": "flow-typed install --ignoreDeps dev bundle peer",
     "format": "eslint . --ext .js --fix",
     "check": "npm run lint && npm run flow",
-    "postinstall": "npm run flow:install && npm run build",
+    "postinstall": "npm run flow:install && build:release",
     "precommit": "npm run format && npm run flow",
     "deploy": "git push origin master && git push heroku master"
   },
@@ -34,6 +34,7 @@
   "dependencies": {
     "bluebird": "^3.5.2",
     "color": "^3.1.0",
+    "ga-lite": "^2.0.1",
     "glamor": "^2.20.40",
     "node-static": "^0.7.11",
     "react": "^16.3.0",
