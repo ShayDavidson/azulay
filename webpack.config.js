@@ -37,13 +37,7 @@ module.exports = function(env) {
     plugins: [
       new HtmlWebpackPlugin({
         title: "Azulay",
-        inject: false,
-        template: require("html-webpack-template"),
-        favicon: path.resolve(__dirname, "src/assets") + "/favicon.png",
-        googleAnalytics: {
-          trackingId: "UA-57428971-3",
-          pageViewOnLoad: true
-        }
+        favicon: path.resolve(__dirname, "src/assets") + "/favicon.png"
       }),
       new StatefulReactContainerPlugin({ noState: true })
     ]
