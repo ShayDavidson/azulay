@@ -42,7 +42,7 @@ const $placementStyle = css({
 
 /***********************************************************/
 
-export default class Wall extends React.Component<Props, State> {
+export default class Wall extends React.PureComponent<Props, State> {
   render() {
     return (
       <div className={$containerStyle}>

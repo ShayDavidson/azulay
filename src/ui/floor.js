@@ -42,7 +42,7 @@ const $placementStyle = css({
 
 /***********************************************************/
 
-export default class Floor extends React.Component<Props, State> {
+export default class Floor extends React.PureComponent<Props, State> {
   render() {
     return (
       <GameContext.Consumer>

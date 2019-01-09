@@ -66,7 +66,7 @@ const $leftoversStyle = css($baseStyle, {
 
 /***********************************************************/
 
-export default class Factory extends React.Component<Props, State> {
+export default class Factory extends React.PureComponent<Props, State> {
   render() {
     let tiles = this.props.factory;
 

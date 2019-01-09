@@ -33,7 +33,7 @@ const $horizontalStyle = css({
 
 /***********************************************************/
 
-export default class Separator extends React.Component<Props, State> {
+export default class Separator extends React.PureComponent<Props, State> {
   render() {
     return <div className={this.props.type == "vertical" ? $verticalStyle : $horizontalStyle} />;
   }

@@ -43,7 +43,7 @@ const $stagingRowStyle = css({
 
 /***********************************************************/
 
-export default class Staging extends React.Component<Props, State> {
+export default class Staging extends React.PureComponent<Props, State> {
   render() {
     return (
       <GameContext.Consumer>

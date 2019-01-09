@@ -32,9 +32,9 @@ type State = {
 
 const $baseStyle = css($bevelStyle, {
   borderRadius: BORDER_RADIUS,
-  position: "relative",
   height: "100%",
   width: "100%",
+  position: "relative",
   transition: "transform 0.3s ease-out"
 });
 

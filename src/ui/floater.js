@@ -26,7 +26,8 @@ const $baseStyle = css({
   height: "100%",
   width: "100%",
   textAlign: "center",
-  animation: `${floatAnimation} 0.75s ease-out both`
+  animation: `${floatAnimation} 0.75s ease-out both`,
+  willChange: "transform, opacity"
 });
 
 /***********************************************************/

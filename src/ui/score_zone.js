@@ -25,7 +25,8 @@ const $spanStyle = css({
 });
 
 const $boldStyle = css({
-  fontWeight: "bold"
+  fontWeight: "bold",
+  willChange: "transform"
 });
 
 const $animatedStyle = css({
@@ -34,7 +35,7 @@ const $animatedStyle = css({
 
 /***********************************************************/
 
-export default class ScoreZone extends React.Component<Props, State> {
+export default class ScoreZone extends React.PureComponent<Props, State> {
   render() {
     const $scoreStyle = this.props.score == 0 ? $boldStyle : css($boldStyle, $animatedStyle);
 

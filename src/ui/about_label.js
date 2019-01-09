@@ -22,7 +22,7 @@ const $baseStyle = css({
 
 /***********************************************************/
 
-export default class AboutLabel extends React.Component<Props, State> {
+export default class AboutLabel extends React.PureComponent<Props, State> {
   render() {
     return (
       <div className={$baseStyle}>

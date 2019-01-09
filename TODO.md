@@ -6,7 +6,6 @@
 * Audio delay in mobile?
 * Game end.
 * More analytics.
-* Solve performance issue (z-index thing?).
 * Organize tiles in factories and groups.
 * Cursor pointer on whole stagingrow/floor rather than placements.
 * Extra validations and TODOs.

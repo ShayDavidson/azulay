@@ -43,7 +43,8 @@ const $baseStyle = css({
   borderRadius: "0.1em",
   backgroundColor: BOARD_COLOR,
   boxShadow: "2px 2px 0 0 rgba(0, 0, 0, 0.1)",
-  width: "max-content"
+  width: "max-content",
+  willChange: "transform"
 });
 
 const $rowContainerStyle = css({
@@ -66,7 +67,7 @@ const $animatedStyle = css({
 
 /***********************************************************/
 
-export default class PlayerBoard extends React.Component<Props, State> {
+export default class PlayerBoard extends React.PureComponent<Props, State> {
   render() {
     const { board: { wall, staging, floor }, score, name, type } = this.props.player;
     return (

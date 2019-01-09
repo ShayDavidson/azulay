@@ -40,12 +40,13 @@ const $tileStyle = css({
 const $animatedStyle = css({
   animation: `${popAnimation} 0.4s ease-out both`,
   transformOrigin: "0% 50%",
-  fontWeight: "bold"
+  fontWeight: "bold",
+  willChange: "transform"
 });
 
 /***********************************************************/
 
-export default class InfoZone extends React.Component<Props, State> {
+export default class InfoZone extends React.PureComponent<Props, State> {
   render() {
     let bag = getTilesColorCounter(this.props.bag);
     let box = getTilesColorCounter(this.props.box);

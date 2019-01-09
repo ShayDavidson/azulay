@@ -45,7 +45,7 @@ const $leftoversStyle = css({
 
 /***********************************************************/
 
-export default class FactoryZone extends React.Component<Props, State> {
+export default class FactoryZone extends React.PureComponent<Props, State> {
   render() {
     const selectionEnabled = true;
     return (
