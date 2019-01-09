@@ -123,7 +123,7 @@ export function createGame(players: number, seed: number): Game {
     players: [...Array(players)].map(
       (_, index) => (index == 0 ? createPlayer(`Human`, "human") : createPlayer(`AI ${index}`, "aiRandom"))
     ),
-    bag: rng.shuffle(createBag()),
+    bag: sortBagBySugarPiles(rng.shuffle(createBag())),
     box: [],
     factories: [...Array(FACTORIES_BY_PLAYERS[players])].map(() => []),
     leftovers: [],
@@ -135,7 +135,7 @@ export function createGame(players: number, seed: number): Game {
   };
 }
 
-export function createBag() {
+export function createBag(): TilesArray {
   let tiles = [];
   for (let color = 0; color < COLORS; color++) {
     for (let count = 0; count < TILES_PER_COLOR; count++) {
@@ -310,7 +310,7 @@ export function shuffleBoxIntoBag(game: Game): Game {
   const rng = createRNG(game.randomProps.seed, game.randomProps.counter);
   const shuffledTiles = rng.shuffle(game.box);
   const randomProps = { ...game.randomProps, counter: rng.getCounter() };
-  return { ...game, randomProps, box: [], bag: shuffledTiles };
+  return { ...game, randomProps, box: [], bag: sortBagBySugarPiles(shuffledTiles) };
 }
 
 export function moveToEndPhase(game: Game): Game {
@@ -318,6 +318,26 @@ export function moveToEndPhase(game: Game): Game {
 }
 
 // HELPERS ////////////////////////////
+
+export function sortBagBySugarPiles(bag: TilesArray): TilesArray {
+  const piles = chunk(bag, FACTORY_MAX_TILES);
+  const sugarPiles = piles.map(sugarSortPile);
+  return [].concat.apply([], sugarPiles);
+}
+
+export function chunk<T>(array: Array<T>, size: number): Array<Array<T>> {
+  return new Array(Math.ceil(array.length / size)).fill(0).map((_, n) => array.slice(n * size, n * size + size));
+}
+
+export function sugarSortPile(pile: TilesArray): TilesArray {
+  if (pile[0].color == pile[3].color) {
+    return [pile[0], pile[3], pile[2], pile[1]];
+  } else if (pile[1].color == pile[2].color) {
+    return [pile[0], pile[1], pile[3], pile[2]];
+  } else {
+    return pile;
+  }
+}
 
 export function shouldGameBeOver(game: Game): boolean {
   return !!game.players.find(

@@ -13,7 +13,6 @@
 * Fade out animation for staging row tiles.
 * Ornament for first tile.
 * Responsive design - mobile.
-* Organize tiles in factories and groups.
 * Extra validations and TODOs.
 * Manual resolve - right API? probably need to have a promise that says "waiting for" and provides a thing.
 * Followup dispatch is weird. Get rid of it?
