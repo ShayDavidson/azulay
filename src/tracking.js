@@ -2,14 +2,16 @@
 
 import ga from "ga-browser";
 
-ga("create", "UA-57428971-3", "auto");
+const client = ga();
+
+client("create", "UA-57428971-3", "auto");
 
 export function trackPage() {
-  ga("send", "pageview", { page: "index" });
+  client("send", "pageview", { page: "index" });
 }
 
 export function trackAction(action: string) {
-  ga("send", {
+  client("send", {
     hitType: "event",
     eventCategory: "action",
     eventAction: action
