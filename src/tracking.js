@@ -1,19 +1,9 @@
-// @flow
-
-import ga from "ga-browser";
-
-const client = ga();
-
-client("create", "UA-57428971-3", "auto");
-
 export function trackPage() {
-  client("send", "pageview", { page: "index" });
+  if (!window.ga) return;
+  window.ga("send", "pageview");
 }
 
-export function trackAction(action: string) {
-  client("send", {
-    hitType: "event",
-    eventCategory: "action",
-    eventAction: action
-  });
+export function trackAction(action) {
+  if (!window.ga) return;
+  window.ga("send", "event", "action", action);
 }

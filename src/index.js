@@ -119,4 +119,4 @@ if (container != null) {
   ReactDOM.render(<Azul />, container);
 }
 
-trackPage();
+trackPage({ seed, players, animationSpeed });
