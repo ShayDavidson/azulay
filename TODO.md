@@ -2,10 +2,10 @@
 
 ## Prioritized
 
-* Stop drawing if wrong state (load state).
 * Cascading step in sound
 * Audio delay in mobile?
 * Game end.
+* More analytics.
 * Solve performance issue (z-index thing?).
 * Organize tiles in factories and groups.
 * Cursor pointer on whole stagingrow/floor rather than placements.
@@ -14,17 +14,12 @@
 * Start game / end / restart UI.
 * Followup dispatch is weird. Get rid of it?
 * Ornament for first tile.
-
-## Delight
-
 * Tiles out of placement / factory animation.
 * Better bonus scoring effect.
 * Animation speed for scoring as well.
 * Cascading floor scoring.
 * Better noise reduction on sounds.
-
-## Refactors
-
+* Stop drawing if wrong state (load state).
 * Add `immer`.
 * Separate game provider from dispatcher.
 * Have a config sub-state.

@@ -469,11 +469,11 @@ export function getMoveToNextPlayerScoringAction(): ActionDispatcherPromise {
 export function getScoreBoardForCurrentPlayerAction(): ActionDispatcherPromise {
   return (dispatch, followupDispatch, getState) => {
     return dispatch({
-      type: ACTIONS.selectTileInFactory,
+      type: ACTIONS.scoreBoardForCurrentPlayer,
       manualResolve: true,
       payload: {}
     })
-      .then(() => trackAction(ACTIONS.selectTileInFactory))
+      .then(() => trackAction(ACTIONS.scoreBoardForCurrentPlayer))
       .delay(500 * getState().ui.animationSpeed)
       .then(() => followupDispatch(getMoveToNextPlayerScoringAction()));
   };
