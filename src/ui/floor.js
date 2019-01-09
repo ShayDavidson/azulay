@@ -7,6 +7,7 @@ import type { Floor as FloorType } from "../models";
 import type { Highlights } from "../ui_models";
 // components
 import Placement from "./placement";
+import Floater from "./floater";
 import { GameContext } from "../game_provider";
 // helpers
 import { FLOOR_SLOTS } from "../models";
@@ -35,6 +36,10 @@ const $baseStyle = css({
   gridGap: `${PLACEMENT_GAP}em`
 });
 
+const $placementStyle = css({
+  position: "relative"
+});
+
 /***********************************************************/
 
 export default class Floor extends React.Component<Props, State> {
@@ -51,13 +56,17 @@ export default class Floor extends React.Component<Props, State> {
               }}
             >
               {FLOOR_SLOTS.map((score, index) => (
-                <Placement
-                  tile={this.props.floor[index]}
-                  label={score.toString()}
-                  highlighted={canPlaceInFloor || !!this.props.highlights}
-                  highlightType={this.props.highlights ? "minus" : "selection"}
-                  key={index}
-                />
+                <div key={index} className={$placementStyle}>
+                  {this.props.highlights != null &&
+                    this.props.floor[index] != null && <Floater value={FLOOR_SLOTS[index].toString()} />}
+                  <Placement
+                    tile={this.props.floor[index]}
+                    label={score.toString()}
+                    highlighted={canPlaceInFloor || !!this.props.highlights}
+                    highlightType={this.props.highlights ? "minus" : "selection"}
+                    key={index}
+                  />
+                </div>
               ))}
             </div>
           );
