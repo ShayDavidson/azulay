@@ -22,7 +22,7 @@
     "flow:install": "flow-typed install --ignoreDeps dev bundle peer",
     "format": "eslint . --ext .js --fix",
     "check": "npm run lint && npm run flow",
-    "postinstall": "npm run flow:install && npm build:release",
+    "postinstall": "npm run flow:install && npm run build:release",
     "precommit": "npm run format && npm run flow",
     "deploy": "git push origin master && git push heroku master"
   },
