@@ -7,6 +7,7 @@ import type { Wall as WallType } from "../models";
 import type { Highlights } from "../ui_models";
 // components
 import Placement from "./placement";
+import Floater from "./floater";
 // helpers
 import { COLORS, getWallPlacementColor } from "../models";
 import { PLACEMENT_GAP } from "../styles";
@@ -35,6 +36,10 @@ const $baseStyle = css({
   gridGap: `${PLACEMENT_GAP}em`
 });
 
+const $placementStyle = css({
+  position: "relative"
+});
+
 /***********************************************************/
 
 export default class Wall extends React.Component<Props, State> {
@@ -54,13 +59,13 @@ export default class Wall extends React.Component<Props, State> {
               const highlightType =
                 this.props.highlights != null ? (this.props.highlights.bonus ? "bonus" : "scoring") : "selection";
               return (
-                <Placement
-                  color={color}
-                  key={key}
-                  tile={tile}
-                  highlighted={highlighted}
-                  highlightType={highlightType}
-                />
+                <div key={key} className={$placementStyle}>
+                  {this.props.highlights != null &&
+                    this.props.highlights.floater != null &&
+                    this.props.highlights.col == col &&
+                    this.props.highlights.row == row && <Floater value={this.props.highlights.floater} />}
+                  <Placement color={color} tile={tile} highlighted={highlighted} highlightType={highlightType} />
+                </div>
               );
             });
           })}

@@ -2,7 +2,7 @@
 
 ## Prioritized
 
-* Floating number when socring tiles.
+* Audio delay in mobile?
 * Game end.
 * Solve performance issue (z-index thing?).
 * Organize tiles in factories and groups.

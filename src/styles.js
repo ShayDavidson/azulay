@@ -66,6 +66,12 @@ export const subtlePopAnimation = css.keyframes({
   "100%": { transform: "scale(1.0)" }
 });
 
+export const floatAnimation = css.keyframes({
+  "0%": { transform: "translateY(-1em)", opacity: 1 },
+  "50%": { transform: "translateY(-1.5em)", opacity: 1 },
+  "100%": { transform: "translateY(-2em)", opacity: 0 }
+});
+
 /***********************************************************/
 
 export const ornaments = [
