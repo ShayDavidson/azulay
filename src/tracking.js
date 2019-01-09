@@ -1,13 +1,17 @@
 // @flow
 
-import ua from "universal-analytics";
+import ga from "ga-browser";
 
-export const client = ua("UA-57428971-3");
+ga("create", "UA-57428971-3", "auto");
 
 export function trackPage() {
-  client.pageview("/").send();
+  ga("send", "pageview", { page: "index" });
 }
 
 export function trackAction(action: string) {
-  client.event("action", action).send();
+  ga("send", {
+    hitType: "event",
+    eventCategory: "action",
+    eventAction: action
+  });
 }
