@@ -5,7 +5,7 @@ import Color from "color";
 
 function placementColor(color: string): string {
   return Color(color)
-    .desaturate(0.55)
+    .desaturate(0.65)
     .toString();
 }
 
@@ -13,22 +13,24 @@ function placementColor(color: string): string {
 
 export const WHITE_COLOR = "hsl(30, 20%, 95%)";
 export const BOARD_COLOR = "rgb(211, 182, 152)";
-export const RED_COLOR = "#fe5447";
-export const BLACK_COLOR = "hsl(360, 18%, 11%)";
-export const BLUE_COLOR = "#4e97ca";
-export const TILE_COLORS = [BLUE_COLOR, "#f8c548", RED_COLOR, BLACK_COLOR, "#4abbbc"];
+export const RED_COLOR = "#D91828";
+export const YELLOW_COLOR = "#FFDC2C";
+export const BLACK_COLOR = "hsl(360, 5%, 0%)";
+export const BLUE_COLOR = "#0480C5";
+export const TEAL_COLOR = "#0BC3D9";
+export const TILE_COLORS = [BLUE_COLOR, YELLOW_COLOR, RED_COLOR, BLACK_COLOR, TEAL_COLOR];
 export const PLACEMENT_COLORS = [
   placementColor(BLUE_COLOR),
-  placementColor("#f8c548"),
+  placementColor(YELLOW_COLOR),
   placementColor(RED_COLOR),
-  "rgba(80, 80, 80, 1)",
-  placementColor("#71cbd4")
+  placementColor("rgba(50, 50, 50, 1)"),
+  placementColor("#00FFFA")
 ];
 export const LABEL_COLORS = [BLACK_COLOR, BLACK_COLOR, BLACK_COLOR, WHITE_COLOR, BLACK_COLOR];
 export const BOARD_TILE_SIZE = 44;
 export const PLACEMENT_GAP = 0.08;
 export const BOARD_BORDER_WIDTH = "3px";
-export const BOARD_BORDER_COLOR = "rgba(100, 100, 100, 0.8)";
+export const BOARD_BORDER_COLOR = "rgba(50, 50, 50, 0.8)";
 export const BOARD_PADDING = 0.1;
 export const GLOBAL_PADDING = 10;
 
@@ -36,7 +38,7 @@ export const GLOBAL_PADDING = 10;
 
 const LIGHT_BORDER_ALPHA = 0.45;
 const DARK_BORDER_ALPHA = 0.35;
-export const HIGHLIGHT_WIDTH = "0.035em";
+export const HIGHLIGHT_WIDTH = "0.025em";
 export const $bevelStyle = css({
   borderBottom: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
   borderRight: `${HIGHLIGHT_WIDTH} solid rgba(255, 255, 255, ${LIGHT_BORDER_ALPHA})`,
@@ -89,7 +91,7 @@ function addResetStyles() {
 
   css.global("body", {
     userSelect: "none",
-    backgroundColor: "hsl(31, 10%, 71%)",
+    backgroundColor: "hsl(31, 10%, 60%)",
     padding: GLOBAL_PADDING,
     fontFamily: "Helvetica",
     fontSize: BOARD_TILE_SIZE,
