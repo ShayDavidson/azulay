@@ -46,24 +46,27 @@ const $gameStyle = css({
 
 /***********************************************************/
 
+const params = new URL(window.location).searchParams;
+
+const seed = params.get("seed") ? params.get("seed") : 1000;
+const players = params.get("players") ? params.get("players") : 4;
+const animationSpeed = params.get("animationSpeed") ? params.get("animationSpeed") : 1;
+
+/***********************************************************/
+
 class Azul extends React.Component<Props, State> {
   constructor(props) {
     super(props);
   }
 
   render() {
-    const params = new URL(window.location).searchParams;
-    const seed = params.get("seed");
-    const players = params.get("players");
-    const animationSpeed = params.get("animationSpeed");
-
     return (
       <div>
         <div className={$titleStyle}>Azulay - The Online Azul AI</div>
         <GameProvider
-          players={players ? parseInt(players) : 4}
-          seed={seed ? parseInt(seed) : 1000}
-          animationSpeed={animationSpeed != null ? parseInt(animationSpeed) : 1}
+          players={parseInt(players)}
+          seed={parseInt(seed)}
+          animationSpeed={parseInt(animationSpeed)}
           log={true}
           hasExternalAPI={true}
         >
@@ -117,4 +120,4 @@ if (container != null) {
 }
 
 galite("create", "UA-57428971-3", "auto");
-galite("send", "pageview", "index");
+galite("send", "pageview", "index", { seed, players, animationSpeed });
