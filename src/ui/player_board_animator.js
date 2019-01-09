@@ -47,7 +47,7 @@ type ScoringAct = {
 const DEFAULT_DELAY = 600;
 
 function playScoreSfx(step) {
-  play(SCORE[Math.min(step, 9)]);
+  return () => play(SCORE[Math.min(step, 9)]);
 }
 
 function deriveHighlightsFromScoringAct(scoringAct: ScoringAct): ?Highlights {
@@ -121,7 +121,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
         kind: "row",
         phase: "score",
         delay: DEFAULT_DELAY,
-        sideEffect: () => playScoreSfx(step),
+        sideEffect: playScoreSfx(step),
         rowIndex: element.row,
         colIndex: element.col,
         scoringTiles: [element.placedTile],
@@ -137,7 +137,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
           kind: "row",
           phase: "scoreRow",
           delay: DEFAULT_DELAY,
-          sideEffect: () => playScoreSfx(step),
+          sideEffect: playScoreSfx(step),
           rowIndex: element.row,
           colIndex: element.col,
           scoringTiles: element.scoringTilesInRow,
@@ -154,7 +154,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
           kind: "row",
           phase: "scoreCol",
           delay: DEFAULT_DELAY,
-          sideEffect: () => playScoreSfx(step),
+          sideEffect: playScoreSfx(step),
           rowIndex: element.row,
           colIndex: element.col,
           scoringTiles: element.scoringTilesInCol,
@@ -171,7 +171,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
           kind: "row",
           phase: "scoreRowBonus",
           delay: DEFAULT_DELAY,
-          sideEffect: () => playScoreSfx(step),
+          sideEffect: playScoreSfx(step),
           rowIndex: element.row,
           colIndex: element.col,
           scoringTiles: element.scoringTilesInRow,
@@ -188,7 +188,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
           kind: "row",
           phase: "scoreColBonus",
           delay: DEFAULT_DELAY,
-          sideEffect: () => playScoreSfx(step),
+          sideEffect: playScoreSfx(step),
           rowIndex: element.row,
           colIndex: element.col,
           scoringTiles: element.scoringTilesInCol,
@@ -205,7 +205,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
         kind: "row",
         phase: "scoreColorBonus",
         delay: DEFAULT_DELAY,
-        sideEffect: () => playScoreSfx(step),
+        sideEffect: playScoreSfx(step),
         rowIndex: element.row,
         colIndex: element.col,
         scoringTiles: element.scoringTilesOfColor,
@@ -234,7 +234,7 @@ function deriveScoringAct(scoring: Scoring, originalPlayer: Player, finalPlayer:
     acts.push({
       kind: "floor",
       phase: "score",
-      delay: DEFAULT_DELAY,
+      delay: DEFAULT_DELAY * 2,
       sideEffect: () => play(SCORE_BAD),
       deltaScore: scoring.floorScore,
       totalScore: scoring.playerScore,

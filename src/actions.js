@@ -31,7 +31,7 @@ import {
   getBoardScoring
 } from "./models";
 // helpers
-import { play, playRandom, TILES, CLICK, SHUFFLE } from "./sfx";
+import { play, playRandom, TILES, CLICK, SHUFFLE, END } from "./sfx";
 import { isAIPlayer } from "./ai";
 
 /***********************************************************/
@@ -520,6 +520,8 @@ export function getMoveToEndPhaseAction(): ActionDispatcherPromise {
     return dispatch({
       type: ACTIONS.moveToEndPhase,
       payload: {}
-    }).then(() => trackAction(ACTIONS.moveToEndPhase));
+    })
+      .then(() => trackAction(ACTIONS.moveToEndPhase))
+      .then(() => play(END));
   };
 }

@@ -2,23 +2,25 @@
 
 ## Prioritized
 
-* Cascading step in sound
+* Stop drawing after load state (e.g. by wrong phase?).
+* Row and column bonus participarting tiles are not shown.
 * Audio delay in mobile?
 * Game end.
+* Random AI.
 * More analytics.
-* Organize tiles in factories and groups.
 * Cursor pointer on whole stagingrow/floor rather than placements.
+* Start game / end / restart UI.
+* Fade out animation for staging row tiles.
+* Ornament for first tile.
+* Responsive design - mobile.
+* Organize tiles in factories and groups.
 * Extra validations and TODOs.
 * Manual resolve - right API? probably need to have a promise that says "waiting for" and provides a thing.
-* Start game / end / restart UI.
 * Followup dispatch is weird. Get rid of it?
-* Ornament for first tile.
 * Tiles out of placement / factory animation.
 * Better bonus scoring effect.
 * Animation speed for scoring as well.
-* Cascading floor scoring.
 * Better noise reduction on sounds.
-* Stop drawing if wrong state (load state).
 * Add `immer`.
 * Separate game provider from dispatcher.
 * Have a config sub-state.
@@ -30,11 +32,6 @@
 * Organizer actions, models, index, provider etc.
 * Player Board animator children flowtype.
 * Log action if it's valid, but before it's committed.
-
-## Next Phase
-
 * Make it an SDK.
-* UI for picking seed / players.
-* Responsive design - mobile.
 * AI.
 * Tile transition from places in the window.

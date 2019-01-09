@@ -25,6 +25,7 @@ export const SCORE = [
 export const SCORE_BAD = require("./assets/score_bad.wav");
 export const SHUFFLE = require("./assets/shuffle.wav");
 export const CLICK = require("./assets/click.mp3");
+export const END = require("./assets/end.mp3");
 
 // functions
 export function playRandom(sfxArray) {
