@@ -1,7 +1,7 @@
 // @flow
 
 import Promise from "bluebird";
-import galite from "ga-lite";
+import { trackAction } from "./tracking.js";
 
 // types
 import type { Game, Tile, Factory, Floor, Scoring } from "./models";
@@ -91,15 +91,6 @@ export const ACTIONS = {
   shuffleBoxIntoBag: "shuffleBoxIntoBag",
   moveToEndPhase: "moveToEndPhase"
 };
-
-/***********************************************************/
-
-function track(action: string) {
-  galite("send", {
-    hitType: "event",
-    eventAction: action
-  });
-}
 
 /***********************************************************/
 
@@ -377,7 +368,7 @@ export function getMoveToPlacementPhaseAction(): ActionDispatcherPromise {
     return dispatch({
       type: ACTIONS.moveToPlacementPhase,
       payload: {}
-    }).then(() => track(ACTIONS.moveToPlacementPhase));
+    }).then(() => trackAction(ACTIONS.moveToPlacementPhase));
   };
 }
 
@@ -390,7 +381,7 @@ export function getSelectTileInFactoryAction(factory: Factory, tile: Tile): Acti
         tile
       }
     })
-      .then(() => track(ACTIONS.selectTileInFactory))
+      .then(() => trackAction(ACTIONS.selectTileInFactory))
       .then(() => play(CLICK));
   };
 }
@@ -401,7 +392,7 @@ export function getPutTilesFromFactoryIntoFloorAction(floor: Floor): ActionDispa
       type: ACTIONS.putTilesFromFactoryIntoFloor,
       payload: { floor }
     })
-      .then(() => track(ACTIONS.putTilesFromFactoryIntoFloor))
+      .then(() => trackAction(ACTIONS.putTilesFromFactoryIntoFloor))
       .then(() => playRandom(TILES))
       .then(() => followupDispatch(getMoveToNextPlayerPlacementAction()));
   };
@@ -415,7 +406,7 @@ export function getPutTilesFromFactoryIntoStagingRowAction(stagingRowIndex: numb
         stagingRowIndex
       }
     })
-      .then(() => track(ACTIONS.putTilesFromFactoryIntoStagingRow))
+      .then(() => trackAction(ACTIONS.putTilesFromFactoryIntoStagingRow))
       .then(() => playRandom(TILES))
       .then(() => followupDispatch(getMoveToNextPlayerPlacementAction()));
   };
@@ -427,7 +418,7 @@ export function getMoveToNextPlayerPlacementAction(): ActionDispatcherPromise {
       type: ACTIONS.moveToNextPlayerPlacement,
       payload: {}
     })
-      .then(() => track(ACTIONS.moveToNextPlayerPlacement))
+      .then(() => trackAction(ACTIONS.moveToNextPlayerPlacement))
       .then(() => {
         const currentPlayer = getCurrentPlayer(getState().game);
         if (isAIPlayer(currentPlayer)) {
@@ -444,7 +435,7 @@ export function getRequestAIMoveAction(): ActionDispatcherPromise {
       manualResolve: true,
       payload: {}
     })
-      .then(() => track(ACTIONS.requestAIMove))
+      .then(() => trackAction(ACTIONS.requestAIMove))
       .then(() => {
         // TODO
       });
@@ -457,7 +448,7 @@ export function getMoveToScoringPhaseAction(): ActionDispatcherPromise {
       type: ACTIONS.moveToScoringPhase,
       payload: {}
     })
-      .then(() => track(ACTIONS.moveToScoringPhase))
+      .then(() => trackAction(ACTIONS.moveToScoringPhase))
       .delay(500 * getState().ui.animationSpeed)
       .then(() => followupDispatch(getMoveToNextPlayerScoringAction()));
   };
@@ -469,7 +460,7 @@ export function getMoveToNextPlayerScoringAction(): ActionDispatcherPromise {
       type: ACTIONS.moveToNextPlayerScoring,
       payload: {}
     })
-      .then(() => track(ACTIONS.moveToNextPlayerScoring))
+      .then(() => trackAction(ACTIONS.moveToNextPlayerScoring))
       .delay(500 * getState().ui.animationSpeed)
       .then(() => followupDispatch(getScoreBoardForCurrentPlayerAction()));
   };
@@ -482,7 +473,7 @@ export function getScoreBoardForCurrentPlayerAction(): ActionDispatcherPromise {
       manualResolve: true,
       payload: {}
     })
-      .then(() => track(ACTIONS.selectTileInFactory))
+      .then(() => trackAction(ACTIONS.selectTileInFactory))
       .delay(500 * getState().ui.animationSpeed)
       .then(() => followupDispatch(getMoveToNextPlayerScoringAction()));
   };
@@ -494,7 +485,7 @@ export function getEndTurnAction(): ActionDispatcherPromise {
       type: ACTIONS.endTurn,
       payload: {}
     })
-      .then(() => track(ACTIONS.endTurn))
+      .then(() => trackAction(ACTIONS.endTurn))
       .delay(100 * getState().ui.animationSpeed)
       .then(() => followupDispatch(getMoveToRefillPhaseAction()));
   };
@@ -506,7 +497,7 @@ export function getMoveToRefillPhaseAction(): ActionDispatcherPromise {
       type: ACTIONS.moveToRefillPhase,
       payload: {}
     })
-      .then(() => track(ACTIONS.moveToRefillPhase))
+      .then(() => trackAction(ACTIONS.moveToRefillPhase))
       .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }
@@ -517,7 +508,7 @@ export function getShuffleBoxIntoBagAction(): ActionDispatcherPromise {
       type: ACTIONS.shuffleBoxIntoBag,
       payload: {}
     })
-      .then(() => track(ACTIONS.shuffleBoxIntoBag))
+      .then(() => trackAction(ACTIONS.shuffleBoxIntoBag))
       .then(() => play(SHUFFLE))
       .delay(500 * getState().ui.animationSpeed)
       .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
@@ -529,6 +520,6 @@ export function getMoveToEndPhaseAction(): ActionDispatcherPromise {
     return dispatch({
       type: ACTIONS.moveToEndPhase,
       payload: {}
-    }).then(() => track(ACTIONS.moveToEndPhase));
+    }).then(() => trackAction(ACTIONS.moveToEndPhase));
   };
 }

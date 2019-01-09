@@ -3,7 +3,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { css } from "glamor";
-import galite from "ga-lite";
 // components
 import GameProvider, { GameContext } from "./game_provider";
 import PlayerBoardAnimator from "./ui/player_board_animator";
@@ -14,6 +13,7 @@ import InfoZone from "./ui/info_zone";
 import AboutLabel from "./ui/about_label";
 // helpers
 import { applyGlobalStyles, GLOBAL_PADDING } from "./styles.js";
+import { trackPage } from "./tracking.js";
 
 /***********************************************************/
 
@@ -119,5 +119,4 @@ if (container != null) {
   ReactDOM.render(<Azul />, container);
 }
 
-galite("create", "UA-57428971-3", "auto");
-galite("send", "pageview", "index", { seed, players, animationSpeed });
+trackPage();

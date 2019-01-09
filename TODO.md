@@ -2,7 +2,7 @@
 
 ## Prioritized
 
-* Mixtiles.
+* Stop drawing if wrong state (load state).
 * Cascading step in sound
 * Audio delay in mobile?
 * Game end.
