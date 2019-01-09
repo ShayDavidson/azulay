@@ -64,7 +64,7 @@ const $labelStyle = css({
 });
 
 const $animatedStyle = css({
-  animation: `${placeAnimation} 0.25s ease-out both`
+  animation: `${placeAnimation} 0.4s ease-out both`
 });
 
 const $highlightedStyle = css({
