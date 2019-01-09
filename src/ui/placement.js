@@ -8,7 +8,7 @@ import type { ColorType, Tile as TileType } from "../models";
 // components
 import Tile from "./tile";
 // helpers
-import { PLACEMENT_COLORS, LABEL_COLORS, BLACK_COLOR, HIGHLIGHT_WIDTH, $bevelStyle } from "../styles";
+import { PLACEMENT_COLORS, LABEL_COLORS, BLACK_COLOR, $bevelStyle } from "../styles";
 
 /***********************************************************/
 
@@ -35,7 +35,8 @@ const $baseStyle = css($bevelStyle, {
   height: "100%",
   width: "100%",
   position: "relative",
-  transition: "transform 0.3s ease-out"
+  transition: "transform 0.3s ease-out, border 0.3s ease-in-out",
+  willChange: "border"
 });
 
 const $labelStyle = css({
@@ -48,7 +49,7 @@ const $labelStyle = css({
 
 const $highlightedStyle = css({
   cursor: "pointer",
-  border: `calc(2 * ${HIGHLIGHT_WIDTH}) solid ${BLACK_COLOR}`
+  border: `0.06em solid ${BLACK_COLOR}`
 });
 
 const $highlightedTypes = {

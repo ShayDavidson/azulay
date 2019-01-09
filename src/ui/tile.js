@@ -35,7 +35,10 @@ type State = {
 const $fillStyle = css({
   width: "100%",
   height: "100%",
-  position: "relative"
+  position: "relative",
+  transition: "box-shadow 0.3s ease-in-out",
+  willChange: "box-shadow",
+  borderRadius: BORDER_RADIUS
 });
 
 const $baseStyle = css({
@@ -90,14 +93,10 @@ export default class Tile extends React.PureComponent<Props, State> {
       cursor: this.props.onClick != null ? "pointer" : "default"
     };
 
-    let $staticStyle = $baseStyle;
-    if (this.props.animated) $staticStyle = css($staticStyle, $animatedStyle);
-    if (this.props.highlighted) $staticStyle = css($staticStyle, $highlightedStyle);
-
     return (
-      <div className={$fillStyle}>
+      <div className={this.props.highlighted ? css($fillStyle, $highlightedStyle) : $fillStyle}>
         <div
-          className={$staticStyle}
+          className={this.props.animated ? css($baseStyle, $animatedStyle) : $baseStyle}
           style={$dynamicStyle}
           onClick={() => this.props.onClick && this.props.onClick(this.props.tile)}
         >
