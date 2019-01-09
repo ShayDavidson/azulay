@@ -208,6 +208,8 @@ export function validate(state: State, action: Action): ?ValidationError {
         } else {
           fallbackAction = getShuffleBoxIntoBagAction();
         }
+      } else if (game.phase != PHASES.refill) {
+        error = new Error("not in right phase");
       }
       break;
     }

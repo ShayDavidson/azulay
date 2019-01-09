@@ -2,7 +2,6 @@
 
 ## Prioritized
 
-* Stop drawing after load state (e.g. by wrong phase?).
 * Row and column bonus participarting tiles are not shown.
 * Audio delay in mobile?
 * Game end.
