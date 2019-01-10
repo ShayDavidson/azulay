@@ -2,6 +2,10 @@
 
 ## Prioritized
 
+* Howler fixes (HTML5 stuff).
+* Fix shuffle bag bug.
+* Fix load state with selection.
+* When there's a single floor tile there are no floater animations.
 * Row and column bonus participarting tiles are not shown.
 * Audio delay in mobile?
 * Game end.

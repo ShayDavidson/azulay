@@ -214,7 +214,7 @@ export function putTilesFromFactoryIntoFloor(game: Game, selectedFactory: Factor
   const factories = immutableCompareUpdate(game.factories, selectedFactory, []);
   const leftovers =
     game.leftovers == selectedFactory ? remainingTiles : game.leftovers.concat(remainingTiles).sort(tilesComparator);
-  const box = game.box.concat(tilesToPutInBox);
+  const box = game.box.concat(tilesToPutInBox.filter(isColoredTile));
   const newPlayer = { ...currentPlayer, board: { ...currentPlayer.board, floor } };
   const players = immutableCompareUpdate(game.players, currentPlayer, newPlayer);
   return {
@@ -246,7 +246,7 @@ export function putTilesFromFactoryIntoStagingRow(
   const roomLeftInFloor = FLOOR_SLOTS.length - currentPlayer.board.floor.length;
   const [tilesToActuallyPutInFloor, tilesToPutInBox] = slice(tilesToPutInFloor, roomLeftInFloor);
   const floor = currentPlayer.board.floor.concat(tilesToActuallyPutInFloor.sort(tilesComparator));
-  const box = game.box.concat(tilesToPutInBox);
+  const box = game.box.concat(tilesToPutInBox.filter(isColoredTile));
   const factories = immutableCompareUpdate(game.factories, selectedFactory, []);
   const leftovers =
     game.leftovers == selectedFactory ? remainingTiles : game.leftovers.concat(remainingTiles).sort(tilesComparator);
@@ -298,7 +298,7 @@ export function scoreBoardForCurrentPlayer(game: Game, scoring: Scoring): Game {
       staging
     }
   });
-  const box = game.box.concat(tilesToDiscard);
+  const box = game.box.concat(tilesToDiscard.concat(currentPlayer.board.floor).filter(isColoredTile));
   return { ...game, players, box };
 }
 
@@ -555,6 +555,10 @@ export function takeTilesFromFactory(selectedFactory: Factory, selectedTile: Til
   const tookFirst = relevantTiles.find(tile => tile.kind == "first") != undefined;
 
   return { relevantTiles, remainingTiles, tookFirst };
+}
+
+export function isColoredTile(tile: Tile): boolean {
+  return tile.kind == "colored";
 }
 
 export function getCurrentPlayer(game: Game): Player {
