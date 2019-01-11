@@ -82,6 +82,8 @@ export const ornaments = [
   require("./assets/ornament_teal.png")
 ];
 
+export const firstOrnament = require("./assets/ornament_first.png");
+
 /***********************************************************/
 
 export function applyGlobalStyles() {

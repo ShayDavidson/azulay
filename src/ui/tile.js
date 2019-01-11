@@ -5,7 +5,7 @@ import { css } from "glamor";
 // types
 import type { Tile as TileType } from "../models";
 // helpers
-import { TILE_COLORS, WHITE_COLOR, BLACK_COLOR, BLUE_COLOR, placeAnimation, ornaments } from "../styles";
+import { TILE_COLORS, WHITE_COLOR, BLACK_COLOR, placeAnimation, ornaments, firstOrnament } from "../styles";
 
 /***********************************************************/
 
@@ -57,15 +57,6 @@ const $baseStyle = css({
   borderRight: `${HIGHLIGHT_WIDTH} solid rgba(127, 127, 127, ${DARK_BORDER_ALPHA})`
 });
 
-const $labelStyle = css({
-  fontSize: "0.5em",
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translateX(-50%) translateY(-50%)",
-  color: BLUE_COLOR
-});
-
 const $animatedStyle = css({
   animation: `${placeAnimation} 0.4s ease-out both`
 });
@@ -84,9 +75,19 @@ export default class Tile extends React.PureComponent<Props, State> {
     let { color, kind } = this.props.tile;
     let isColoredTile = kind == "colored";
 
+    let backgroundImage;
+    if (color != null && ornaments[color]) {
+      backgroundImage = `${$tileGradient}, url(${ornaments[color]})`;
+    }
+    if (kind == "first") {
+      backgroundImage = `${$tileGradient}, url(${firstOrnament})`;
+    } else {
+      backgroundImage = $tileGradient;
+    }
+
     const $dynamicStyle = {
       backgroundColor: isColoredTile && color != undefined ? TILE_COLORS[color] : WHITE_COLOR,
-      backgroundImage: color != null && ornaments[color] ? `${$tileGradient}, url(${ornaments[color]})` : $tileGradient,
+      backgroundImage,
       backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
       backgroundPosition: "center",
@@ -99,9 +100,7 @@ export default class Tile extends React.PureComponent<Props, State> {
           className={this.props.animated ? css($baseStyle, $animatedStyle) : $baseStyle}
           style={$dynamicStyle}
           onClick={() => this.props.onClick && this.props.onClick(this.props.tile)}
-        >
-          {isColoredTile || this.props.surpressLabel ? null : <div className={$labelStyle}>1</div>}
-        </div>
+        />
       </div>
     );
   }

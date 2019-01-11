@@ -10,7 +10,6 @@
 * Cursor pointer on whole stagingrow/floor rather than placements.
 * Start game / end / restart UI.
 * Fade out animation for staging row tiles.
-* Ornament for first tile.
 * Responsive design - mobile.
 * Extra validations and TODOs.
 * Manual resolve - right API? probably need to have a promise that says "waiting for" and provides a thing.
