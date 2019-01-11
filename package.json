@@ -37,6 +37,7 @@
     "glamor": "^2.20.40",
     "mixpanel-browser": "^2.25.0",
     "node-static": "^0.7.11",
+    "pusher-js": "^4.3.1",
     "react": "^16.3.0",
     "react-dom": "^16.3.0",
     "react-transition-group": "^2.4.0"

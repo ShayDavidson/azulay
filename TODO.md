@@ -1,13 +1,10 @@
 # TODO
 
-## Prioritized
-
 * Sometimes scoring floater/animations are not shown.
 * Audio delay in mobile?
 * Game end.
 * Random AI.
 * More analytics.
-* Cursor pointer on whole stagingrow/floor rather than placements.
 * Start game / end / restart UI.
 * Fade out animation for staging row tiles.
 * Responsive design - mobile.
@@ -25,6 +22,7 @@
 * Error fallback flow type crap (Because of & misuse)
 * Flow type checking better for context.
 * Generic game provider.
+* Cursor pointer on whole stagingrow/floor rather than placements.
 * Organizer actions, models, index, provider etc.
 * Player Board animator children flowtype.
 * Log action if it's valid, but before it's committed.
