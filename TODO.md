@@ -2,11 +2,7 @@
 
 ## Prioritized
 
-* Howler fixes (HTML5 stuff).
-* Fix shuffle bag bug.
-* Fix load state with selection.
-* When there's a single floor tile there are no floater animations.
-* Row and column bonus participarting tiles are not shown.
+* Sometimes scoring floater/animations are not shown.
 * Audio delay in mobile?
 * Game end.
 * Random AI.
@@ -25,7 +21,6 @@
 * Better noise reduction on sounds.
 * Add `immer`.
 * Separate game provider from dispatcher.
-* Have a config sub-state.
 * Flowtype for actions hard-typed.
 * Can't be wrong in floor placement - always for current player.
 * Error fallback flow type crap (Because of & misuse)

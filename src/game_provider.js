@@ -38,7 +38,9 @@ export default class GameProvider extends React.Component<Props, State> {
     const { players, seed, animationSpeed } = nextProps;
     return {
       game: createGame(players, seed),
-      ui: { selectedFactory: undefined, selectedTile: undefined, currentScoring: undefined, animationSpeed },
+      ui: { selectedFactory: undefined, selectedTile: undefined },
+      presentation: { currentScoring: undefined },
+      config: { animationSpeed },
       ai: undefined,
       resolver: undefined
     };
@@ -49,7 +51,7 @@ export default class GameProvider extends React.Component<Props, State> {
     if (this.props.hasExternalAPI) {
       window.setState = this.setState.bind(this);
       window.getState = () => this.state;
-      window.saveState = () => localStorage.setItem("state", JSON.stringify(this.state));
+      window.saveState = () => localStorage.setItem("state", JSON.stringify({ ...this.state, ui: {} }));
       window.loadState = () => {
         const json = localStorage.getItem("state");
         if (json != null) this.setState(JSON.parse(json));

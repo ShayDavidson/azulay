@@ -1,5 +1,3 @@
-import { Howl } from "howler";
-
 // assets
 export const TILES = [
   wrap(require("./assets/tile0.wav")),
@@ -31,10 +29,7 @@ export const END = wrap(require("./assets/end.mp3"));
 
 // functions
 function wrap(path) {
-  return new Howl({
-    src: [path],
-    html5: true
-  });
+  return new Audio(path);
 }
 
 export function playRandom(sfxArray) {
@@ -43,5 +38,5 @@ export function playRandom(sfxArray) {
 }
 
 export function play(sfx) {
-  sfx.play();
+  sfx.play().catch(() => {});
 }

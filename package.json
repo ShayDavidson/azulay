@@ -35,7 +35,6 @@
     "bluebird": "^3.5.2",
     "color": "^3.1.0",
     "glamor": "^2.20.40",
-    "howler": "^2.1.1",
     "mixpanel-browser": "^2.25.0",
     "node-static": "^0.7.11",
     "react": "^16.3.0",

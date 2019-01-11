@@ -5,7 +5,7 @@ import { trackAction } from "./tracking.js";
 
 // types
 import type { Game, Tile, Factory, Floor, Scoring } from "./models";
-import type { UI } from "./ui_models";
+import type { UI, Presentation, Config } from "./ui_models";
 import type { AI } from "./ai";
 
 // action handlers
@@ -69,6 +69,8 @@ export type Resolver = (thenableOrResult?: any) => void;
 export type State = {|
   game: Game,
   ui: UI,
+  presentation: Presentation,
+  config: Config,
   ai: ?AI,
   resolver?: Resolver
 |};
@@ -123,7 +125,8 @@ export function reduce(state: State, action: Action): State {
         return {
           ...state,
           game: putTilesFromFactoryIntoFloor(game, selectedFactory, selectedTile),
-          ui: { ...state.ui, selectedFactory: undefined, selectedTile: undefined, currentScoring: undefined }
+          ui: { ...state.ui, selectedFactory: undefined, selectedTile: undefined },
+          presentation: { ...state.presentation, currentScoring: undefined }
         };
       } else {
         return state;
@@ -135,7 +138,8 @@ export function reduce(state: State, action: Action): State {
         return {
           ...state,
           game: putTilesFromFactoryIntoStagingRow(game, action.payload.stagingRowIndex, selectedFactory, selectedTile),
-          ui: { ...state.ui, selectedFactory: undefined, selectedTile: undefined, currentScoring: undefined }
+          ui: { ...state.ui, selectedFactory: undefined, selectedTile: undefined },
+          presentation: { ...state.presentation, currentScoring: undefined }
         };
       } else {
         return state;
@@ -155,7 +159,11 @@ export function reduce(state: State, action: Action): State {
     }
 
     case ACTIONS.moveToNextPlayerScoring: {
-      return { ...state, game: moveToNextPlayer(game), ui: { ...state.ui, currentScoring: undefined } };
+      return {
+        ...state,
+        game: moveToNextPlayer(game),
+        presentation: { ...state.presentation, currentScoring: undefined }
+      };
     }
 
     case ACTIONS.scoreBoardForCurrentPlayer: {
@@ -163,12 +171,16 @@ export function reduce(state: State, action: Action): State {
       return {
         ...state,
         game: scoreBoardForCurrentPlayer(game, scoring),
-        ui: { ...state.ui, currentScoring: scoring }
+        presentation: { ...state.presentation, currentScoring: scoring }
       };
     }
 
     case ACTIONS.endTurn: {
-      return { ...state, game: endTurn(game), ui: { ...state.ui, currentScoring: undefined } };
+      return {
+        ...state,
+        game: endTurn(game),
+        presentation: { ...state.presentation, currentScoring: undefined }
+      };
     }
 
     case ACTIONS.moveToRefillPhase: {
@@ -180,7 +192,11 @@ export function reduce(state: State, action: Action): State {
     }
 
     case ACTIONS.moveToEndPhase: {
-      return { ...state, game: moveToEndPhase(game), ui: { ...state.ui, currentScoring: undefined } };
+      return {
+        ...state,
+        game: moveToEndPhase(game),
+        presentation: { ...state.presentation, currentScoring: undefined }
+      };
     }
 
     default:
@@ -360,7 +376,7 @@ export function getDrawTileFromBagIntoFactoriesAction(): ActionDispatcherPromise
       payload: {}
     })
       .then(() => playRandom(TILES))
-      .delay(75 * getState().ui.animationSpeed)
+      .delay(75 * getState().config.animationSpeed)
       .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }
@@ -451,7 +467,7 @@ export function getMoveToScoringPhaseAction(): ActionDispatcherPromise {
       payload: {}
     })
       .then(() => trackAction(ACTIONS.moveToScoringPhase))
-      .delay(500 * getState().ui.animationSpeed)
+      .delay(500 * getState().config.animationSpeed)
       .then(() => followupDispatch(getMoveToNextPlayerScoringAction()));
   };
 }
@@ -463,7 +479,7 @@ export function getMoveToNextPlayerScoringAction(): ActionDispatcherPromise {
       payload: {}
     })
       .then(() => trackAction(ACTIONS.moveToNextPlayerScoring))
-      .delay(500 * getState().ui.animationSpeed)
+      .delay(500 * getState().config.animationSpeed)
       .then(() => followupDispatch(getScoreBoardForCurrentPlayerAction()));
   };
 }
@@ -476,7 +492,7 @@ export function getScoreBoardForCurrentPlayerAction(): ActionDispatcherPromise {
       payload: {}
     })
       .then(() => trackAction(ACTIONS.scoreBoardForCurrentPlayer))
-      .delay(500 * getState().ui.animationSpeed)
+      .delay(500 * getState().config.animationSpeed)
       .then(() => followupDispatch(getMoveToNextPlayerScoringAction()));
   };
 }
@@ -488,7 +504,7 @@ export function getEndTurnAction(): ActionDispatcherPromise {
       payload: {}
     })
       .then(() => trackAction(ACTIONS.endTurn))
-      .delay(100 * getState().ui.animationSpeed)
+      .delay(100 * getState().config.animationSpeed)
       .then(() => followupDispatch(getMoveToRefillPhaseAction()));
   };
 }
@@ -512,7 +528,7 @@ export function getShuffleBoxIntoBagAction(): ActionDispatcherPromise {
     })
       .then(() => trackAction(ACTIONS.shuffleBoxIntoBag))
       .then(() => play(SHUFFLE))
-      .delay(500 * getState().ui.animationSpeed)
+      .delay(500 * getState().config.animationSpeed)
       .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }

@@ -5,9 +5,15 @@ import type { Tile, Factory, Scoring, TilesArray } from "./models";
 // TYPES ////////////////////////////
 
 export type UI = {|
-  selectedFactory: ?Factory,
-  selectedTile: ?Tile,
-  currentScoring: ?Scoring,
+  selectedFactory?: ?Factory,
+  selectedTile?: ?Tile
+|};
+
+export type Presentation = {|
+  currentScoring: ?Scoring
+|};
+
+export type Config = {|
   animationSpeed: number
 |};
 
