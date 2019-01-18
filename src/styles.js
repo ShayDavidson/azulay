@@ -111,3 +111,10 @@ function addResetStyles() {
     boxSizing: "border-box"
   });
 }
+
+/***********************************************************/
+
+export function pick(classes: { [string]: boolean }): string {
+  const enabledClasses = Object.keys(classes).filter(className => classes[className]);
+  return css(enabledClasses);
+}

@@ -1,6 +1,7 @@
 # TODO
 
 * Sometimes scoring floater/animations are not shown.
+* CSS condition helper class.
 * Audio delay in mobile?
 * Game end.
 * Random AI.

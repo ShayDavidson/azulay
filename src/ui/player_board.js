@@ -28,7 +28,8 @@ import { PLAYER_TYPE } from "../models";
 type Props = {
   player: Player,
   current: boolean,
-  highlights?: ?Highlights
+  highlights?: ?Highlights,
+  label?: string
 };
 
 type State = {
@@ -44,7 +45,29 @@ const $baseStyle = css({
   backgroundColor: BOARD_COLOR,
   boxShadow: "2px 2px 0 0 rgba(0, 0, 0, 0.1)",
   width: "max-content",
-  willChange: "transform"
+  willChange: "transform",
+  position: "relative"
+});
+
+const $withLabelStyle = css({
+  "::before": {
+    content: " ",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    backgroundColor: "rgba(0, 0, 0, 0.3)"
+  },
+  "::after": {
+    fontSize: "1em",
+    content: "attr(data-label)",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    padding: "0 0.15em"
+  }
 });
 
 const $rowContainerStyle = css({
@@ -70,9 +93,13 @@ const $animatedStyle = css({
 export default class PlayerBoard extends React.PureComponent<Props, State> {
   render() {
     const { board: { wall, staging, floor }, score, name, type } = this.props.player;
+    let $boardStyle = this.props.current ? css($animatedStyle, $baseStyle) : $baseStyle;
+    if (this.props.label != null) {
+      $boardStyle = css($boardStyle, $withLabelStyle);
+    }
     return (
       <div
-        className={this.props.current ? css($animatedStyle, $baseStyle) : $baseStyle}
+        className={$boardStyle}
         style={
           this.props.current
             ? {
@@ -82,7 +109,7 @@ export default class PlayerBoard extends React.PureComponent<Props, State> {
             : {}
         }
       >
-        <div className={$rowContainerStyle} style={{ width: "max-content" }}>
+        <div className={$rowContainerStyle} data-label={this.props.label} style={{ width: "max-content" }}>
           <Staging selectionEnabled={this.props.current} staging={staging} highlights={this.props.highlights} />
           <Separator type="vertical" />
           <Wall wall={wall} highlights={this.props.highlights} />

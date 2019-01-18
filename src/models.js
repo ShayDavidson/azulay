@@ -319,6 +319,24 @@ export function moveToEndPhase(game: Game): Game {
 
 // HELPERS ////////////////////////////
 
+export function winningPlayers(game: Game): Array<Player> {
+  const maxScore = Math.max(...game.players.map(player => player.score));
+  const players = game.players.filter(player => player.score == maxScore);
+  if (players.length == 1) {
+    return players;
+  } else {
+    const rowsCompletePerPlayer = players.map(numberOfCompletedRows);
+    const maxRows = Math.max.apply(null, rowsCompletePerPlayer);
+    return players.filter(player => numberOfCompletedRows(player) == maxRows);
+  }
+}
+
+export function numberOfCompletedRows(player: Player): number {
+  return player.board.wall.reduce((sum, stagingRow, stagingRowIndex) => {
+    return sum + (isWallRowComplete(player.board.wall, stagingRowIndex) ? 1 : 0);
+  }, 0);
+}
+
 export function sortBagBySugarPiles(bag: TilesArray): TilesArray {
   const piles = chunk(bag, FACTORY_MAX_TILES);
   const sugarPiles = piles.map(sugarSortPile);
