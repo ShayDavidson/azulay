@@ -326,7 +326,7 @@ export function winningPlayers(game: Game): Array<Player> {
     return players;
   } else {
     const rowsCompletePerPlayer = players.map(numberOfCompletedRows);
-    const maxRows = Math.max.apply(null, rowsCompletePerPlayer);
+    const maxRows = Math.max(...rowsCompletePerPlayer);
     return players.filter(player => numberOfCompletedRows(player) == maxRows);
   }
 }
