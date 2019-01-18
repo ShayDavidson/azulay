@@ -13,6 +13,7 @@ import InfoZone from "./ui/info_zone";
 import AboutLabel from "./ui/about_label";
 // helpers
 import { applyGlobalStyles, GLOBAL_PADDING } from "./styles.js";
+import { winningPlayers } from "./models.js";
 import { trackPage } from "./tracking.js";
 
 /***********************************************************/
@@ -71,7 +72,7 @@ class Azul extends React.Component<Props, State> {
           hasExternalAPI={true}
         >
           <GameContext.Consumer>
-            {({ gameState, uiState, resolver }) => {
+            {({ gameState, presentationState, resolver }) => {
               if (gameState == undefined) return null;
               const numberOfPlayers = gameState.players.length;
               const $boardsGridStyle = { gridTemplateColumns: `repeat(${numberOfPlayers > 2 ? 2 : 1}, 1fr)` };
@@ -85,7 +86,7 @@ class Azul extends React.Component<Props, State> {
                           <PlayerBoardAnimator
                             key={index}
                             player={player}
-                            scoring={currentPlayer ? uiState.currentScoring : undefined}
+                            scoring={currentPlayer ? presentationState.currentScoring : undefined}
                             resolver={currentPlayer ? resolver : undefined}
                           >
                             {(player, highlights) => (
@@ -93,7 +94,11 @@ class Azul extends React.Component<Props, State> {
                                 player={player}
                                 highlights={highlights}
                                 current={currentPlayer}
-                                label={gameState.phase == "end" ? "Winner!" : undefined}
+                                label={
+                                  gameState.phase == "end"
+                                    ? winningPlayers(gameState).includes(player) ? "Won!" : "Lost"
+                                    : undefined
+                                }
                               />
                             )}
                           </PlayerBoardAnimator>

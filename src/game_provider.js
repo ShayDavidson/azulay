@@ -100,12 +100,13 @@ export default class GameProvider extends React.Component<Props, State> {
   }
 
   render() {
-    const { game, ui, resolver } = this.state;
+    const { game, ui, presentation, resolver } = this.state;
     return (
       <GameContext.Provider
         value={{
           gameState: game,
           uiState: ui,
+          presentationState: presentation,
           resolver: resolver,
           dispatch: this.dispatch.bind(this)
         }}

@@ -19,7 +19,8 @@ import {
   BOARD_COLOR,
   WHITE_COLOR,
   $bevelStyle,
-  subtlePopAnimation
+  subtlePopAnimation,
+  fadeInAnimation
 } from "../styles";
 import { PLAYER_TYPE } from "../models";
 
@@ -57,7 +58,9 @@ const $withLabelStyle = css({
     width: "100%",
     height: "100%",
     position: "absolute",
-    backgroundColor: "rgba(0, 0, 0, 0.3)"
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    animation: `${fadeInAnimation} 1s ease-out`,
+    willChange: "opacity"
   },
   "::after": {
     fontSize: "1em",
@@ -66,7 +69,11 @@ const $withLabelStyle = css({
     top: 0,
     left: 0,
     width: "100%",
-    padding: "0 0.15em"
+    padding: "0 0.15em",
+    animation: `${fadeInAnimation} 1s ease-out`,
+    willChange: "opacity",
+    color: WHITE_COLOR,
+    textShadow: "1px 1px black"
   }
 });
 
@@ -99,6 +106,7 @@ export default class PlayerBoard extends React.PureComponent<Props, State> {
     }
     return (
       <div
+        data-label={this.props.label}
         className={$boardStyle}
         style={
           this.props.current
@@ -109,7 +117,7 @@ export default class PlayerBoard extends React.PureComponent<Props, State> {
             : {}
         }
       >
-        <div className={$rowContainerStyle} data-label={this.props.label} style={{ width: "max-content" }}>
+        <div className={$rowContainerStyle} style={{ width: "max-content" }}>
           <Staging selectionEnabled={this.props.current} staging={staging} highlights={this.props.highlights} />
           <Separator type="vertical" />
           <Wall wall={wall} highlights={this.props.highlights} />

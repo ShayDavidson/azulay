@@ -1,9 +1,11 @@
 # TODO
 
+* -1 color when +1 tile.
 * Sometimes scoring floater/animations are not shown.
 * CSS condition helper class.
 * Audio delay in mobile?
 * Game end.
+* Mark game end when someone closes a row.
 * Random AI.
 * More analytics.
 * Start game / end / restart UI.
@@ -11,7 +13,9 @@
 * Responsive design - mobile.
 * Extra validations and TODOs.
 * Manual resolve - right API? probably need to have a promise that says "waiting for" and provides a thing.
+* Present winning conditions better (rows tie, score)
 * Followup dispatch is weird. Get rid of it?
+* Solve 'will-change' and zIndex for tiles.
 * Tiles out of placement / factory animation.
 * Better bonus scoring effect.
 * Animation speed for scoring as well.
