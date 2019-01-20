@@ -82,6 +82,11 @@ export type State = {|
 
 /***********************************************************/
 
+function waitForUserInteraction() {}
+function finito() {}
+
+/***********************************************************/
+
 export const ACTIONS = {
   drawTileFromBagIntoFactories: "drawTileFromBagIntoFactories",
   moveToPlacementPhase: "moveToPlacementPhase",
@@ -389,7 +394,9 @@ export function getMoveToPlacementPhaseAction(): ActionDispatcherPromise {
   return (wrapAction, dispatch, getState) => {
     return wrapAction({
       type: ACTIONS.moveToPlacementPhase
-    }).then(() => trackAction(ACTIONS.moveToPlacementPhase, getState().game));
+    })
+      .then(() => trackAction(ACTIONS.moveToPlacementPhase, getState().game))
+      .then(waitForUserInteraction);
   };
 }
 
@@ -403,7 +410,8 @@ export function getSelectTileInFactoryAction(factory: Factory, tile: Tile): Acti
       }
     })
       .then(() => trackAction(ACTIONS.selectTileInFactory, getState().game))
-      .then(() => play(CLICK));
+      .then(() => play(CLICK))
+      .then(waitForUserInteraction);
   };
 }
 
@@ -535,6 +543,7 @@ export function getMoveToEndPhaseAction(): ActionDispatcherPromise {
       type: ACTIONS.moveToEndPhase
     })
       .then(() => trackAction(ACTIONS.moveToEndPhase, getState().game))
-      .then(() => play(END));
+      .then(() => play(END))
+      .then(finito);
   };
 }

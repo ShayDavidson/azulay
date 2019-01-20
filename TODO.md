@@ -1,9 +1,9 @@
 # TODO
 
-- Optional chaining.
 - Make floor clickable only if current player (remove floor validation)
 - CSS condition helper class.
 
+- Optional chaining.
 - Gameprovider should not know what's an initial state/action is.
 - Arrange flow for initializing tracking and multi.
 - Sometimes scoring floater/animations are not shown.
@@ -25,7 +25,6 @@
 - Add `immer`.
 
 - Separate game provider from dispatcher + generic game provider.
-- Flowtype for actions hard-typed.
 - Can't be wrong in floor placement - always for current player.
 - Error fallback flow type crap (Because of & misuse)
 - Cursor pointer on whole stagingrow/floor rather than placements.
