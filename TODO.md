@@ -6,7 +6,6 @@
 - Audio delay in mobile?
 - Mark game end when someone closes a row.
 - Random AI.
-- More analytics.
 - Game end animation.
 - Start game / end / restart UI.
 - Fade out animation for staging row tiles.
@@ -29,6 +28,7 @@
 - Cursor pointer on whole stagingrow/floor rather than placements.
 - Organizer actions, models, index, provider etc.
 - Player Board animator children flowtype.
+- Player board animator put tiles in box.
 - Log action if it's valid, but before it's committed.
 - Make it an SDK.
 - AI.

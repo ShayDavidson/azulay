@@ -51,10 +51,10 @@ export type Action = {
 
 export type ActionName = $Values<typeof ACTIONS>;
 export type ActionDispatcher = (action: Action) => Promise<any>;
-export type ActionFallbackDispatcher = (actionPromise: ActionDispatcherPromise) => Promise<any>;
+export type ActionPromiseDispatcher = (actionPromise: ActionDispatcherPromise) => Promise<any>;
 export type ActionDispatcherPromise = (
   dispatch: ActionDispatcher,
-  fallbackDispatch: ActionFallbackDispatcher,
+  fallbackDispatch: ActionPromiseDispatcher,
   state: () => State
 ) => Promise<any>;
 
@@ -382,16 +382,16 @@ export function getDrawTileFromBagIntoFactoriesAction(): ActionDispatcherPromise
 }
 
 export function getMoveToPlacementPhaseAction(): ActionDispatcherPromise {
-  return dispatch => {
+  return (dispatch, followupDispatch, getState) => {
     return dispatch({
       type: ACTIONS.moveToPlacementPhase,
       payload: {}
-    }).then(() => trackAction(ACTIONS.moveToPlacementPhase));
+    }).then(() => trackAction(ACTIONS.moveToPlacementPhase, getState().game));
   };
 }
 
 export function getSelectTileInFactoryAction(factory: Factory, tile: Tile): ActionDispatcherPromise {
-  return dispatch => {
+  return (dispatch, followupDispatch, getState) => {
     return dispatch({
       type: ACTIONS.selectTileInFactory,
       payload: {
@@ -399,32 +399,32 @@ export function getSelectTileInFactoryAction(factory: Factory, tile: Tile): Acti
         tile
       }
     })
-      .then(() => trackAction(ACTIONS.selectTileInFactory))
+      .then(() => trackAction(ACTIONS.selectTileInFactory, getState().game))
       .then(() => play(CLICK));
   };
 }
 
 export function getPutTilesFromFactoryIntoFloorAction(floor: Floor): ActionDispatcherPromise {
-  return (dispatch, followupDispatch) => {
+  return (dispatch, followupDispatch, getState) => {
     return dispatch({
       type: ACTIONS.putTilesFromFactoryIntoFloor,
       payload: { floor }
     })
-      .then(() => trackAction(ACTIONS.putTilesFromFactoryIntoFloor))
+      .then(() => trackAction(ACTIONS.putTilesFromFactoryIntoFloor, getState().game))
       .then(() => playRandom(TILES))
       .then(() => followupDispatch(getMoveToNextPlayerPlacementAction()));
   };
 }
 
 export function getPutTilesFromFactoryIntoStagingRowAction(stagingRowIndex: number): ActionDispatcherPromise {
-  return (dispatch, followupDispatch) => {
+  return (dispatch, followupDispatch, getState) => {
     return dispatch({
       type: ACTIONS.putTilesFromFactoryIntoStagingRow,
       payload: {
         stagingRowIndex
       }
     })
-      .then(() => trackAction(ACTIONS.putTilesFromFactoryIntoStagingRow))
+      .then(() => trackAction(ACTIONS.putTilesFromFactoryIntoStagingRow, getState().game))
       .then(() => playRandom(TILES))
       .then(() => followupDispatch(getMoveToNextPlayerPlacementAction()));
   };
@@ -436,7 +436,7 @@ export function getMoveToNextPlayerPlacementAction(): ActionDispatcherPromise {
       type: ACTIONS.moveToNextPlayerPlacement,
       payload: {}
     })
-      .then(() => trackAction(ACTIONS.moveToNextPlayerPlacement))
+      .then(() => trackAction(ACTIONS.moveToNextPlayerPlacement, getState().game))
       .then(() => {
         const currentPlayer = getCurrentPlayer(getState().game);
         if (isAIPlayer(currentPlayer)) {
@@ -447,13 +447,13 @@ export function getMoveToNextPlayerPlacementAction(): ActionDispatcherPromise {
 }
 
 export function getRequestAIMoveAction(): ActionDispatcherPromise {
-  return dispatch => {
+  return (dispatch, followupDispatch, getState) => {
     return dispatch({
       type: ACTIONS.requestAIMove,
       manualResolve: true,
       payload: {}
     })
-      .then(() => trackAction(ACTIONS.requestAIMove))
+      .then(() => trackAction(ACTIONS.requestAIMove, getState().game))
       .then(() => {
         // TODO
       });
@@ -466,7 +466,7 @@ export function getMoveToScoringPhaseAction(): ActionDispatcherPromise {
       type: ACTIONS.moveToScoringPhase,
       payload: {}
     })
-      .then(() => trackAction(ACTIONS.moveToScoringPhase))
+      .then(() => trackAction(ACTIONS.moveToScoringPhase, getState().game))
       .delay(500 * getState().config.animationSpeed)
       .then(() => followupDispatch(getMoveToNextPlayerScoringAction()));
   };
@@ -478,7 +478,7 @@ export function getMoveToNextPlayerScoringAction(): ActionDispatcherPromise {
       type: ACTIONS.moveToNextPlayerScoring,
       payload: {}
     })
-      .then(() => trackAction(ACTIONS.moveToNextPlayerScoring))
+      .then(() => trackAction(ACTIONS.moveToNextPlayerScoring, getState().game))
       .delay(500 * getState().config.animationSpeed)
       .then(() => followupDispatch(getScoreBoardForCurrentPlayerAction()));
   };
@@ -491,7 +491,7 @@ export function getScoreBoardForCurrentPlayerAction(): ActionDispatcherPromise {
       manualResolve: true,
       payload: {}
     })
-      .then(() => trackAction(ACTIONS.scoreBoardForCurrentPlayer))
+      .then(() => trackAction(ACTIONS.scoreBoardForCurrentPlayer, getState().game))
       .delay(500 * getState().config.animationSpeed)
       .then(() => followupDispatch(getMoveToNextPlayerScoringAction()));
   };
@@ -503,19 +503,19 @@ export function getEndTurnAction(): ActionDispatcherPromise {
       type: ACTIONS.endTurn,
       payload: {}
     })
-      .then(() => trackAction(ACTIONS.endTurn))
+      .then(() => trackAction(ACTIONS.endTurn, getState().game))
       .delay(100 * getState().config.animationSpeed)
       .then(() => followupDispatch(getMoveToRefillPhaseAction()));
   };
 }
 
 export function getMoveToRefillPhaseAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch) => {
+  return (dispatch, followupDispatch, getState) => {
     return dispatch({
       type: ACTIONS.moveToRefillPhase,
       payload: {}
     })
-      .then(() => trackAction(ACTIONS.moveToRefillPhase))
+      .then(() => trackAction(ACTIONS.moveToRefillPhase, getState().game))
       .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }
@@ -526,7 +526,7 @@ export function getShuffleBoxIntoBagAction(): ActionDispatcherPromise {
       type: ACTIONS.shuffleBoxIntoBag,
       payload: {}
     })
-      .then(() => trackAction(ACTIONS.shuffleBoxIntoBag))
+      .then(() => trackAction(ACTIONS.shuffleBoxIntoBag, getState().game))
       .then(() => play(SHUFFLE))
       .delay(500 * getState().config.animationSpeed)
       .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
@@ -534,12 +534,12 @@ export function getShuffleBoxIntoBagAction(): ActionDispatcherPromise {
 }
 
 export function getMoveToEndPhaseAction(): ActionDispatcherPromise {
-  return dispatch => {
+  return (dispatch, followupDispatch, getState) => {
     return dispatch({
       type: ACTIONS.moveToEndPhase,
       payload: {}
     })
-      .then(() => trackAction(ACTIONS.moveToEndPhase))
+      .then(() => trackAction(ACTIONS.moveToEndPhase, getState().game))
       .then(() => play(END));
   };
 }

@@ -8,7 +8,7 @@ import type {
   State,
   Action,
   ActionDispatcherPromise,
-  ActionFallbackDispatcher,
+  ActionPromiseDispatcher,
   ValidationError,
   Resolver
 } from "./actions";
@@ -25,7 +25,7 @@ export type Context = {|
   uiState: UI,
   presentationState: Presentation,
   resolver?: ?Resolver,
-  dispatch: ActionFallbackDispatcher // TODO: rename type name
+  dispatch: ActionPromiseDispatcher
 |} | void;
 
 export const GameContext = React.createContext<Context>(undefined); // prettier-ignore
