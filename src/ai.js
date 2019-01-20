@@ -33,15 +33,12 @@ export function getAllMoves(game: Game): Array<Move> {
   const allSelections = leftoverSelections.concat(factorySelections);
 
   return allSelections.reduce((moves, selection) => {
-    const selectionMoves = player.board.staging.reduce(
-      (relevantMoves, stagingRow, stagingRowIndex) => {
-        if (canPlaceTilesInStagingRow(player, stagingRowIndex, selection.selectedTile)) {
-          relevantMoves.push({ ...selection, selectedTarget: stagingRowIndex });
-        }
-        return relevantMoves;
-      },
-      [{ ...selection, selectedTarget: "floor" }]
-    );
+    const selectionMoves = player.board.staging.reduce((relevantMoves, stagingRow, stagingRowIndex) => {
+      if (canPlaceTilesInStagingRow(player, stagingRowIndex, selection.selectedTile)) {
+        relevantMoves.push({ ...selection, selectedTarget: stagingRowIndex });
+      }
+      return relevantMoves;
+    }, [{ ...selection, selectedTarget: "floor" }]);
     return moves.concat(selectionMoves);
   }, []);
 }

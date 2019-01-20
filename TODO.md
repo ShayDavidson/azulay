@@ -1,36 +1,35 @@
 # TODO
 
-* Arrange flow for initializing tracking and multi.
-* Sometimes scoring floater/animations are not shown.
-* CSS condition helper class.
-* Audio delay in mobile?
-* Fix prettier in VSCode.
-* Mark game end when someone closes a row.
-* Random AI.
-* More analytics.
-* Game end animation.
-* Start game / end / restart UI.
-* Fade out animation for staging row tiles.
-* Responsive design - mobile.
-* Extra validations and TODOs.
-* Manual resolve - right API? probably need to have a promise that says "waiting for" and provides a thing.
-* Present winning conditions better (rows tie, score)
-* Followup dispatch is weird. Get rid of it?
-* Solve 'will-change' and zIndex for tiles.
-* Tiles out of placement / factory animation.
-* Better bonus scoring effect.
-* Animation speed for scoring as well.
-* Better noise reduction on sounds.
-* Add `immer`.
-* Optional chaining.
-* Separate game provider from dispatcher + generic game provider.
-* Flowtype for actions hard-typed.
-* Can't be wrong in floor placement - always for current player.
-* Error fallback flow type crap (Because of & misuse)
-* Cursor pointer on whole stagingrow/floor rather than placements.
-* Organizer actions, models, index, provider etc.
-* Player Board animator children flowtype.
-* Log action if it's valid, but before it's committed.
-* Make it an SDK.
-* AI.
-* Tile transition from places in the window.
+- Arrange flow for initializing tracking and multi.
+- Sometimes scoring floater/animations are not shown.
+- CSS condition helper class.
+- Audio delay in mobile?
+- Mark game end when someone closes a row.
+- Random AI.
+- More analytics.
+- Game end animation.
+- Start game / end / restart UI.
+- Fade out animation for staging row tiles.
+- Responsive design - mobile.
+- Extra validations and TODOs.
+- Manual resolve - right API? probably need to have a promise that says "waiting for" and provides a thing.
+- Present winning conditions better (rows tie, score)
+- Followup dispatch is weird. Get rid of it?
+- Solve 'will-change' and zIndex for tiles.
+- Tiles out of placement / factory animation.
+- Better bonus scoring effect.
+- Animation speed for scoring as well.
+- Better noise reduction on sounds.
+- Add `immer`.
+- Optional chaining.
+- Separate game provider from dispatcher + generic game provider.
+- Flowtype for actions hard-typed.
+- Can't be wrong in floor placement - always for current player.
+- Error fallback flow type crap (Because of & misuse)
+- Cursor pointer on whole stagingrow/floor rather than placements.
+- Organizer actions, models, index, provider etc.
+- Player Board animator children flowtype.
+- Log action if it's valid, but before it's committed.
+- Make it an SDK.
+- AI.
+- Tile transition from places in the window.
