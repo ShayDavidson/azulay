@@ -120,8 +120,8 @@ export type Game = {|
 export function createGame(players: number, seed: number): Game {
   const rng = createRNG(seed);
   return {
-    players: [...Array(players)].map(
-      (_, index) => (index == 0 ? createPlayer(`Human`, "human") : createPlayer(`AI ${index}`, "aiRandom"))
+    players: [...Array(players)].map((_, index) =>
+      index == 0 ? createPlayer(`Human`, "human") : createPlayer(`AI ${index}`, "aiRandom")
     ),
     bag: sortBagBySugarPiles(rng.shuffle(createBag())),
     box: [],
@@ -482,22 +482,19 @@ function countTilesOfColorInWall(wall: Wall, color: ColorType): number {
 
 function splitArrayBy(array: Array<any>, splitter: any): Array<any> {
   return array
-    .reduce(
-      (array, value) => {
-        const lastChunk = array[array.length - 1];
-        if (value == splitter) {
-          if (lastChunk.length == 0) {
-            return array;
-          } else {
-            return [...array, []];
-          }
-        } else {
-          lastChunk.push(value);
+    .reduce((array, value) => {
+      const lastChunk = array[array.length - 1];
+      if (value == splitter) {
+        if (lastChunk.length == 0) {
           return array;
+        } else {
+          return [...array, []];
         }
-      },
-      [[]]
-    )
+      } else {
+        lastChunk.push(value);
+        return array;
+      }
+    }, [[]])
     .filter(array => array.length > 0);
 }
 
@@ -517,11 +514,10 @@ function placeTileInWall(wall: Wall, fromStagingRowIndex: number, tile: Tile): W
   if (tile.color != null) {
     const tileWallRow = fromStagingRowIndex;
     const tileWallCol = getWallPlacementCol(tileWallRow, tile.color);
-    return wall.map(
-      (wallRow, wallRowIndex) =>
-        wallRowIndex == tileWallRow
-          ? immutablePredicateUpdate(wallRow, (_, wallColIndex) => wallColIndex == tileWallCol, tile)
-          : wallRow
+    return wall.map((wallRow, wallRowIndex) =>
+      wallRowIndex == tileWallRow
+        ? immutablePredicateUpdate(wallRow, (_, wallColIndex) => wallColIndex == tileWallCol, tile)
+        : wallRow
     );
   } else {
     return wall;
@@ -644,15 +640,12 @@ export function getWallPlacementColor(row: number, col: number): ColorType {
 }
 
 export function getTilesColorCounter(tiles: TilesArray): TilesColorCounter {
-  return tiles.reduce(
-    (counter, tile) => {
-      if (tile.color != undefined) {
-        counter[tile.color] += 1;
-      }
-      return counter;
-    },
-    [0, 0, 0, 0, 0]
-  );
+  return tiles.reduce((counter, tile) => {
+    if (tile.color != undefined) {
+      counter[tile.color] += 1;
+    }
+    return counter;
+  }, [0, 0, 0, 0, 0]);
 }
 
 export function getStagingRowColor(row: StagingRow): ?ColorType {
@@ -660,5 +653,5 @@ export function getStagingRowColor(row: StagingRow): ?ColorType {
 }
 
 export function mod(num: number, n: number) {
-  return (num % n + n) % n;
+  return ((num % n) + n) % n;
 }

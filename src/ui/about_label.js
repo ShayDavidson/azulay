@@ -29,7 +29,8 @@ export default class AboutLabel extends React.PureComponent<Props, State> {
         Created by Shay Davidson (<a href="mailto:shay.h.davidson@gmail.com">shay.h.davidson@gmail.com</a>,
         <a rel="noopener noreferrer" target="_blank" href="https://twitter.com/ShayHDavidson">
           @ShayHDavidson
-        </a>).
+        </a>
+        ).
         <br />
         Azul was created by Michael Kiesling and published by Plan B Games.
       </div>

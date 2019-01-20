@@ -89,15 +89,18 @@ export default class GameProvider extends React.Component<Props, State> {
   internalDispatch(action: Action) {
     return new Promise((resolve, reject) => {
       const resolver = () => resolve({ action, state: this.state });
-      this.setState(prevState => {
-        let validationError = validate(prevState, action);
-        if (validationError) {
-          reject(validationError);
-          return;
-        }
-        const state = reduce(prevState, action);
-        return action.manualResolve ? { ...state, resolver } : { ...state, resolver: undefined };
-      }, action.manualResolve ? undefined : resolver);
+      this.setState(
+        prevState => {
+          let validationError = validate(prevState, action);
+          if (validationError) {
+            reject(validationError);
+            return;
+          }
+          const state = reduce(prevState, action);
+          return action.manualResolve ? { ...state, resolver } : { ...state, resolver: undefined };
+        },
+        action.manualResolve ? undefined : resolver
+      );
     }).then(this.logActionResult.bind(this));
   }
 
