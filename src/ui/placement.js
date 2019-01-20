@@ -92,7 +92,8 @@ export default class Placement extends React.PureComponent<Props, State> {
     return (
       <div className={$dynamicBaseStyle} style={$dynamicStyle}>
         {this.props.tile != null ? <Tile animated={true} surpressLabel={true} tile={this.props.tile} /> : null}
-        {this.props.label != null ? (
+        {this.props.label != null &&
+        (this.props.tile == null || (this.props.tile != null && this.props.tile.kind != "first")) ? (
           <div className={$labelStyle} style={$dynamicLabelStyle}>
             {this.props.label}
           </div>

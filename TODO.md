@@ -1,13 +1,13 @@
 # TODO
 
-* -1 color when +1 tile.
+* Arrange flow for initializing tracking and multi.
 * Sometimes scoring floater/animations are not shown.
 * CSS condition helper class.
 * Audio delay in mobile?
-* Game end.
 * Mark game end when someone closes a row.
 * Random AI.
 * More analytics.
+* Game end animation.
 * Start game / end / restart UI.
 * Fade out animation for staging row tiles.
 * Responsive design - mobile.
