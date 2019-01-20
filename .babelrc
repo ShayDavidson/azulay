@@ -1,15 +1,30 @@
 {
   "presets": [
     [
-      "env",
+      "@babel/preset-env",
       {
         "targets": {
-          "browsers": [">0.25%", "not ie 11", "not op_mini all"]
+          "browsers": [
+            ">0.25%",
+            "not ie 11",
+            "not op_mini all"
+          ]
         }
       }
     ],
-    "react",
-    "flow"
+    "@babel/preset-react",
+    "@babel/preset-flow"
   ],
-  "plugins": ["transform-class-properties", "transform-object-rest-spread", ["module-resolver", { "root": ["./src"] }]]
+  "plugins": [
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-proposal-object-rest-spread",
+    [
+      "module-resolver",
+      {
+        "root": [
+          "./src"
+        ]
+      }
+    ]
+  ]
 }

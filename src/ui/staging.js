@@ -47,7 +47,9 @@ export default class Staging extends React.PureComponent<Props, State> {
   render() {
     return (
       <GameContext.Consumer>
-        {({ gameState, uiState, dispatch }) => {
+        {state => {
+          if (state == null) return null;
+          const { gameState, uiState, dispatch } = state;
           return (
             <div className={$containerStyle}>
               {this.props.staging.map((stagingRow, stagingRowIndex) => {

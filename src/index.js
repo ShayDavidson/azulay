@@ -72,8 +72,10 @@ class Azul extends React.Component<Props, State> {
           hasExternalAPI={true}
         >
           <GameContext.Consumer>
-            {({ gameState, presentationState, resolver }) => {
-              if (gameState == undefined) return null;
+            {state => {
+              if (state == null) return null;
+              const { gameState, presentationState, resolver } = state;
+              if (gameState == null) return null;
               const numberOfPlayers = gameState.players.length;
               const $boardsGridStyle = { gridTemplateColumns: `repeat(${numberOfPlayers > 2 ? 2 : 1}, 1fr)` };
               return (

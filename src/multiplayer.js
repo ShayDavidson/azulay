@@ -3,13 +3,13 @@
 import Pusher from "pusher-js";
 
 const params = new URL(window.location).searchParams;
-const channelName = params.get("channel");
+const channelName: ?string = params.get("channel");
 const multiplayerEnabled = channelName != null;
 
 let channel;
 let socket;
 
-if (multiplayerEnabled) {
+if (channelName != null) {
   socket = new Pusher("56d4390b3561d3bcec29", {
     cluster: "eu"
   });

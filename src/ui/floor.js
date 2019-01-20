@@ -46,8 +46,10 @@ export default class Floor extends React.PureComponent<Props, State> {
   render() {
     return (
       <GameContext.Consumer>
-        {({ uiState, dispatch }) => {
-          let canPlaceInFloor = this.props.selectionEnabled && uiState.selectedTile;
+        {state => {
+          if (state == null) return null;
+          const { uiState, dispatch } = state;
+          let canPlaceInFloor = !!(this.props.selectionEnabled && uiState.selectedTile);
           return (
             <div
               className={$baseStyle}

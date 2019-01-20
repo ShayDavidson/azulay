@@ -21,11 +21,11 @@
 * Animation speed for scoring as well.
 * Better noise reduction on sounds.
 * Add `immer`.
+* Optionak chaining.
 * Separate game provider from dispatcher.
 * Flowtype for actions hard-typed.
 * Can't be wrong in floor placement - always for current player.
 * Error fallback flow type crap (Because of & misuse)
-* Flow type checking better for context.
 * Generic game provider.
 * Cursor pointer on whole stagingrow/floor rather than placements.
 * Organizer actions, models, index, provider etc.

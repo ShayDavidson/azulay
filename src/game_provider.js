@@ -4,14 +4,31 @@ import Promise from "bluebird";
 import React from "react";
 import type { Node } from "react";
 // types
-import type { State, Action, ActionDispatcherPromise, ValidationError } from "./actions";
+import type {
+  State,
+  Action,
+  ActionDispatcherPromise,
+  ActionFallbackDispatcher,
+  ValidationError,
+  Resolver
+} from "./actions";
+import type { Game } from "./models";
+import type { UI, Presentation } from "./ui_models";
 // helpers
 import { createGame } from "./models";
 import { reduce, validate, getMoveToRefillPhaseAction } from "./actions";
 
 /***********************************************************/
 
-export const GameContext: Object = React.createContext();
+export type Context = {|
+  gameState: Game,
+  uiState: UI,
+  presentationState: Presentation,
+  resolver?: ?Resolver,
+  dispatch: ActionFallbackDispatcher // TODO: rename type name
+|} | void;
+
+export const GameContext = React.createContext<Context>(undefined); // prettier-ignore
 
 /***********************************************************/
 

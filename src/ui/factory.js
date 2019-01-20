@@ -72,13 +72,17 @@ export default class Factory extends React.PureComponent<Props, State> {
 
     return (
       <GameContext.Consumer>
-        {({ uiState, dispatch }) => {
+        {state => {
+          if (state == null) return null;
+          const { uiState, dispatch } = state;
           return (
             <div className={this.props.type == "normal" ? $standardStyle : $leftoversStyle}>
               <div className={this.props.type == "normal" ? $containerStyle : $leftoversContainerStyle}>
                 {tiles.map((tile, index) => {
                   const highlighted =
-                    uiState.selectedFactory == this.props.factory && uiState.selectedTile.color == tile.color;
+                    uiState.selectedFactory == this.props.factory &&
+                    uiState.selectedTile != null &&
+                    uiState.selectedTile.color == tile.color;
                   return (
                     <div key={index}>
                       <Tile

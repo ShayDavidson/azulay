@@ -22,7 +22,7 @@ type Props = {
   tile: TileType,
   highlighted?: boolean,
   animated?: boolean,
-  onClick?: TileType => void,
+  onClick?: TileType => any,
   surpressLabel?: boolean
 };
 
