@@ -4,6 +4,7 @@
 * Sometimes scoring floater/animations are not shown.
 * CSS condition helper class.
 * Audio delay in mobile?
+* Fix prettier in VSCode.
 * Mark game end when someone closes a row.
 * Random AI.
 * More analytics.
@@ -21,12 +22,11 @@
 * Animation speed for scoring as well.
 * Better noise reduction on sounds.
 * Add `immer`.
-* Optionak chaining.
-* Separate game provider from dispatcher.
+* Optional chaining.
+* Separate game provider from dispatcher + generic game provider.
 * Flowtype for actions hard-typed.
 * Can't be wrong in floor placement - always for current player.
 * Error fallback flow type crap (Because of & misuse)
-* Generic game provider.
 * Cursor pointer on whole stagingrow/floor rather than placements.
 * Organizer actions, models, index, provider etc.
 * Player Board animator children flowtype.

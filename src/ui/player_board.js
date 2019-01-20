@@ -99,12 +99,7 @@ const $animatedStyle = css({
 
 export default class PlayerBoard extends React.PureComponent<Props, State> {
   render() {
-    const {
-      board: { wall, staging, floor },
-      score,
-      name,
-      type
-    } = this.props.player;
+    const { board: { wall, staging, floor }, score, name, type } = this.props.player;
     let $boardStyle = this.props.current ? css($animatedStyle, $baseStyle) : $baseStyle;
     if (this.props.label != null) {
       $boardStyle = css($boardStyle, $withLabelStyle);

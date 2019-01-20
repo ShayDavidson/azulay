@@ -98,9 +98,7 @@ class Azul extends React.Component<Props, State> {
                                 current={currentPlayer}
                                 label={
                                   gameState.phase == "end"
-                                    ? winningPlayers(gameState).includes(player)
-                                      ? "Won!"
-                                      : "Lost"
+                                    ? winningPlayers(gameState).includes(player) ? "Won!" : "Lost"
                                     : undefined
                                 }
                               />
