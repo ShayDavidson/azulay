@@ -72,7 +72,11 @@ export default class GameProvider extends React.Component<Props, State> {
       window.saveState = () => localStorage.setItem("state", JSON.stringify({ ...this.state, ui: {} }));
       window.loadState = () => {
         const json = localStorage.getItem("state");
-        if (json != null) this.setState(JSON.parse(json));
+        try {
+          if (json != null) this.setState(JSON.parse(json));
+        } catch {
+          console.error("failure to parse state JSON", json);
+        }
       };
     }
   }
@@ -82,12 +86,14 @@ export default class GameProvider extends React.Component<Props, State> {
   }
 
   dispatch(actionPromiser: ActionDispatcherPromise) {
-    return actionPromiser(this.internalDispatch.bind(this), this.dispatch.bind(this), this.getState.bind(this)).catch(
-      this.handleValidationError.bind(this)
-    );
+    return actionPromiser(
+      this.actionPromiseWrapper.bind(this),
+      this.dispatch.bind(this),
+      this.getState.bind(this)
+    ).catch(this.handleValidationError.bind(this));
   }
 
-  internalDispatch(action: Action) {
+  actionPromiseWrapper(action: Action) {
     return new Promise((resolve, reject) => {
       const resolver = () => resolve({ action, state: this.state });
       this.setState(

@@ -5,7 +5,7 @@ import type { Game } from "./models";
 
 mixpanel.init("df8155fbd663fcf03a7fcba484cbc46e");
 
-export function trackPage(payload: any = {}) {
+export function trackPage(payload: {} = {}) {
   mixpanel.track("game:loaded", payload);
 }
 

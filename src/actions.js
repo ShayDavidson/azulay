@@ -4,7 +4,7 @@ import Promise from "bluebird";
 import { trackAction } from "./tracking.js";
 
 // types
-import type { Game, Tile, Factory, Floor, Scoring } from "./models";
+import type { Game, Tile, Factory, Floor } from "./models";
 import type { UI, Presentation, Config } from "./ui_models";
 import type { AI } from "./ai";
 
@@ -38,24 +38,29 @@ import { isAIPlayer } from "./ai";
 
 export type Action = {
   type: ActionName,
-  manualResolve?: boolean,
-  payload: {
-    factory?: Factory,
-    tile?: Tile,
-    floor?: Floor,
-    stagingRowIndex?: number,
-    scoring?: Scoring,
-    scoringIndex?: number
-  }
+  manualResolve?: boolean
 };
+
+export type ActionWithTileSelection = Action & {|
+  payload: {|
+    factory: Factory,
+    tile: Tile
+  |}
+|};
+
+export type ActionWithRowSelection = Action & {|
+  payload: {|
+    stagingRowIndex: number
+  |}
+|};
 
 export type ActionName = $Values<typeof ACTIONS>;
 export type ActionDispatcher = (action: Action) => Promise<any>;
 export type ActionPromiseDispatcher = (actionPromise: ActionDispatcherPromise) => Promise<any>;
 export type ActionDispatcherPromise = (
-  dispatch: ActionDispatcher,
-  fallbackDispatch: ActionPromiseDispatcher,
-  state: () => State
+  wrapAction: ActionDispatcher,
+  dispatcher: ActionPromiseDispatcher,
+  getState: () => State
 ) => Promise<any>;
 
 export type ValidationError = Error & {
@@ -110,6 +115,7 @@ export function reduce(state: State, action: Action): State {
     }
 
     case ACTIONS.selectTileInFactory: {
+      action = ((action: any): ActionWithTileSelection);
       return {
         ...state,
         ui: {
@@ -134,6 +140,7 @@ export function reduce(state: State, action: Action): State {
     }
 
     case ACTIONS.putTilesFromFactoryIntoStagingRow: {
+      action = ((action: any): ActionWithRowSelection);
       if (selectedFactory != undefined && selectedTile != undefined && action.payload.stagingRowIndex != undefined) {
         return {
           ...state,
@@ -208,7 +215,7 @@ export function reduce(state: State, action: Action): State {
 
 export function validate(state: State, action: Action): ?ValidationError {
   const { game, ui } = state;
-  const { type, payload } = action;
+  const { type } = action;
   let error: ?ValidationError;
   let fallbackAction: ?ActionDispatcherPromise;
 
@@ -250,24 +257,22 @@ export function validate(state: State, action: Action): ?ValidationError {
         error = new Error("no selected tile in factory");
       } else if (game.phase != PHASES.placement) {
         error = new Error("can't put tile in board in this phase");
-      } else if (payload.floor != game.players[game.currentPlayer].board.floor) {
-        error = new Error("wrong player's floor");
       }
       break;
     }
 
     case ACTIONS.putTilesFromFactoryIntoStagingRow: {
+      action = ((action: any): ActionWithRowSelection);
       const { selectedFactory, selectedTile } = ui;
-      const { stagingRowIndex } = payload;
       if (selectedFactory == null || selectedTile == null) {
         error = new Error("no selected tile in factory");
-      } else if (stagingRowIndex == null) {
+      } else if (action.payload.stagingRowIndex == null) {
         error = new Error("no selected staging row");
       } else if (game.phase != PHASES.placement) {
         error = new Error("can't put tile in board in this phase");
       } else if (selectedTile.kind == "first") {
         error = new Error("can't put first tile in staging");
-      } else if (!canPlaceTilesInStagingRow(getCurrentPlayer(game), stagingRowIndex, selectedTile)) {
+      } else if (!canPlaceTilesInStagingRow(getCurrentPlayer(game), action.payload.stagingRowIndex, selectedTile)) {
         error = new Error("staging area cannot contain tile");
       }
       break;
@@ -358,7 +363,7 @@ export function validate(state: State, action: Action): ?ValidationError {
 
 /***********************************************************/
 
-export function isDeselect(action: Action, ui: UI): boolean {
+export function isDeselect(action: ActionWithTileSelection, ui: UI): boolean {
   return action.payload.factory &&
     action.payload.factory == ui.selectedFactory &&
     action.payload.tile &&
@@ -370,29 +375,27 @@ export function isDeselect(action: Action, ui: UI): boolean {
 /***********************************************************/
 
 export function getDrawTileFromBagIntoFactoriesAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, getState) => {
-    return dispatch({
-      type: ACTIONS.drawTileFromBagIntoFactories,
-      payload: {}
+  return (wrapAction, dispatch, getState) => {
+    return wrapAction({
+      type: ACTIONS.drawTileFromBagIntoFactories
     })
       .then(() => playRandom(TILES))
       .delay(75 * getState().config.animationSpeed)
-      .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
+      .then(() => dispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }
 
 export function getMoveToPlacementPhaseAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, getState) => {
-    return dispatch({
-      type: ACTIONS.moveToPlacementPhase,
-      payload: {}
+  return (wrapAction, dispatch, getState) => {
+    return wrapAction({
+      type: ACTIONS.moveToPlacementPhase
     }).then(() => trackAction(ACTIONS.moveToPlacementPhase, getState().game));
   };
 }
 
 export function getSelectTileInFactoryAction(factory: Factory, tile: Tile): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, getState) => {
-    return dispatch({
+  return (wrapAction, dispatch, getState) => {
+    return wrapAction({
       type: ACTIONS.selectTileInFactory,
       payload: {
         factory,
@@ -405,20 +408,20 @@ export function getSelectTileInFactoryAction(factory: Factory, tile: Tile): Acti
 }
 
 export function getPutTilesFromFactoryIntoFloorAction(floor: Floor): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, getState) => {
-    return dispatch({
+  return (wrapAction, dispatch, getState) => {
+    return wrapAction({
       type: ACTIONS.putTilesFromFactoryIntoFloor,
       payload: { floor }
     })
       .then(() => trackAction(ACTIONS.putTilesFromFactoryIntoFloor, getState().game))
       .then(() => playRandom(TILES))
-      .then(() => followupDispatch(getMoveToNextPlayerPlacementAction()));
+      .then(() => dispatch(getMoveToNextPlayerPlacementAction()));
   };
 }
 
 export function getPutTilesFromFactoryIntoStagingRowAction(stagingRowIndex: number): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, getState) => {
-    return dispatch({
+  return (wrapAction, dispatch, getState) => {
+    return wrapAction({
       type: ACTIONS.putTilesFromFactoryIntoStagingRow,
       payload: {
         stagingRowIndex
@@ -426,29 +429,28 @@ export function getPutTilesFromFactoryIntoStagingRowAction(stagingRowIndex: numb
     })
       .then(() => trackAction(ACTIONS.putTilesFromFactoryIntoStagingRow, getState().game))
       .then(() => playRandom(TILES))
-      .then(() => followupDispatch(getMoveToNextPlayerPlacementAction()));
+      .then(() => dispatch(getMoveToNextPlayerPlacementAction()));
   };
 }
 
 export function getMoveToNextPlayerPlacementAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, getState) => {
-    return dispatch({
-      type: ACTIONS.moveToNextPlayerPlacement,
-      payload: {}
+  return (wrapAction, dispatch, getState) => {
+    return wrapAction({
+      type: ACTIONS.moveToNextPlayerPlacement
     })
       .then(() => trackAction(ACTIONS.moveToNextPlayerPlacement, getState().game))
       .then(() => {
         const currentPlayer = getCurrentPlayer(getState().game);
         if (isAIPlayer(currentPlayer)) {
-          return followupDispatch(getRequestAIMoveAction());
+          return dispatch(getRequestAIMoveAction());
         }
       });
   };
 }
 
 export function getRequestAIMoveAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, getState) => {
-    return dispatch({
+  return (wrapAction, dispatch, getState) => {
+    return wrapAction({
       type: ACTIONS.requestAIMove,
       manualResolve: true,
       payload: {}
@@ -461,83 +463,76 @@ export function getRequestAIMoveAction(): ActionDispatcherPromise {
 }
 
 export function getMoveToScoringPhaseAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, getState) => {
-    return dispatch({
-      type: ACTIONS.moveToScoringPhase,
-      payload: {}
+  return (wrapAction, dispatch, getState) => {
+    return wrapAction({
+      type: ACTIONS.moveToScoringPhase
     })
       .then(() => trackAction(ACTIONS.moveToScoringPhase, getState().game))
       .delay(500 * getState().config.animationSpeed)
-      .then(() => followupDispatch(getMoveToNextPlayerScoringAction()));
+      .then(() => dispatch(getMoveToNextPlayerScoringAction()));
   };
 }
 
 export function getMoveToNextPlayerScoringAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, getState) => {
-    return dispatch({
-      type: ACTIONS.moveToNextPlayerScoring,
-      payload: {}
+  return (wrapAction, dispatch, getState) => {
+    return wrapAction({
+      type: ACTIONS.moveToNextPlayerScoring
     })
       .then(() => trackAction(ACTIONS.moveToNextPlayerScoring, getState().game))
       .delay(500 * getState().config.animationSpeed)
-      .then(() => followupDispatch(getScoreBoardForCurrentPlayerAction()));
+      .then(() => dispatch(getScoreBoardForCurrentPlayerAction()));
   };
 }
 
 export function getScoreBoardForCurrentPlayerAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, getState) => {
-    return dispatch({
+  return (wrapAction, dispatch, getState) => {
+    return wrapAction({
       type: ACTIONS.scoreBoardForCurrentPlayer,
-      manualResolve: true,
-      payload: {}
+      manualResolve: true
     })
       .then(() => trackAction(ACTIONS.scoreBoardForCurrentPlayer, getState().game))
       .delay(500 * getState().config.animationSpeed)
-      .then(() => followupDispatch(getMoveToNextPlayerScoringAction()));
+      .then(() => dispatch(getMoveToNextPlayerScoringAction()));
   };
 }
 
 export function getEndTurnAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, getState) => {
-    return dispatch({
-      type: ACTIONS.endTurn,
-      payload: {}
+  return (wrapAction, dispatch, getState) => {
+    return wrapAction({
+      type: ACTIONS.endTurn
     })
       .then(() => trackAction(ACTIONS.endTurn, getState().game))
       .delay(100 * getState().config.animationSpeed)
-      .then(() => followupDispatch(getMoveToRefillPhaseAction()));
+      .then(() => dispatch(getMoveToRefillPhaseAction()));
   };
 }
 
 export function getMoveToRefillPhaseAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, getState) => {
-    return dispatch({
-      type: ACTIONS.moveToRefillPhase,
-      payload: {}
+  return (wrapAction, dispatch, getState) => {
+    return wrapAction({
+      type: ACTIONS.moveToRefillPhase
     })
       .then(() => trackAction(ACTIONS.moveToRefillPhase, getState().game))
-      .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
+      .then(() => dispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }
 
 export function getShuffleBoxIntoBagAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, getState) => {
-    return dispatch({
-      type: ACTIONS.shuffleBoxIntoBag,
-      payload: {}
+  return (wrapAction, dispatch, getState) => {
+    return wrapAction({
+      type: ACTIONS.shuffleBoxIntoBag
     })
       .then(() => trackAction(ACTIONS.shuffleBoxIntoBag, getState().game))
       .then(() => play(SHUFFLE))
       .delay(500 * getState().config.animationSpeed)
-      .then(() => followupDispatch(getDrawTileFromBagIntoFactoriesAction()));
+      .then(() => dispatch(getDrawTileFromBagIntoFactoriesAction()));
   };
 }
 
 export function getMoveToEndPhaseAction(): ActionDispatcherPromise {
-  return (dispatch, followupDispatch, getState) => {
-    return dispatch({
-      type: ACTIONS.moveToEndPhase,
-      payload: {}
+  return (wrapAction, dispatch, getState) => {
+    return wrapAction({
+      type: ACTIONS.moveToEndPhase
     })
       .then(() => trackAction(ACTIONS.moveToEndPhase, getState().game))
       .then(() => play(END));

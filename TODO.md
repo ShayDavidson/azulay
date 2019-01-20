@@ -1,8 +1,12 @@
 # TODO
 
+- Optional chaining.
+- Make floor clickable only if current player (remove floor validation)
+- CSS condition helper class.
+
+- Gameprovider should not know what's an initial state/action is.
 - Arrange flow for initializing tracking and multi.
 - Sometimes scoring floater/animations are not shown.
-- CSS condition helper class.
 - Audio delay in mobile?
 - Mark game end when someone closes a row.
 - Random AI.
@@ -19,7 +23,7 @@
 - Better bonus scoring effect.
 - Better noise reduction on sounds.
 - Add `immer`.
-- Optional chaining.
+
 - Separate game provider from dispatcher + generic game provider.
 - Flowtype for actions hard-typed.
 - Can't be wrong in floor placement - always for current player.
