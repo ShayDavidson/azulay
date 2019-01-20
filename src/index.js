@@ -74,7 +74,7 @@ class Azul extends React.Component<Props, State> {
           <GameContext.Consumer>
             {state => {
               if (state == null) return null;
-              const { gameState, presentationState, resolver } = state;
+              const { gameState, presentationState, configState, resolver } = state;
               if (gameState == null) return null;
               const numberOfPlayers = gameState.players.length;
               const $boardsGridStyle = { gridTemplateColumns: `repeat(${numberOfPlayers > 2 ? 2 : 1}, 1fr)` };
@@ -87,6 +87,7 @@ class Azul extends React.Component<Props, State> {
                         return (
                           <PlayerBoardAnimator
                             key={index}
+                            animationSpeed={configState.animationSpeed}
                             player={player}
                             scoring={currentPlayer ? presentationState.currentScoring : undefined}
                             resolver={currentPlayer ? resolver : undefined}

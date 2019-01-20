@@ -17,7 +17,6 @@
 - Solve 'will-change' and zIndex for tiles.
 - Tiles out of placement / factory animation.
 - Better bonus scoring effect.
-- Animation speed for scoring as well.
 - Better noise reduction on sounds.
 - Add `immer`.
 - Optional chaining.

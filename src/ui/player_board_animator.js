@@ -15,6 +15,7 @@ import { SCORE, TILES, SCORE_BAD, play, playRandom } from "../sfx";
 /***********************************************************/
 
 type Props = {
+  animationSpeed: number,
   player: Player,
   scoring: ?Scoring,
   resolver: ?Resolver,
@@ -284,7 +285,7 @@ export default class PlayerBoardAnimator extends React.Component<Props, State> {
               highlights: deriveHighlightsFromScoringAct(actStep)
             };
           });
-        }, actStep.delay);
+        }, actStep.delay * this.props.animationSpeed);
       } else if (this.props.resolver != null) {
         this.props.resolver();
         this.setState(state => {

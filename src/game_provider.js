@@ -13,7 +13,7 @@ import type {
   Resolver
 } from "./actions";
 import type { Game } from "./models";
-import type { UI, Presentation } from "./ui_models";
+import type { UI, Presentation, Config } from "./ui_models";
 // helpers
 import { createGame } from "./models";
 import { reduce, validate, getMoveToRefillPhaseAction } from "./actions";
@@ -24,6 +24,7 @@ export type Context = {|
   gameState: Game,
   uiState: UI,
   presentationState: Presentation,
+  configState: Config,
   resolver?: ?Resolver,
   dispatch: ActionPromiseDispatcher
 |} | void;
@@ -120,13 +121,14 @@ export default class GameProvider extends React.Component<Props, State> {
   }
 
   render() {
-    const { game, ui, presentation, resolver } = this.state;
+    const { game, ui, presentation, config, resolver } = this.state;
     return (
       <GameContext.Provider
         value={{
           gameState: game,
           uiState: ui,
           presentationState: presentation,
+          configState: config,
           resolver: resolver,
           dispatch: this.dispatch.bind(this)
         }}
