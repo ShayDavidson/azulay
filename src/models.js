@@ -348,7 +348,9 @@ export function chunk<T>(array: Array<T>, size: number): Array<Array<T>> {
 }
 
 export function sugarSortPile(pile: TilesArray): TilesArray {
-  if (pile[0].color == pile[3].color) {
+  if (pile.length < 4) {
+    return pile;
+  } else if (pile[0].color == pile[3].color) {
     return [pile[0], pile[3], pile[2], pile[1]];
   } else if (pile[1].color == pile[2].color) {
     return [pile[0], pile[1], pile[3], pile[2]];

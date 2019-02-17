@@ -76,11 +76,10 @@ export default class Tile extends React.PureComponent<Props, State> {
     let isColoredTile = kind == "colored";
 
     let backgroundImage;
-    if (color != null && ornaments[color]) {
-      backgroundImage = `${$tileGradient}, url(${ornaments[color]})`;
-    }
     if (kind == "first") {
       backgroundImage = `${$tileGradient}, url(${firstOrnament})`;
+    } else if (color != null && ornaments[color]) {
+      backgroundImage = `${$tileGradient}, url(${ornaments[color]})`;
     } else {
       backgroundImage = $tileGradient;
     }
